@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volumen von Prismen – Klasse 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --primary: #4361ee;
+    --accent: #f72585;
+    --green: #06d6a0;
+    --yellow: #ffd166;
+    --orange: #ef8c2b;
+    --text: #1a1a2e;
+    --muted: #6c6f8b;
+    --radius: 18px;
+    --shadow: 0 8px 32px rgba(67,97,238,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(28px, 6vw, 46px);
+    color: var(--primary);
+    line-height: 1.1;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* NAV DOTS */
+  .nav-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .dot-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dot-btn.active, .dot-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+  }
+  .dot-btn.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    border: 2px solid transparent;
+  }
+  .card-accent { border-color: var(--primary); }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 24px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .emoji { font-size: 28px; }
+
+  p { font-size: 16px; line-height: 1.7; margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: linear-gradient(135deg, #4361ee15, #f7258520);
+    border: 2.5px dashed var(--primary);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  .formula {
+    font-family: 'Fredoka One', cursive;
+    font-size: 28px;
+    color: var(--primary);
+    letter-spacing: 1px;
+  }
+  .formula-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* PRISM SVG AREA */
+  .prism-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .prism-card {
+    background: #f8f9ff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: center;
+    flex: 1 1 160px;
+    max-width: 200px;
+    border: 2px solid #e0e5ff;
+    transition: transform .2s, border-color .2s;
+  }
+  .prism-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+  .prism-card svg { width: 100px; height: 100px; }
+  .prism-card .name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 16px;
+    color: var(--primary);
+    margin-top: 8px;
+  }
+  .prism-card .hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* STEPS */
+  .steps { list-style: none; padding: 0; }
+  .steps li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: #f8f9ff;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+  }
+  .step-num {
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    min-width: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .step-text { font-size: 15px; line-height: 1.6; }
+  .step-text strong { color: var(--primary); }
+
+  /* EXAMPLE BOX */
+  .example-box {
+    background: linear-gradient(135deg, #fff9f0, #fff3e0);
+    border: 2px solid var(--orange);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .example-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+  .calc-line {
+    font-size: 15px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #f0d0a0;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .calc-line:last-child { border: none; color: var(--accent); font-size: 16px; }
+  .calc-line span { color: var(--muted); font-weight: 400; font-size: 13px; }
+
+  /* INTERACTIVE CALCULATOR */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .input-group input, .input-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #dde2f5;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    color: var(--text);
+    background: #f8f9ff;
+    transition: border-color .2s;
+    outline: none;
+  }
+  .input-group input:focus, .input-group select:focus { border-color: var(--primary); background: white; }
+
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform .15s, background .2s;
+    letter-spacing: .5px;
+  }
+  .calc-btn:hover { background: #3451d1; transform: translateY(-2px); }
+
+  .result-box {
+    background: linear-gradient(135deg, #06d6a020, #4361ee15);
+    border: 2px solid var(--green);
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .result-val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 36px;
+    color: var(--green);
+    margin-top: 4px;
+  }
+  .result-steps { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.7; }
+
+  /* QUIZ */
+  .quiz-q {
+    background: #f8f9ff;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 2px solid #e0e5ff;
+  }
+  .quiz-q .q-text {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .q-opt {
+    padding: 11px 16px;
+    border: 2px solid #dde2f5;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all .2s;
+    background: white;
+    text-align: left;
+  }
+  .q-opt:hover { border-color: var(--primary); background: #f0f4ff; }
+  .q-opt.correct { background: #e6fff8; border-color: var(--green); color: #007a5e; }
+  .q-opt.wrong { background: #fff0f5; border-color: var(--accent); color: var(--accent); }
+  .q-feedback {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #e6fff8; color: #007a5e; }
+  .q-feedback.fail { background: #fff0f5; color: var(--accent); }
+
+  /* SCORE */
+  .score-bar-wrap {
+    background: #e0e5ff;
+    border-radius: 50px;
+    height: 18px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .score-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--green));
+    border-radius: 50px;
+    transition: width .6s ease;
+  }
+
+  /* NAV BUTTONS */
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .btn-prev, .btn-next {
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 17px;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+  }
+  .btn-prev {
+    background: #e0e5ff;
+    color: var(--primary);
+  }
+  .btn-prev:hover { background: #d0d8ff; }
+  .btn-next {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+  }
+  .btn-next:hover { background: #3451d1; transform: translateY(-2px); }
+
+  /* TIP BOX */
+  .tip-box {
+    background: linear-gradient(135deg, #fff8e6, #fff3cc);
+    border-left: 4px solid var(--yellow);
+    border-radius: 0 12px 12px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .tip-box::before { content: "💡 "; }
+
+  /* MERKE */
+  .merke-box {
+    background: linear-gradient(135deg, #f0f4ff, #e8edff);
+    border: 2.5px solid var(--primary);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .merke-title {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  /* PROGRESS */
+  .progress-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  /* responsive */
+  @media(max-width:500px) {
+    .card { padding: 18px 16px; }
+    .prism-card { flex: 1 1 130px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Mathematik · Klasse 6</div>
+  <h1>📦 Volumen von Prismen</h1>
+  <p class="subtitle">Lernbaustein · 5 Kapitel · Interaktiv</p>
+</header>
+
+<div class="progress-top">
+  <span id="progress-text">Kapitel 1 von 5</span>
+</div>
+
+<div class="nav-dots" id="navDots">
+  <button class="dot-btn active" onclick="goTo(0)">1</button>
+  <button class="dot-btn" onclick="goTo(1)">2</button>
+  <button class="dot-btn" onclick="goTo(2)">3</button>
+  <button class="dot-btn" onclick="goTo(3)">4</button>
+  <button class="dot-btn" onclick="goTo(4)">5</button>
+</div>
+
+<!-- SECTION 1: Was ist ein Prisma? -->
+<div class="section active" id="s0">
+  <div class="card card-accent">
+    <div class="section-title"><span class="emoji">🔷</span> Was ist ein Prisma?</div>
+    <p>Ein <strong>Prisma</strong> ist ein geometrischer Körper mit zwei <strong>gleichen, parallelen Grundflächen</strong> (den sogenannten Deckflächen) und rechteckigen Seitenflächen.</p>
+    <p>Die Form der Grundfläche bestimmt, welche Art von Prisma es ist.</p>
+
+    <div class="prism-area">
+      <!-- Quader (rechteckige Grundfläche) -->
+      <div class="prism-card">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,70 60,70 60,30 10,30" fill="#e0e8ff" stroke="#4361ee" stroke-width="2"/>
+          <polygon points="60,30 80,15 80,55 60,70" fill="#c5d0ff" stroke="#4361ee" stroke-width="2"/>
+          <polygon points="10,30 30,15 80,15 60,30" fill="#d5dcff" stroke="#4361ee" stroke-width="2"/>
+          <line x1="10" y1="70" x2="30" y2="55" stroke="#4361ee" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="30" y1="55" x2="80" y2="55" stroke="#4361ee" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="30" y1="55" x2="30" y2="15" stroke="#4361ee" stroke-width="2" stroke-dasharray="4"/>
+        </svg>
+        <div class="name">Quader</div>
+        <div class="hint">Rechteck als Grundfläche</div>
+      </div>
+      <!-- Dreiecksprisma -->
+      <div class="prism-card">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,75 50,30 80,75" fill="#ffd16640" stroke="#ef8c2b" stroke-width="2"/>
+          <polygon points="20,75 15,60 45,15 50,30" fill="#ffe08a60" stroke="#ef8c2b" stroke-width="2"/>
+          <polygon points="50,30 80,75 75,60 45,15" fill="#ffd16640" stroke="#ef8c2b" stroke-width="2"/>
+          <line x1="15" y1="60" x2="75" y2="60" stroke="#ef8c2b" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="45" y1="15" x2="75" y2="60" stroke="#ef8c2b" stroke-width="2" stroke-dasharray="4"/>
+          <line x1="45" y1="15" x2="15" y2="60" stroke="#ef8c2b" stroke-width="2" stroke-dasharray="4"/>
+        </svg>
+        <div class="name">Dreiecksprisma</div>
+        <div class="hint">Dreieck als Grundfläche</div>
+      </div>
+      <!-- Sechseckprisma -->
+      <div class="prism-card">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="30,80 10,65 10,45 30,30 60,30 80,45 80,65 60,80" fill="#e0fff6" stroke="#06d6a0" stroke-width="2"/>
+          <polygon points="30,55 10,42 10,22 30,10 60,10 80,22 80,42 60,55" fill="#b8f5e8" stroke="#06d6a0" stroke-width="1.5" opacity="0.7"/>
+          <line x1="30" y1="80" x2="30" y2="55" stroke="#06d6a0" stroke-width="2"/>
+          <line x1="60" y1="80" x2="60" y2="55" stroke="#06d6a0" stroke-width="2"/>
+          <line x1="80" y1="65" x2="80" y2="42" stroke="#06d6a0" stroke-width="2"/>
+          <line x1="10" y1="65" x2="10" y2="42" stroke="#06d6a0" stroke-width="2" stroke-dasharray="3"/>
+          <line x1="10" y1="45" x2="10" y2="22" stroke="#06d6a0" stroke-width="2" stroke-dasharray="3"/>
+        </svg>
+        <div class="name">Sechsecksprisma</div>
+        <div class="hint">Sechseck als Grundfläche</div>
+      </div>
+    </div>
+
+    <div class="merke-box">
+      <div class="merke-title">📌 Merke!</div>
+      <p style="margin:0">Alle Prismen haben gemeinsam: <strong>zwei gleiche, parallele Grundflächen</strong> und <strong>rechteckige Seitenflächen</strong>. Der häufigste Fall in Klasse 6 ist der <strong>Quader</strong>.</p>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <span></span>
+    <button class="btn-next" onclick="goTo(1)">Weiter ▶</button>
+  </div>
+</div>
+
+<!-- SECTION 2: Die Formel -->
+<div class="section" id="s1">
+  <div class="card card-accent">
+    <div class="section-title"><span class="emoji">📐</span> Die Volumen-Formel</div>
+    <p>Das <strong>Volumen</strong> eines Körpers gibt an, wie viel Raum er einnimmt. Es wird in <strong>cm³</strong> (Kubikzentimeter) oder <strong>m³</strong> (Kubikmeter) angegeben.</p>
+
+    <div class="formula-box">
+      <div class="formula">V = G · h</div>
+      <div class="formula-sub">V = Volumen &nbsp;|&nbsp; G = Grundfläche &nbsp;|&nbsp; h = Höhe</div>
+    </div>
+
+    <p>Das Volumen eines Prismas berechnet man immer gleich: <strong>Grundfläche mal Höhe</strong>. Je nach Form der Grundfläche ändert sich nur, wie man <em>G</em> berechnet.</p>
+
+    <ul class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Grundfläche G berechnen</strong><br>
+          Beim Quader: G = Länge · Breite<br>
+          Beim Dreiecksprisma: G = ½ · Grundseite · Höhe des Dreiecks
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Höhe h des Prismas ablesen</strong><br>
+          Das ist die Strecke zwischen den beiden Grundflächen.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Volumen berechnen:</strong> <strong>V = G · h</strong></div>
+      </li>
+    </ul>
+
+    <div class="tip-box">
+      Das Volumen kann man sich als viele übereinander gestapelte Schichten der Grundfläche vorstellen – je mehr Schichten (= größere Höhe), desto größer das Volumen!
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn-prev" onclick="goTo(0)">◀ Zurück</button>
+    <button class="btn-next" onclick="goTo(2)">Weiter ▶</button>
+  </div>
+</div>
+
+<!-- SECTION 3: Beispiele -->
+<div class="section" id="s2">
+  <div class="card card-accent">
+    <div class="section-title"><span class="emoji">✏️</span> Rechenbeispiele</div>
+
+    <!-- Beispiel 1 -->
+    <div class="example-box">
+      <div class="example-title">Beispiel 1 · Quader</div>
+      <p style="font-size:15px; margin-bottom:10px;">Ein Aquarium hat die Maße: <strong>Länge = 60 cm</strong>, <strong>Breite = 30 cm</strong>, <strong>Höhe = 40 cm</strong>.</p>
+      <div class="calc-line">Schritt 1: G = l · b = 60 cm · 30 cm <span>= Grundfläche</span></div>
+      <div class="calc-line">G = 1 800 cm²</div>
+      <div class="calc-line">Schritt 2: V = G · h = 1 800 cm² · 40 cm</div>
+      <div class="calc-line">✅ V = 72 000 cm³ = 72 Liter 🐟</div>
+    </div>
+
+    <!-- Beispiel 2 -->
+    <div class="example-box">
+      <div class="example-title">Beispiel 2 · Dreiecksprisma (Dachform)</div>
+      <p style="font-size:15px; margin-bottom:10px;">Ein keilförmiger Türstopper: <strong>Dreieck: Grundseite = 8 cm, Höhe = 5 cm</strong>. <strong>Länge = 20 cm</strong>.</p>
+      <div class="calc-line">Schritt 1: G = ½ · g · h_Δ = ½ · 8 · 5 <span>= Dreiecksfläche</span></div>
+      <div class="calc-line">G = 20 cm²</div>
+      <div class="calc-line">Schritt 2: V = G · h = 20 cm² · 20 cm</div>
+      <div class="calc-line">✅ V = 400 cm³</div>
+    </div>
+
+    <div class="merke-box">
+      <div class="merke-title">📌 Einheiten nicht vergessen!</div>
+      <p style="margin:0">Flächen werden in <strong>cm²</strong> angegeben, Volumen in <strong>cm³</strong>. Immer gleiche Einheiten verwenden, bevor du rechnest!</p>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn-prev" onclick="goTo(1)">◀ Zurück</button>
+    <button class="btn-next" onclick="goTo(3)">Weiter ▶</button>
+  </div>
+</div>
+
+<!-- SECTION 4: Rechner -->
+<div class="section" id="s3">
+  <div class="card card-accent">
+    <div class="section-title"><span class="emoji">🧮</span> Interaktiver Rechner</div>
+    <p>Probiere selbst aus – wähle eine Prismaform und gib die Maße ein!</p>
+
+    <div class="input-group" style="margin-bottom:14px;">
+      <label>Prismaform</label>
+      <select id="prismType" onchange="updateCalcForm()">
+        <option value="quader">Quader (rechteckige Grundfläche)</option>
+        <option value="dreieck">Dreiecksprisma</option>
+      </select>
+    </div>
+
+    <div class="calc-grid" id="calcFields">
+      <div class="input-group">
+        <label id="f1label">Länge (cm)</label>
+        <input type="number" id="f1" min="0" step="0.1" placeholder="z. B. 10">
+      </div>
+      <div class="input-group">
+        <label id="f2label">Breite (cm)</label>
+        <input type="number" id="f2" min="0" step="0.1" placeholder="z. B. 5">
+      </div>
+      <div class="input-group">
+        <label>Höhe des Prismas (cm)</label>
+        <input type="number" id="f3" min="0" step="0.1" placeholder="z. B. 8">
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Volumen berechnen 🚀</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-label">Ergebnis</div>
+      <div class="result-val" id="resultVal">— cm³</div>
+      <div class="result-steps" id="resultSteps"></div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn-prev" onclick="goTo(2)">◀ Zurück</button>
+    <button class="btn-next" onclick="goTo(4)">Zum Quiz ▶</button>
+  </div>
+</div>
+
+<!-- SECTION 5: Quiz -->
+<div class="section" id="s4">
+  <div class="card card-accent">
+    <div class="section-title"><span class="emoji">🎯</span> Wissens-Quiz</div>
+    <p>Beantworte die Fragen und teste dein Wissen!</p>
+
+    <div id="scoreArea" style="display:none; margin-bottom:16px;">
+      <strong id="scoreText"></strong>
+      <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%"></div></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-q" id="q0">
+      <div class="q-text">1. Mit welcher Formel berechnet man das Volumen eines Prismas?</div>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="answer(0,0,false)">V = G + h</button>
+        <button class="q-opt" onclick="answer(0,1,true)">V = G · h</button>
+        <button class="q-opt" onclick="answer(0,2,false)">V = G · h²</button>
+        <button class="q-opt" onclick="answer(0,3,false)">V = 2 · G · h</button>
+      </div>
+      <div class="q-feedback" id="fb0"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-q" id="q1">
+      <div class="q-text">2. Ein Quader hat l = 5 cm, b = 4 cm, h = 3 cm. Wie groß ist das Volumen?</div>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="answer(1,0,false)">47 cm³</button>
+        <button class="q-opt" onclick="answer(1,1,false)">40 cm³</button>
+        <button class="q-opt" onclick="answer(1,2,true)">60 cm³</button>
+        <button class="q-opt" onclick="answer(1,3,false)">24 cm³</button>
+      </div>
+      <div class="q-feedback" id="fb1"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-q" id="q2">
+      <div class="q-text">3. In welcher Einheit wird das Volumen angegeben?</div>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="answer(2,0,false)">cm²</button>
+        <button class="q-opt" onclick="answer(2,1,true)">cm³</button>
+        <button class="q-opt" onclick="answer(2,2,false)">cm</button>
+        <button class="q-opt" onclick="answer(2,3,false)">m²</button>
+      </div>
+      <div class="q-feedback" id="fb2"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-q" id="q3">
+      <div class="q-text">4. Ein Dreiecksprisma: Dreieck mit g = 6 cm, h_Δ = 4 cm. Länge = 10 cm. Wie groß ist V?</div>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="answer(3,0,false)">240 cm³</button>
+        <button class="q-opt" onclick="answer(3,1,true)">120 cm³</button>
+        <button class="q-opt" onclick="answer(3,2,false)">60 cm³</button>
+        <button class="q-opt" onclick="answer(3,3,false)">180 cm³</button>
+      </div>
+      <div class="q-feedback" id="fb3"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-q" id="q4">
+      <div class="q-text">5. Was ist die Grundfläche G bei einem Quader mit l = 7 cm und b = 3 cm?</div>
+      <div class="quiz-options">
+        <button class="q-opt" onclick="answer(4,0,false)">10 cm²</button>
+        <button class="q-opt" onclick="answer(4,1,false)">20 cm²</button>
+        <button class="q-opt" onclick="answer(4,2,true)">21 cm²</button>
+        <button class="q-opt" onclick="answer(4,3,false)">14 cm²</button>
+      </div>
+      <div class="q-feedback" id="fb4"></div>
+    </div>
+
+    <button class="calc-btn" style="margin-top:16px;" onclick="showScore()">Auswertung anzeigen 🏆</button>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn-prev" onclick="goTo(3)">◀ Zurück</button>
+  </div>
+</div>
+
+<script>
+  let currentSection = 0;
+  const totalSections = 5;
+  const answers = new Array(5).fill(null);
+
+  function goTo(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => {
+      s.classList.toggle('active', i === idx);
+    });
+    currentSection = idx;
+    document.querySelectorAll('.dot-btn').forEach((b,i) => {
+      b.classList.remove('active');
+      if (i === idx) b.classList.add('active');
+    });
+    document.getElementById('progress-text').textContent = `Kapitel ${idx+1} von ${totalSections}`;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // CALCULATOR
+  function updateCalcForm() {
+    const t = document.getElementById('prismType').value;
+    if (t === 'quader') {
+      document.getElementById('f1label').textContent = 'Länge (cm)';
+      document.getElementById('f2label').textContent = 'Breite (cm)';
+    } else {
+      document.getElementById('f1label').textContent = 'Grundseite Dreieck (cm)';
+      document.getElementById('f2label').textContent = 'Höhe des Dreiecks (cm)';
+    }
+    document.getElementById('resultBox').classList.remove('show');
+  }
+
+  function calculate() {
+    const t = document.getElementById('prismType').value;
+    const a = parseFloat(document.getElementById('f1').value);
+    const b = parseFloat(document.getElementById('f2').value);
+    const h = parseFloat(document.getElementById('f3').value);
+    if (isNaN(a)||isNaN(b)||isNaN(h)||a<=0||b<=0||h<=0) {
+      alert('Bitte alle Felder mit positiven Zahlen ausfüllen!');
+      return;
+    }
+    let G, V, steps;
+    if (t === 'quader') {
+      G = a * b;
+      V = G * h;
+      steps = `Schritt 1: G = ${a} · ${b} = ${G} cm²\nSchritt 2: V = ${G} · ${h} = ${V} cm³`;
+    } else {
+      G = 0.5 * a * b;
+      V = G * h;
+      steps = `Schritt 1: G = ½ · ${a} · ${b} = ${G} cm²\nSchritt 2: V = ${G} · ${h} = ${V} cm³`;
+    }
+    const box = document.getElementById('resultBox');
+    document.getElementById('resultVal').textContent = V.toLocaleString('de-DE') + ' cm³';
+    document.getElementById('resultSteps').innerHTML = steps.replace(/\n/g,'<br>');
+    box.classList.add('show');
+  }
+
+  // QUIZ
+  function answer(q, opt, correct) {
+    const question = document.getElementById('q' + q);
+    if (question.dataset.answered) return;
+    question.dataset.answered = '1';
+    answers[q] = correct;
+
+    const opts = question.querySelectorAll('.q-opt');
+    opts.forEach((o, i) => {
+      o.disabled = true;
+      if (i === opt) o.classList.add(correct ? 'correct' : 'wrong');
+    });
+    // Mark correct if wrong was chosen
+    if (!correct) {
+      opts.forEach(o => {
+        if (o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+      });
+    }
+
+    const fb = document.getElementById('fb' + q);
+    fb.classList.add('show');
+    if (correct) {
+      fb.classList.add('ok');
+      fb.textContent = '✅ Richtig! Super gemacht!';
+    } else {
+      fb.classList.add('fail');
+      const hints = [
+        'Denke daran: V = G · h (multiplizieren, nicht addieren!)',
+        'G = 5·4 = 20 cm², dann V = 20·3 = 60 cm³',
+        'Volumen wird in Kubikzentimetern (cm³) gemessen.',
+        'G = ½ · 6 · 4 = 12 cm², dann V = 12 · 10 = 120 cm³',
+        'G = l · b = 7 · 3 = 21 cm²'
+      ];
+      fb.textContent = '❌ Leider falsch. ' + hints[q];
+    }
+  }
+
+  function showScore() {
+    const answered = answers.filter(a => a !== null).length;
+    const correct = answers.filter(a => a === true).length;
+    const scoreArea = document.getElementById('scoreArea');
+    scoreArea.style.display = 'block';
+    const pct = answered > 0 ? Math.round((correct / 5) * 100) : 0;
+    let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+    document.getElementById('scoreText').textContent = `${emoji} ${correct} von 5 Fragen richtig (${pct}%)`;
+    document.getElementById('scoreBar').style.width = pct + '%';
+    scoreArea.scrollIntoView({behavior:'smooth'});
+  }
+</script>
+</body>
+</html>
