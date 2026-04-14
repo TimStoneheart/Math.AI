@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math.Ai.matics</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #0d1b2a;
+      --card: rgba(255, 255, 255, 0.08);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f8fbff;
+      --soft: #b8c7db;
+      --accent: #67e8f9;
+      --accent2: #8b5cf6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(103, 232, 249, 0.16), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.18), transparent 35%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 28px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+      padding: 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .logo-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .logo-box img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      display: block;
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(103, 232, 249, 0.12);
+      border: 1px solid rgba(103, 232, 249, 0.28);
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2.3rem, 5vw, 4.2rem);
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #67e8f9, #ffffff, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--soft);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 560px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: 0.25s ease;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #67e8f9, #60a5fa);
+      color: #07111f;
+      box-shadow: 0 12px 30px rgba(103, 232, 249, 0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .tag {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--soft);
+      background: rgba(255,255,255,0.03);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 30px 22px;
+      }
+
+      .logo-box {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="logo-box">
+        <img src="images/logo.png" alt="Math.Ai.matics Logo">
+      </div>
+
+      <div>
+        <div class="badge">Mathematik × KI × Lernen</div>
+
+        <h1>
+          Willkommen bei
+          <span class="gradient-text">Math.Ai.matics</span>
+        </h1>
+
+        <p class="subtitle">
+          Mathe verständlich, modern und mit KI neu gedacht.
+          Auf dem Channel und im Blog geht es um smarte Erklärungen,
+          kreative Lernideen und spannende Verbindungen zwischen Mathematik und Technologie.
+        </p>
+
+        <div class="buttons">
+          <a class="btn btn-primary" href="https://www.youtube.com/@Math.AI.matics" target="_blank">
+            Zum YouTube-Channel
+          </a>
+       
+        </div>
+<div class="badge">Lerntools
+  </div>
+     
+        <div class="tags">
+          <span class="tag" href="prismen.html">Prismen</span>
+          <span class="tag">Lineare Algebra</span>
+       
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
