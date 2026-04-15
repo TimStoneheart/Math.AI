@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sehnenvierecke – Klasse 7 Gymnasium Sachsen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=DM+Sans:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --c1: #1D9E75; --c1l: #E1F5EE; --c1d: #085041; --c1m: #9FE1CB;
+    --c2: #534AB7; --c2l: #EEEDFE; --c2d: #26215C; --c2m: #AFA9EC;
+    --c3: #BA7517; --c3l: #FAEEDA; --c3d: #412402; --c3m: #FAC775;
+    --c4: #D85A30; --c4l: #FAECE7; --c4d: #4A1B0C; --c4m: #F0997B;
+    --bg: #f5f4ef;
+    --bg2: #ffffff;
+    --bg3: #eeede8;
+    --txt: #2c2c2a;
+    --txt2: #5f5e5a;
+    --brd: rgba(44,44,42,0.15);
+    --brd2: rgba(44,44,42,0.3);
+    --radius: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c1l: #04342C; --c1d: #9FE1CB; --c1m: #0F6E56;
+      --c2l: #26215C; --c2d: #CECBF6; --c2m: #3C3489;
+      --c3l: #412402; --c3d: #FAC775; --c3m: #854F0B;
+      --c4l: #4A1B0C; --c4d: #F5C4B3; --c4m: #993C1D;
+      --bg: #1a1a18; --bg2: #232321; --bg3: #2c2c2a;
+      --txt: #e8e7e0; --txt2: #9c9a92;
+      --brd: rgba(200,198,190,0.12); --brd2: rgba(200,198,190,0.25);
+    }
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--c1l); border: 0.5px solid var(--c1m);
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 1.5rem;
+  }
+  .hero svg { flex-shrink: 0; }
+  .hero h1 {
+    font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600;
+    color: var(--c1d); margin-bottom: 4px;
+  }
+  .hero p { font-size: 13px; color: var(--c1); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .tab {
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    padding: 7px 16px; border-radius: 20px;
+    border: 0.5px solid var(--brd); background: var(--bg2);
+    color: var(--txt2); cursor: pointer; transition: all .15s;
+  }
+  .tab.active { background: var(--c2l); color: var(--c2d); border-color: var(--c2m); font-weight: 500; }
+  .tab:hover:not(.active) { background: var(--bg3); }
+
+  .section { display: none; }
+  .section.vis { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--bg2); border: 0.5px solid var(--brd);
+    border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px;
+  }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 10px; border-radius: 20px; margin-bottom: 8px;
+  }
+  .tag-def { background: var(--c2l); color: var(--c2d); }
+  .tag-satz { background: var(--c1l); color: var(--c1d); }
+  .tag-bsp { background: var(--c3l); color: var(--c3d); }
+  .card h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--txt); }
+  .card p { font-size: 14px; color: var(--txt2); line-height: 1.7; }
+  .card strong { color: var(--txt); font-weight: 500; }
+
+  .formel-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .formel {
+    display: inline-block; padding: 5px 14px; border-radius: 7px;
+    font-size: 15px; font-weight: 500;
+  }
+  .formel-a { background: var(--c2l); color: var(--c2d); }
+  .formel-b { background: var(--c1l); color: var(--c1d); }
+
+  .eg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .eg-item {
+    background: var(--bg3); border-radius: 8px; padding: 10px 12px;
+    font-size: 13px; color: var(--txt2); line-height: 1.5;
+    border-left: 3px solid var(--c1);
+  }
+  .eg-item b { display: block; color: var(--txt); font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+
+  /* Erkunden */
+  .canvas-wrap {
+    background: var(--bg2); border: 0.5px solid var(--brd);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+  }
+  .canvas-hint { font-size: 12px; color: var(--txt2); margin-bottom: 8px; }
+  canvas { width: 100%; border-radius: 8px; cursor: crosshair; display: block; }
+  .highlight {
+    background: var(--c3l); border: 0.5px solid var(--c3m); border-radius: 8px;
+    padding: 10px 14px; font-size: 13px; color: var(--c3d); margin-top: 10px;
+  }
+  .ctrl-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .ctrl-row label { font-size: 13px; color: var(--txt2); }
+  .ctrl-row input[type=range] { width: 130px; accent-color: var(--c1); }
+  .readout {
+    font-size: 13px; font-weight: 500; min-width: 36px;
+    color: var(--c1d); background: var(--c1l); padding: 2px 8px; border-radius: 6px;
+  }
+
+  /* Aufgaben */
+  .aufg-nr {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--c2l); color: var(--c2d); font-size: 12px; font-weight: 500;
+    margin-right: 8px; flex-shrink: 0;
+  }
+  .aufg-titel { font-size: 15px; font-weight: 500; color: var(--txt); display: flex; align-items: center; margin-bottom: 8px; }
+  .aufg-text { font-size: 14px; color: var(--txt2); line-height: 1.7; margin-bottom: 12px; }
+  .eingabe-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .eingabe-row label { font-size: 13px; color: var(--txt2); }
+  .eingabe-row input {
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    padding: 6px 10px; border-radius: 6px; width: 80px;
+    border: 0.5px solid var(--brd2); background: var(--bg3); color: var(--txt);
+    outline: none;
+  }
+  .eingabe-row input:focus { border-color: var(--c2m); }
+  .btn {
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    padding: 7px 18px; border-radius: 7px; cursor: pointer;
+    border: 0.5px solid var(--brd2); background: var(--bg2);
+    color: var(--txt2); transition: all .15s;
+  }
+  .btn:hover { background: var(--c2l); color: var(--c2d); border-color: var(--c2m); }
+  .feedback {
+    font-size: 13px; padding: 8px 14px; border-radius: 7px;
+    margin-top: 8px; display: none; line-height: 1.6;
+  }
+  .ok { background: var(--c1l); color: var(--c1d); }
+  .err { background: var(--c4l); color: var(--c4d); }
+
+  .mc-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 7px;
+    border: 0.5px solid var(--brd); cursor: pointer;
+    font-size: 13px; color: var(--txt2); transition: all .15s;
+    background: var(--bg2); line-height: 1.5;
+  }
+  .mc-option:hover { background: var(--bg3); }
+  .mc-option.richtig { background: var(--c1l); color: var(--c1d); border-color: var(--c1m); }
+  .mc-option.falsch  { background: var(--c4l); color: var(--c4d); border-color: var(--c4m); }
+  .mc-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 0.5px solid var(--brd2); flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* Merkkarten */
+  .merk {
+    background: var(--c2l); border: 0.5px solid var(--c2m);
+    border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px;
+  }
+  .merk-icon { font-size: 18px; margin-bottom: 6px; }
+  .merk h3 { font-size: 14px; font-weight: 500; color: var(--c2d); margin-bottom: 5px; }
+  .merk p { font-size: 13px; color: var(--c2); line-height: 1.65; }
+  .merk .formel {
+    display: inline-block; background: var(--bg2); border-radius: 6px;
+    padding: 4px 12px; font-size: 14px; font-weight: 500; color: var(--c2d); margin-top: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; font-size: 12px; color: var(--txt2);
+    margin-top: 2.5rem; padding-top: 1rem;
+    border-top: 0.5px solid var(--brd);
+  }
+
+  @media (max-width: 520px) {
+    .eg-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <svg width="58" height="58" viewBox="0 0 58 58">
+      <circle cx="29" cy="29" r="26" fill="none" stroke="#1D9E75" stroke-width="1.5"/>
+      <polygon points="11,39 25,9 45,19 37,47" fill="none" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="11" cy="39" r="3.5" fill="#1D9E75"/>
+      <circle cx="25" cy="9"  r="3.5" fill="#1D9E75"/>
+      <circle cx="45" cy="19" r="3.5" fill="#1D9E75"/>
+      <circle cx="37" cy="47" r="3.5" fill="#1D9E75"/>
+    </svg>
+    <div>
+      <h1>Sehnenvierecke</h1>
+      <p>Klasse 7 · Gymnasium Sachsen · Geometrie</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('wissen',this)">Wissen</div>
+    <div class="tab" onclick="showTab('erkunden',this)">Erkunden</div>
+    <div class="tab" onclick="showTab('aufgaben',this)">Aufgaben</div>
+    <div class="tab" onclick="showTab('merken',this)">Merkkarten</div>
+  </div>
+
+  <!-- WISSEN -->
+  <div class="section vis" id="tab-wissen">
+
+    <div class="card">
+      <div class="tag tag-def">Definition</div>
+      <h3>Was ist ein Sehnenviereck?</h3>
+      <p>Ein Viereck heißt <strong>Sehnenviereck</strong>, wenn alle vier Ecken auf einem gemeinsamen Kreis – dem <strong>Umkreis</strong> – liegen. Die Seiten des Vierecks sind dann Sehnen dieses Kreises.</p>
+    </div>
+
+    <div class="card">
+      <div class="tag tag-satz">Satz</div>
+      <h3>Gegenüberliegende Winkel ergänzen sich</h3>
+      <p>In jedem Sehnenviereck gilt: Die Summe zweier <strong>gegenüberliegender Innenwinkel</strong> beträgt stets <strong>180°</strong>. Diese Eigenschaft folgt aus dem Umfangswinkelsatz.</p>
+      <div class="formel-row">
+        <span class="formel formel-a">α + γ = 180°</span>
+        <span class="formel formel-b">β + δ = 180°</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag tag-satz">Umkehrsatz (Kriterium)</div>
+      <h3>Wann hat ein Viereck einen Umkreis?</h3>
+      <p>Genau dann, wenn die Summe der gegenüberliegenden Winkel jeweils 180° beträgt. Dieses Kriterium lässt sich direkt zur Überprüfung nutzen.</p>
+    </div>
+
+    <div class="card">
+      <div class="tag tag-bsp">Beispiele</div>
+      <h3>Bekannte Sehnenvierecke und Gegenbeispiele</h3>
+      <div class="eg-grid">
+        <div class="eg-item"><b>Rechteck</b>Alle Winkel 90° → gegenüb. Paare: 90°+90°=180° ✓</div>
+        <div class="eg-item"><b>Quadrat</b>Sonderfall des Rechtecks; Umkreis hat Diagonale als Durchmesser</div>
+        <div class="eg-item"><b>Gleichschenk. Trapez</b>Hat Umkreis → ist Sehnenviereck ✓</div>
+        <div class="eg-item"><b>Raute / allgem. Parallelogramm</b>Im Allgemeinen <em>kein</em> Sehnenviereck ✗</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ERKUNDEN -->
+  <div class="section" id="tab-erkunden">
+    <div class="canvas-wrap">
+      <div class="canvas-hint">Ziehe die vier Eckpunkte auf dem Kreis – die Winkel werden live berechnet.</div>
+      <canvas id="myCanvas" width="620" height="360"></canvas>
+      <div class="highlight" id="winkelInfo">Bewege die Punkte und beobachte: α + γ = ? und β + δ = ?</div>
+    </div>
+    <div class="ctrl-row">
+      <label>Kreisradius</label>
+      <input type="range" id="rSlider" min="80" max="150" value="118" oninput="updateR(this.value)">
+      <span class="readout" id="rOut">118</span>
+    </div>
+  </div>
+
+  <!-- AUFGABEN -->
+  <div class="section" id="tab-aufgaben">
+
+    <div class="card">
+      <div class="aufg-titel"><span class="aufg-nr">1</span>Winkel berechnen</div>
+      <div class="aufg-text">Im Sehnenviereck ABCD gilt: α = 73°, β = 105°. Berechne γ und δ.</div>
+      <div class="eingabe-row">
+        <label>γ =</label>
+        <input type="number" id="a1g" placeholder="°">
+        <label>°&nbsp;&nbsp;δ =</label>
+        <input type="number" id="a1d" placeholder="°">
+        <label>°</label>
+      </div>
+      <button class="btn" onclick="check1()">Prüfen</button>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="card">
+      <div class="aufg-titel"><span class="aufg-nr">2</span>Ist es ein Sehnenviereck?</div>
+      <div class="aufg-text">Ein Viereck hat die Innenwinkel 82°, 110°, 98° und 70°. Ist es ein Sehnenviereck?</div>
+      <div id="mc2">
+        <div class="mc-option" onclick="checkMC2('ja',this)"><div class="mc-dot"></div>Ja, denn 82°+98°=180° und 110°+70°=180°.</div>
+        <div class="mc-option" onclick="checkMC2('nein1',this)"><div class="mc-dot"></div>Nein, die Winkelsumme stimmt nicht.</div>
+        <div class="mc-option" onclick="checkMC2('nein2',this)"><div class="mc-dot"></div>Nein, ein Sehnenviereck muss rechte Winkel haben.</div>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="card">
+      <div class="aufg-titel"><span class="aufg-nr">3</span>Gleichung aufstellen</div>
+      <div class="aufg-text">In einem Sehnenviereck ist α = (2x + 10)° und γ = (x + 20)°. Bestimme x.</div>
+      <div class="eingabe-row">
+        <label>x =</label>
+        <input type="number" id="a3x" placeholder="x">
+      </div>
+      <button class="btn" onclick="check3()">Prüfen</button>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <div class="card">
+      <div class="aufg-titel"><span class="aufg-nr">4</span>Konstruktion (Denkaufgabe)</div>
+      <div class="aufg-text">Ein Sehnenviereck hat die Seiten a = 4 cm, b = 5 cm, c = 3 cm und Umkreisradius r = 3,5 cm. Beschreibe, wie du es konstruieren würdest.</div>
+      <button class="btn" onclick="showHint4()">Hinweis anzeigen</button>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+  </div>
+
+  <!-- MERKKARTEN -->
+  <div class="section" id="tab-merken">
+    <div class="merk">
+      <div class="merk-icon">📐</div>
+      <h3>Definition Sehnenviereck</h3>
+      <p>Alle vier Ecken liegen auf einem gemeinsamen Kreis (Umkreis). Die Seiten sind Sehnen dieses Kreises.</p>
+    </div>
+    <div class="merk">
+      <div class="merk-icon">∠</div>
+      <h3>Winkelsatz</h3>
+      <p>Gegenüberliegende Innenwinkel im Sehnenviereck ergänzen sich zu 180°.</p>
+      <div class="formel">α + γ = 180° &nbsp;|&nbsp; β + δ = 180°</div>
+    </div>
+    <div class="merk">
+      <div class="merk-icon">↔</div>
+      <h3>Umkehrsatz (Kriterium)</h3>
+      <p>Ein Viereck ist genau dann ein Sehnenviereck, wenn seine gegenüberliegenden Winkel supplementär sind (Summe = 180°).</p>
+    </div>
+    <div class="merk">
+      <div class="merk-icon">✓</div>
+      <h3>Wichtige Beispiele</h3>
+      <p>Rechteck und Quadrat sind immer Sehnenvierecke. Gleichschenkliges Trapez ebenfalls. Allgemeines Parallelogramm und Raute (außer Quadrat) sind es im Allgemeinen nicht.</p>
+    </div>
+    <div class="merk">
+      <div class="merk-icon">💡</div>
+      <h3>Merkhilfe</h3>
+      <p>„Gegenüber ergänzt sich" – zwei gegenüberliegende Winkel ergeben zusammen immer einen gestreckten Winkel (180°).</p>
+    </div>
+  </div>
+
+  <div class="footer">Lernbaustein Geometrie · Sehnenvierecke · Klasse 7 Gymnasium Sachsen</div>
+</div>
+
+<script>
+// ---- Tab-Steuerung ----
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('vis'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('vis');
+  el.classList.add('active');
+  if (id === 'erkunden') { initCanvas(); }
+}
+
+// ---- Canvas ----
+let R = 118, pts = [], drag = -1;
+let canvasReady = false;
+
+function getCX() { return 310; }
+function getCY() { return 180; }
+
+function initPts(r) {
+  const cx = getCX(), cy = getCY();
+  const angs = [50, 140, 230, 320];
+  pts = angs.map(a => ({
+    x: cx + r * Math.cos(a * Math.PI / 180),
+    y: cy + r * Math.sin(a * Math.PI / 180)
+  }));
+}
+
+function updateR(v) {
+  R = +v;
+  document.getElementById('rOut').textContent = v;
+  initPts(R);
+  drawCanvas();
+}
+
+function angle3(A, B, C) {
+  const v1 = { x: A.x - B.x, y: A.y - B.y };
+  const v2 = { x: C.x - B.x, y: C.y - B.y };
+  const dot = v1.x * v2.x + v1.y * v2.y;
+  const m = Math.sqrt((v1.x ** 2 + v1.y ** 2) * (v2.x ** 2 + v2.y ** 2));
+  return Math.round(Math.acos(Math.max(-1, Math.min(1, dot / m))) * 180 / Math.PI);
+}
+
+function isDark() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function drawCanvas() {
+  const canvas = document.getElementById('myCanvas');
+  if (!canvas || !pts.length) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const dark = isDark();
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = dark ? '#232321' : '#f8f8f6';
+  ctx.beginPath(); ctx.roundRect(0, 0, w, h, 8); ctx.fill();
+
+  const cx = getCX(), cy = getCY();
+  const teal = '#1D9E75', purple = '#534AB7', amber = '#BA7517';
+  const circC = dark ? '#085041' : '#9FE1CB';
+  const textC = dark ? '#c2c0b6' : '#2c2c2a';
+  const wColors = [teal, amber, teal, amber];
+  const labels = ['α', 'β', 'γ', 'δ'];
+  const n = pts.length;
+
+  // Circle
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+  ctx.strokeStyle = circC; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Polygon fill
+  ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+  pts.forEach((p, i) => { if (i) ctx.lineTo(p.x, p.y); });
+  ctx.closePath();
+  ctx.fillStyle = dark ? 'rgba(83,74,183,0.12)' : 'rgba(83,74,183,0.07)';
+  ctx.fill();
+  ctx.strokeStyle = purple; ctx.lineWidth = 2; ctx.stroke();
+
+  // Angles
+  const winkels = pts.map((_, i) => angle3(pts[(i + n - 1) % n], pts[i], pts[(i + 1) % n]));
+
+  pts.forEach((p, i) => {
+    // Dot
+    ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = purple; ctx.fill();
+    ctx.strokeStyle = dark ? '#232321' : '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Label offset
+    const dx = p.x - cx, dy = p.y - cy;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ox = dx / len * 24, oy = dy / len * 24;
+    ctx.font = '500 13px "DM Sans", sans-serif';
+    ctx.fillStyle = wColors[i];
+    ctx.fillText(labels[i] + '=' + winkels[i] + '°', p.x + ox - 14, p.y + oy + 5);
+  });
+
+  // Center label
+  ctx.font = '11px "DM Sans", sans-serif';
+  ctx.fillStyle = dark ? circC : teal;
+  ctx.textAlign = 'center';
+  ctx.fillText('Umkreis', cx, cy + R + 18);
+  ctx.textAlign = 'left';
+
+  // Update info box
+  const ag = winkels[0] + winkels[2], bd = winkels[1] + winkels[3];
+  const ok = Math.abs(ag - 180) <= 5 && Math.abs(bd - 180) <= 5;
+  document.getElementById('winkelInfo').innerHTML =
+    '<strong>α + γ = ' + winkels[0] + '° + ' + winkels[2] + '° = ' + ag + '°</strong>' +
+    '&nbsp;&nbsp;&nbsp;' +
+    '<strong>β + δ = ' + winkels[1] + '° + ' + winkels[3] + '° = ' + bd + '°</strong>' +
+    (ok ? '&nbsp;&nbsp;✓ Sehnenviereck!' : '');
+}
+
+function getPos(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+  const touch = e.touches ? e.touches[0] : e;
+  return { x: (touch.clientX - rect.left) * sx, y: (touch.clientY - rect.top) * sy };
+}
+
+function snapToCircle(p) {
+  const cx = getCX(), cy = getCY();
+  const dx = p.x - cx, dy = p.y - cy;
+  const ang = Math.atan2(dy, dx);
+  return { x: cx + R * Math.cos(ang), y: cy + R * Math.sin(ang) };
+}
+
+function initCanvas() {
+  if (!canvasReady) {
+    canvasReady = true;
+    initPts(R);
+    const canvas = document.getElementById('myCanvas');
+    canvas.addEventListener('mousedown', e => {
+      const pos = getPos(e, canvas);
+      drag = pts.findIndex(p => Math.hypot(p.x - pos.x, p.y - pos.y) < 14);
+    });
+    canvas.addEventListener('mousemove', e => {
+      if (drag < 0) return;
+      pts[drag] = snapToCircle(getPos(e, canvas));
+      drawCanvas();
+    });
+    canvas.addEventListener('mouseup', () => drag = -1);
+    canvas.addEventListener('touchstart', e => {
+      const pos = getPos(e, canvas);
+      drag = pts.findIndex(p => Math.hypot(p.x - pos.x, p.y - pos.y) < 18);
+    }, { passive: true });
+    canvas.addEventListener('touchmove', e => {
+      if (drag < 0) return;
+      e.preventDefault();
+      pts[drag] = snapToCircle(getPos(e, canvas));
+      drawCanvas();
+    }, { passive: false });
+    canvas.addEventListener('touchend', () => drag = -1);
+  }
+  drawCanvas();
+}
+
+// ---- Aufgaben ----
+function showFB(id, msg, ok) {
+  const el = document.getElementById(id);
+  el.innerHTML = msg;
+  el.className = 'feedback ' + (ok ? 'ok' : 'err');
+  el.style.display = 'block';
+}
+
+function check1() {
+  const g = +document.getElementById('a1g').value;
+  const d = +document.getElementById('a1d').value;
+  if (g === 107 && d === 75)
+    showFB('fb1', '✓ Richtig! α+γ=180° → γ=107°; β+δ=180° → δ=75°', true);
+  else
+    showFB('fb1', 'Noch nicht ganz. Nutze: γ = 180°−73° und δ = 180°−105°.', false);
+}
+
+function checkMC2(val, el) {
+  document.querySelectorAll('#mc2 .mc-option').forEach(o => o.className = 'mc-option');
+  if (val === 'ja') {
+    el.classList.add('richtig');
+    showFB('fb2', '✓ Genau! 82°+98°=180° und 110°+70°=180° → Winkelsatz erfüllt → Sehnenviereck.', true);
+  } else {
+    el.classList.add('falsch');
+    showFB('fb2', 'Nicht korrekt. Prüfe die gegenüberliegenden Winkelpaare: 82°+98° und 110°+70°.', false);
+  }
+}
+
+function check3() {
+  const x = +document.getElementById('a3x').value;
+  if (x === 50)
+    showFB('fb3', '✓ Korrekt! (2·50+10)°=110° und (50+20)°=70°, Summe=180° ✓', true);
+  else
+    showFB('fb3', 'Tipp: α+γ=180° → (2x+10)+(x+20)=180 → 3x+30=180 → 3x=150 → x=?', false);
+}
+
+function showHint4() {
+  showFB('fb4', 'Hinweis: Berechne aus jeder Seite (Sehne) und dem Radius den zugehörigen Mittelpunktswinkel mithilfe des Kosinussatzes. Zeichne dann den Umkreis mit r = 3,5 cm, trage die Mittelpunktswinkel ein und verbinde die Endpunkte der Sehnen.', true);
+}
+</script>
+</body>
+</html>
