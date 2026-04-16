@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winkel – Lernbaustein Klasse 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --primary: #3a56e8;
+    --secondary: #ff6b35;
+    --accent: #ffcc00;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #9333ea;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 4px 20px rgba(58,86,232,0.12);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #3a56e8 0%, #6c3de8 100%);
+    color: white;
+    padding: 2rem 1.5rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpolygon points='30 0 60 30 30 60 0 30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 50px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  header h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    position: relative;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    opacity: 0.88;
+    position: relative;
+  }
+
+  /* ── WAVY DIVIDER ── */
+  .wave {
+    display: block;
+    width: 100%;
+    margin-top: -2px;
+    fill: var(--bg);
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrapper {
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 1rem 0.5rem;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--primary); background: #f8faff; }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f4ff; }
+  .tab-btn .tab-icon { display: block; font-size: 1.3rem; margin-bottom: 0.2rem; }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* ── SECTIONS ── */
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+  }
+  .card h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card p { line-height: 1.7; color: #334155; margin-bottom: 0.6rem; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* ── DEFINITION BOX ── */
+  .def-box {
+    background: linear-gradient(135deg, #eef2ff, #f5f0ff);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-weight: 600;
+  }
+
+  /* ── ANGLE TYPE GRID ── */
+  .angle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .angle-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1rem;
+    text-align: center;
+    border: 2px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .angle-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: var(--primary); }
+  .angle-card svg { display: block; margin: 0 auto 0.6rem; }
+  .angle-card .angle-name { font-weight: 800; font-size: 1rem; color: var(--primary); }
+  .angle-card .angle-range { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+  .angle-card .angle-desc { font-size: 0.78rem; margin-top: 0.4rem; color: #475569; }
+
+  /* ── INTERACTIVE ANGLE BUILDER ── */
+  .angle-builder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  #angle-canvas-container {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1;
+    position: relative;
+  }
+  #angle-canvas { width: 100%; height: 100%; }
+  .slider-group { width: 100%; max-width: 360px; }
+  .slider-group label { font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+  #angle-slider {
+    width: 100%;
+    accent-color: var(--primary);
+    margin: 0.4rem 0;
+  }
+  .angle-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  #angle-value {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  #angle-type-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.3rem 0.9rem;
+    border-radius: 50px;
+    transition: all 0.3s;
+  }
+
+  /* ── INTERSECTING LINES DEMO ── */
+  #lines-canvas { width: 100%; max-width: 420px; display: block; margin: 0 auto; }
+  .lines-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin-top: 1rem;
+  }
+  .angle-info-box {
+    background: #f8faff;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .angle-info-box .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .angle-info-box .value { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+  .angle-info-box .type { font-size: 0.72rem; color: var(--muted); }
+
+  /* ── QUIZ ── */
+  .quiz-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 10px;
+    background: var(--border);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--purple));
+    border-radius: 50px;
+    transition: width 0.4s;
+  }
+  .quiz-score { font-weight: 800; font-size: 0.9rem; color: var(--primary); white-space: nowrap; }
+
+  .quiz-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .quiz-question { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; line-height: 1.5; }
+  .quiz-svg-wrap { text-align: center; margin: 0.8rem 0 1.2rem; }
+  .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+  .quiz-opt {
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: #eef2ff; color: var(--primary); }
+  .quiz-opt.correct { border-color: var(--green); background: #f0fdf4; color: #166534; }
+  .quiz-opt.wrong { border-color: var(--red); background: #fef2f2; color: #991b1b; }
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .quiz-feedback.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; display: block; }
+  .quiz-feedback.wrong { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; display: block; }
+  .next-btn {
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: none;
+    transition: background 0.2s;
+  }
+  .next-btn:hover { background: #2a46d8; }
+
+  /* quiz result */
+  .quiz-result {
+    text-align: center;
+    padding: 2rem;
+  }
+  .quiz-result .big-score {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .quiz-result p { color: var(--muted); margin: 0.5rem 0 1.5rem; }
+  .restart-btn {
+    padding: 0.8rem 2rem;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .restart-btn:hover { background: #e55a25; }
+
+  /* ── MERKHILFE BOX ── */
+  .memo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .memo-item {
+    background: linear-gradient(135deg, #fff7ed, #fff);
+    border: 2px solid #fed7aa;
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+  }
+  .memo-item h3 { font-size: 0.95rem; font-weight: 800; color: #c2410c; margin-bottom: 0.3rem; }
+  .memo-item p { font-size: 0.85rem; line-height: 1.6; color: #57534e; }
+  .memo-item .formula {
+    display: inline-block;
+    background: #fff;
+    border: 1.5px solid #fed7aa;
+    border-radius: 8px;
+    padding: 0.2rem 0.6rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #c2410c;
+    margin-top: 0.3rem;
+  }
+
+  /* ── DRAG & DROP EXERCISE ── */
+  .drag-task { margin-bottom: 1.5rem; }
+  .drag-task p { font-weight: 700; margin-bottom: 0.7rem; }
+  .drag-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 52px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 0.6rem;
+    background: #f8faff;
+    transition: border-color 0.2s;
+  }
+  .drag-area.over { border-color: var(--primary); background: #eef2ff; }
+  .drag-chip {
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .drag-chip:active { cursor: grabbing; transform: scale(1.05); }
+  .drag-chip.correct-chip { background: var(--green); }
+  .drag-chip.wrong-chip { background: var(--red); }
+  .chips-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 500px) {
+    .quiz-options { grid-template-columns: 1fr; }
+    .lines-info { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Mathematik · Klasse 5 · Gymnasium Sachsen</div>
+  <h1>📐 <span>Winkel</span> verstehen</h1>
+  <p>Winkelarten · Messen · Schneidende Geraden</p>
+</header>
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z"/></svg>
+
+<div class="nav-wrapper">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showSection('theorie')" id="tab-theorie">
+      <span class="tab-icon">📖</span>Theorie
+    </button>
+    <button class="tab-btn" onclick="showSection('winkelarten')" id="tab-winkelarten">
+      <span class="tab-icon">📐</span>Winkelarten
+    </button>
+    <button class="tab-btn" onclick="showSection('interaktiv')" id="tab-interaktiv">
+      <span class="tab-icon">🎛️</span>Interaktiv
+    </button>
+    <button class="tab-btn" onclick="showSection('geraden')" id="tab-geraden">
+      <span class="tab-icon">✂️</span>Schneidende Geraden
+    </button>
+    <button class="tab-btn" onclick="showSection('quiz')" id="tab-quiz">
+      <span class="tab-icon">🧩</span>Quiz
+    </button>
+    <button class="tab-btn" onclick="showSection('merkhilfe')" id="tab-merkhilfe">
+      <span class="tab-icon">💡</span>Merkhilfe
+    </button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════ THEORIE ══════════ -->
+  <div class="section active" id="section-theorie">
+    <div class="card">
+      <h2>📖 Was ist ein Winkel?</h2>
+      <p>Ein <strong>Winkel</strong> entsteht, wenn zwei <strong>Strahlen</strong> (oder Geraden) von einem gemeinsamen Punkt, dem <strong>Scheitelpunkt</strong>, ausgehen.</p>
+      <div class="def-box">
+        🔑 <strong>Definition:</strong> Ein Winkel wird durch zwei Halbgeraden (Schenkel) und ihren gemeinsamen Ausgangspunkt (Scheitelpunkt) gebildet.
+      </div>
+      <p>Die Größe eines Winkels wird in <strong>Grad (°)</strong> angegeben. Ein voller Umlauf hat <strong>360°</strong>. Winkel werden mit dem griechischen Buchstaben <em>α</em> (Alpha), <em>β</em> (Beta) oder <em>γ</em> (Gamma) bezeichnet.</p>
+
+      <!--
+        Scheitelpunkt S = (110, 150)
+        Schenkel 1: waagerecht nach rechts → Endpunkt (250, 150)
+        Schenkel 2: 50° nach oben links → Winkel 130° von positiver x-Achse
+          dx = cos(130°)*130 ≈ -83.6  → x = 110-84 = 26
+          dy = sin(130°)*130 ≈ 99.6   → y = 150-100 = 50
+        Winkelbogen: Radius 55, von 0° (rechts) gegen den Uhrzeigersinn bis 130°
+          Startpunkt (Radius 55 bei 0°):   (165, 150)
+          Endpunkt   (Radius 55 bei 130°): (110 + 55·cos130°, 150 - 55·sin130°)
+                                         = (110 - 35.4, 150 - 42.1) = (74.6, 107.9)
+      -->
+      <svg viewBox="0 0 300 210" width="100%" style="max-width:320px;display:block;margin:1rem auto">
+        <defs>
+          <marker id="arr" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="#3a56e8"/>
+          </marker>
+        </defs>
+        <!-- Schenkel 1: waagerecht nach rechts -->
+        <line x1="110" y1="150" x2="248" y2="150" stroke="#3a56e8" stroke-width="2.5" marker-end="url(#arr)"/>
+        <!-- Schenkel 2: 50° über der Waagerechten nach links oben (130° von pos. x-Achse) -->
+        <line x1="110" y1="150" x2="26" y2="50" stroke="#3a56e8" stroke-width="2.5" marker-end="url(#arr)"/>
+        <!-- Winkelbogen: von Schenkel 1 (0°) gegen UZS bis Schenkel 2 (130°), sweep-flag=0 (CCW) -->
+        <path d="M 165,150 A 55,55 0 0,0 74.6,107.9" fill="none" stroke="#ff6b35" stroke-width="2.5"/>
+        <!-- Alpha-Label in der Mitte des Bogens, bei ca. 65° -->
+        <!-- 65°: x=110+38·cos65°≈126, y=150-38·sin65°≈116 -->
+        <text x="130" y="128" font-family="Nunito" font-size="16" fill="#ff6b35" font-weight="800">α</text>
+        <!-- Scheitelpunkt -->
+        <circle cx="110" cy="150" r="5" fill="#3a56e8"/>
+        <!-- Beschriftungen -->
+        <text x="90" y="178" font-family="Nunito" font-size="12" fill="#1e293b" font-weight="700">Scheitelpunkt S</text>
+        <text x="252" y="148" font-family="Nunito" font-size="12" fill="#3a56e8" font-weight="700">Schenkel</text>
+        <text x="0" y="48" font-family="Nunito" font-size="12" fill="#3a56e8" font-weight="700">Schenkel</text>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h2>📏 Winkel messen mit dem Geodreieck</h2>
+      <p>Um einen Winkel zu messen, legt man das <strong>Geodreieck</strong> so, dass:</p>
+      <ul style="margin-left:1.2rem;line-height:2;color:#334155">
+        <li>Der <strong>Mittelpunkt</strong> der Gradeinteilung auf dem <strong>Scheitelpunkt</strong> liegt.</li>
+        <li>Die <strong>Nulllinie</strong> des Geodreieks auf einem <strong>Schenkel</strong> liegt.</li>
+        <li>Man dann auf der Skala abliest, wo der zweite Schenkel die Bogenleiste trifft.</li>
+      </ul>
+      <div class="def-box" style="margin-top:1rem">
+        ⚠️ <strong>Achtung:</strong> Das Geodreieck hat zwei Skalen (innen und außen) – immer von der <strong>0°-Markierung</strong> aus lesen!
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ WINKELARTEN ══════════ -->
+  <div class="section" id="section-winkelarten">
+    <div class="card">
+      <h2>📐 Die Winkelarten</h2>
+      <p>Winkel werden nach ihrer Größe in verschiedene Arten eingeteilt. Klicke auf eine Karte, um mehr zu erfahren!</p>
+      <div class="angle-grid">
+
+        <!-- Nullwinkel -->
+        <div class="angle-card">
+          <svg width="80" height="60" viewBox="0 0 80 60">
+            <line x1="10" y1="45" x2="70" y2="45" stroke="#94a3b8" stroke-width="2.5"/>
+            <line x1="10" y1="45" x2="70" y2="45" stroke="#3a56e8" stroke-width="2.5"/>
+            <circle cx="10" cy="45" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name">Nullwinkel</div>
+          <div class="angle-range">= 0°</div>
+          <div class="angle-desc">Beide Schenkel liegen aufeinander</div>
+        </div>
+
+        <!-- Spitzer Winkel -->
+        <div class="angle-card">
+          <svg width="80" height="70" viewBox="0 0 80 70">
+            <line x1="10" y1="55" x2="70" y2="55" stroke="#3a56e8" stroke-width="2.5"/>
+            <line x1="10" y1="55" x2="40" y2="10" stroke="#3a56e8" stroke-width="2.5"/>
+            <path d="M 30,55 A 20,20 0 0,0 19,36" fill="none" stroke="#ff6b35" stroke-width="2"/>
+            <text x="26" y="47" font-family="Nunito" font-size="11" fill="#ff6b35" font-weight="800">α</text>
+            <circle cx="10" cy="55" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#ff6b35">Spitzer Winkel</div>
+          <div class="angle-range">0° &lt; α &lt; 90°</div>
+          <div class="angle-desc">Kleiner als ein rechter Winkel</div>
+        </div>
+
+        <!-- Rechter Winkel -->
+        <!--
+          S=(10,55), Schenkel1 → (70,55), Schenkel2 ↑ → (10,10)
+          Bogen 90°: Radius 20, von 0° (rechts) bis 90° (oben/CCW)
+          Startpunkt: (30,55), Endpunkt: (10,35)
+          Punkt in der Mitte des Bogens bei 45°: (10+20·cos45°, 55-20·sin45°) ≈ (24.1, 40.9)
+        -->
+        <div class="angle-card">
+          <svg width="80" height="70" viewBox="0 0 80 70">
+            <line x1="10" y1="55" x2="70" y2="55" stroke="#3a56e8" stroke-width="2.5"/>
+            <line x1="10" y1="55" x2="10" y2="10" stroke="#3a56e8" stroke-width="2.5"/>
+            <path d="M 30,55 A 20,20 0 0,0 10,35" fill="none" stroke="#22c55e" stroke-width="2"/>
+            <circle cx="24.1" cy="40.9" r="2.5" fill="#22c55e"/>
+            <circle cx="10" cy="55" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#22c55e">Rechter Winkel</div>
+          <div class="angle-range">= 90°</div>
+          <div class="angle-desc">Bogen mit Punkt als Zeichen</div>
+        </div>
+
+        <!-- Stumpfer Winkel -->
+        <!--
+          S=(10,55), Schenkel1 → (70,55)
+          Schenkel2: 135° von positiver x-Achse → (10+60·cos135°, 55-60·sin135°) = (10-42.4, 55-42.4) = (-32.4, 12.6)
+          Aber SVG-Bereich 0–80, also Schenkel2 bis zum Rand kürzen:
+          Richtung (cos135°,−sin135°) = (−0.707, −0.707), Länge bis x=0: t=10/0.707≈14.1 → y=55−14.1·0.707≈45
+          Nehmen wir einfach Endpunkt (0, 45) – das passt sichtbar in den Rahmen.
+          Bogen 135°: Radius 22, von 0° bis 135° (CCW)
+          Start: (32, 55)
+          End: (10+22·cos135°, 55-22·sin135°) = (10-15.56, 55-15.56) = (-5.56, 39.44) – außerhalb!
+          → Radius 16:
+          Start: (26, 55)
+          End: (10+16·cos135°, 55-16·sin135°) = (10-11.31, 55-11.31) = (-1.31, 43.69) – knapp außerhalb
+          → Radius 14:
+          Start: (24, 55)
+          End: (10+14·cos135°, 55-14·sin135°) = (10-9.9, 55-9.9) = (0.1, 45.1) ≈ (0, 45) ✓
+          Label bei 67.5°: (10+10·cos67.5°, 55-10·sin67.5°) = (10+3.83, 55-9.24) = (14, 46)
+        -->
+        <div class="angle-card">
+          <svg width="80" height="70" viewBox="0 0 80 70">
+            <line x1="10" y1="55" x2="70" y2="55" stroke="#3a56e8" stroke-width="2.5"/>
+            <line x1="10" y1="55" x2="0" y2="45" stroke="#3a56e8" stroke-width="2.5"/>
+            <path d="M 24,55 A 14,14 0 0,0 0.1,45.1" fill="none" stroke="#9333ea" stroke-width="2"/>
+            <text x="22" y="48" font-family="Nunito" font-size="11" fill="#9333ea" font-weight="800">β</text>
+            <circle cx="10" cy="55" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#9333ea">Stumpfer Winkel</div>
+          <div class="angle-range">90° &lt; β &lt; 180°</div>
+          <div class="angle-desc">Größer als ein rechter Winkel</div>
+        </div>
+
+        <!-- Überstumpfer Winkel (neu) -->
+        <!--
+          S=(10,55), Schenkel1 → (70,55)
+          Schenkel2: 225° von positiver x-Achse (zeigt nach links-unten)
+          = (10+40·cos225°, 55-40·sin225°) = (10-28.28, 55+28.28) = (-18, 83) – außerhalb
+          Kürzer, z.B. 20px: (10-14.14, 55+14.14) = (-4, 69) – passt in Höhe 70
+          Besser: 270° (geradeaus nach oben-unten sieht falsch aus für überstumpf)
+          Nehmen wir 250°: (10+20·cos250°, 55-20·sin250°) = (10-6.84, 55+18.79) = (3.2, 73.8) ≈ (3, 70)
+          Bogen 250°: groß, large-arc-flag=1, sweep=0 (CCW)
+          Radius 16: Start (26,55), End=(10+16·cos250°, 55-16·sin250°)=(10-5.47,55+15.04)=(4.5,70)
+          Label bei 125°: (10+10·cos125°, 55-10·sin125°) = (10-5.74, 55-8.19) = (4, 47)
+        -->
+        <div class="angle-card">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <line x1="10" y1="55" x2="70" y2="55" stroke="#3a56e8" stroke-width="2.5"/>
+            <line x1="10" y1="55" x2="3" y2="70" stroke="#3a56e8" stroke-width="2.5"/>
+            <path d="M 26,55 A 16,16 0 1,0 4.5,70" fill="none" stroke="#e11d48" stroke-width="2"/>
+            <text x="36" y="43" font-family="Nunito" font-size="11" fill="#e11d48" font-weight="800">γ</text>
+            <circle cx="10" cy="55" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#e11d48">Überstumpfer Winkel</div>
+          <div class="angle-range">180° &lt; γ &lt; 360°</div>
+          <div class="angle-desc">Größer als ein gestreckter Winkel</div>
+        </div>
+
+        <!-- Gestreckter Winkel -->
+        <div class="angle-card">
+          <svg width="80" height="60" viewBox="0 0 80 60">
+            <line x1="5" y1="35" x2="75" y2="35" stroke="#3a56e8" stroke-width="2.5"/>
+            <path d="M 50,35 A 15,15 0 0,0 20,35" fill="none" stroke="#ef4444" stroke-width="2"/>
+            <text x="30" y="28" font-family="Nunito" font-size="11" fill="#ef4444" font-weight="800">180°</text>
+            <circle cx="35" cy="35" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#ef4444">Gestreckter Winkel</div>
+          <div class="angle-range">= 180°</div>
+          <div class="angle-desc">Beide Schenkel bilden eine Gerade</div>
+        </div>
+
+        <!-- Vollwinkel -->
+        <div class="angle-card">
+          <svg width="80" height="70" viewBox="0 0 80 70">
+            <circle cx="40" cy="38" r="22" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,2"/>
+            <line x1="40" y1="38" x2="62" y2="38" stroke="#3a56e8" stroke-width="2.5"/>
+            <text x="52" y="28" font-family="Nunito" font-size="10" fill="#f59e0b" font-weight="800">360°</text>
+            <circle cx="40" cy="38" r="4" fill="#3a56e8"/>
+          </svg>
+          <div class="angle-name" style="color:#f59e0b">Vollwinkel</div>
+          <div class="angle-range">= 360°</div>
+          <div class="angle-desc">Voller Umlauf um den Scheitelpunkt</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Ergänzungswinkel & Supplementwinkel</h2>
+      <p><strong>Komplementwinkel</strong> (Ergänzungswinkel auf 90°): Zwei Winkel, die zusammen <strong>90°</strong> ergeben.</p>
+      <div class="def-box">Beispiel: 35° + 55° = 90° → beide Winkel sind komplementär zueinander</div>
+      <p style="margin-top:0.8rem"><strong>Supplementwinkel</strong> (Ergänzungswinkel auf 180°): Zwei Winkel, die zusammen <strong>180°</strong> ergeben.</p>
+      <div class="def-box">Beispiel: 70° + 110° = 180° → beide Winkel sind supplementär zueinander</div>
+    </div>
+  </div>
+
+  <!-- ══════════ INTERAKTIV ══════════ -->
+  <div class="section" id="section-interaktiv">
+    <div class="card">
+      <h2>🎛️ Winkel-Werkzeug</h2>
+      <p>Verschiebe den Schieberegler und beobachte, wie sich Winkelgröße und Winkelart verändern!</p>
+      <div class="angle-builder">
+        <div id="angle-canvas-container">
+          <canvas id="angle-canvas" width="360" height="360"></canvas>
+        </div>
+        <div class="angle-display">
+          <div id="angle-value">60°</div>
+          <div id="angle-type-label">spitzer Winkel</div>
+        </div>
+        <div class="slider-group">
+          <label for="angle-slider">Winkelgröße: <span id="slider-val">60</span>°</label>
+          <input type="range" id="angle-slider" min="0" max="360" value="60" step="1">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SCHNEIDENDE GERADEN ══════════ -->
+  <div class="section" id="section-geraden">
+    <div class="card">
+      <h2>✂️ Winkel an schneidenden Geraden</h2>
+      <p>Wenn sich zwei Geraden schneiden, entstehen genau <strong>vier Winkel</strong>. Diese haben besondere Beziehungen zueinander.</p>
+
+      <div class="def-box" style="margin:1rem 0">
+        📌 An einem Schnittpunkt entstehen immer <strong>4 Winkel</strong>, die zusammen <strong>360°</strong> ergeben.
+      </div>
+
+      <canvas id="lines-canvas" width="420" height="300"></canvas>
+
+      <div class="lines-info" id="lines-info">
+        <div class="angle-info-box" id="box-a">
+          <div class="label">Winkel α (oben)</div>
+          <div class="value" id="val-a">60°</div>
+          <div class="type" id="type-a">spitz</div>
+        </div>
+        <div class="angle-info-box" id="box-b">
+          <div class="label">Winkel β (rechts)</div>
+          <div class="value" id="val-b">120°</div>
+          <div class="type" id="type-b">stumpf</div>
+        </div>
+        <div class="angle-info-box" id="box-c">
+          <div class="label">Winkel γ (unten)</div>
+          <div class="value" id="val-c">60°</div>
+          <div class="type" id="type-c">spitz</div>
+        </div>
+        <div class="angle-info-box" id="box-d">
+          <div class="label">Winkel δ (links)</div>
+          <div class="value" id="val-d">120°</div>
+          <div class="type" id="type-d">stumpf</div>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:0.8rem;font-size:0.82rem;color:var(--muted)">🖱️ Klicke und ziehe im Bild, um die Geraden zu drehen!</p>
+    </div>
+
+    <div class="card">
+      <h2>🔀 Scheitelwinkel</h2>
+      <p><strong>Scheitelwinkel</strong> sind die Winkel, die sich <em>gegenüberliegen</em> (diagonal). Sie sind immer <strong>gleich groß</strong>!</p>
+      <div class="def-box">α = γ &nbsp;&nbsp;&nbsp; und &nbsp;&nbsp;&nbsp; β = δ (Scheitelwinkelsatz)</div>
+    </div>
+
+    <div class="card">
+      <h2>↔️ Nebenwinkel</h2>
+      <p><strong>Nebenwinkel</strong> liegen <em>nebeneinander</em> und ergänzen sich zu <strong>180°</strong> (gestreckter Winkel).</p>
+      <div class="def-box">α + β = 180° &nbsp;&nbsp; | &nbsp;&nbsp; β + γ = 180° &nbsp;&nbsp; | &nbsp;&nbsp; γ + δ = 180° &nbsp;&nbsp; | &nbsp;&nbsp; δ + α = 180°</div>
+    </div>
+  </div>
+
+  <!-- ══════════ QUIZ ══════════ -->
+  <div class="section" id="section-quiz">
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+      <div class="quiz-score" id="quiz-score-display">0 / 8</div>
+    </div>
+    <div class="quiz-card" id="quiz-container"></div>
+  </div>
+
+  <!-- ══════════ MERKHILFE ══════════ -->
+  <div class="section" id="section-merkhilfe">
+    <div class="card">
+      <h2>💡 Alles auf einen Blick</h2>
+      <div class="memo-grid">
+        <div class="memo-item">
+          <h3>Nullwinkel</h3>
+          <p>Beide Schenkel liegen aufeinander.</p>
+          <div class="formula">= 0°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Spitzer Winkel</h3>
+          <p>Kleiner als ein rechter Winkel – „spitz wie eine Nadel".</p>
+          <div class="formula">0° &lt; α &lt; 90°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Rechter Winkel</h3>
+          <p>Genau 90°, markiert mit einem Bogen und Punkt im Inneren.</p>
+          <div class="formula">= 90°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Stumpfer Winkel</h3>
+          <p>Größer als 90°, aber kleiner als 180° – „stumpf und breit".</p>
+          <div class="formula">90° &lt; β &lt; 180°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Gestreckter Winkel</h3>
+          <p>Beide Schenkel bilden eine gerade Linie.</p>
+          <div class="formula">= 180°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Überstumpfer Winkel</h3>
+          <p>Größer als 180°, aber kleiner als 360° – „öffnet sich mehr als eine Gerade".</p>
+          <div class="formula">180° &lt; γ &lt; 360°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Vollwinkel</h3>
+          <p>Ein voller Umlauf um den Scheitelpunkt.</p>
+          <div class="formula">= 360°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Scheitelwinkel</h3>
+          <p>Gegenüberliegende Winkel an schneidenden Geraden sind gleich groß.</p>
+          <div class="formula">α = γ, β = δ</div>
+        </div>
+        <div class="memo-item">
+          <h3>Nebenwinkel</h3>
+          <p>Benachbarte Winkel an schneidenden Geraden ergänzen sich auf 180°.</p>
+          <div class="formula">α + β = 180°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Komplementwinkel</h3>
+          <p>Zwei Winkel, die zusammen 90° ergeben.</p>
+          <div class="formula">α + β = 90°</div>
+        </div>
+        <div class="memo-item">
+          <h3>Supplementwinkel</h3>
+          <p>Zwei Winkel, die zusammen 180° ergeben.</p>
+          <div class="formula">α + β = 180°</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Merktrick</h2>
+      <p style="font-size:1rem;line-height:1.8">
+        <strong>Sp</strong>itz – wie die <strong>Sp</strong>itze eines Bleistifts → kleiner als 90°<br>
+        <strong>R</strong>echt – wie eine <strong>R</strong>aumecke, Bogen mit Punkt → genau 90°<br>
+        <strong>St</strong>umpf – wie ein <strong>st</strong>umpfes Messer, breit → zwischen 90° und 180°<br>
+        <strong>G</strong>estreckt – wie eine <strong>g</strong>erade Linie → genau 180°<br>
+        <strong>Ü</strong>berstumpf – <strong>ü</strong>ber 180°, öffnet sich nach hinten → zwischen 180° und 360°
+      </p>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'interaktiv') initAngleCanvas();
+  if (id === 'geraden') initLinesCanvas();
+}
+
+// ═══════════════════════════════════════
+// INTERACTIVE ANGLE CANVAS
+// ═══════════════════════════════════════
+let angleCanvasReady = false;
+function initAngleCanvas() {
+  if (angleCanvasReady) return;
+  angleCanvasReady = true;
+  const canvas = document.getElementById('angle-canvas');
+  const ctx = canvas.getContext('2d');
+  const slider = document.getElementById('angle-slider');
+  const valDisplay = document.getElementById('slider-val');
+  const angleVal = document.getElementById('angle-value');
+  const typeLabel = document.getElementById('angle-type-label');
+
+  const TYPE_COLORS = {
+    'Nullwinkel': '#94a3b8',
+    'spitzer Winkel': '#ff6b35',
+    'rechter Winkel': '#22c55e',
+    'stumpfer Winkel': '#9333ea',
+    'gestreckter Winkel': '#ef4444',
+    'überstumpfer Winkel': '#e11d48',
+    'Vollwinkel': '#f59e0b'
+  };
+
+  function getType(deg) {
+    if (deg === 0) return 'Nullwinkel';
+    if (deg < 90) return 'spitzer Winkel';
+    if (deg === 90) return 'rechter Winkel';
+    if (deg < 180) return 'stumpfer Winkel';
+    if (deg === 180) return 'gestreckter Winkel';
+    if (deg < 360) return 'überstumpfer Winkel';
+    return 'Vollwinkel';
+  }
+
+  function draw(deg) {
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    // Scheitelpunkt leicht unten-links für guten Platzbedarf
+    const cx = w * 0.38, cy = h * 0.62;
+    const r = w * 0.40;
+    const type = getType(deg);
+    const color = TYPE_COLORS[type];
+    const rayAngle = deg * Math.PI / 180; // CCW from east
+
+    // ── Schenkel 1: nach rechts (Osten, 0°)
+    const s1x = cx + r, s1y = cy;
+    // ── Schenkel 2: rayAngle CCW from east
+    const s2x = cx + r * Math.cos(rayAngle);
+    const s2y = cy - r * Math.sin(rayAngle);
+
+    // ── Winkelbogen (von Schenkel 1 CCW zu Schenkel 2)
+    if (deg > 0 && deg < 360) {
+      const arcR = r * 0.30;
+      const arcStart = 0;            // east
+      const arcEnd   = -rayAngle;    // canvas y-axis inverted, so CCW = negative in canvas
+
+      // Filled sector
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, arcR, arcStart, arcEnd, true); // true = CCW in canvas coords
+      ctx.closePath();
+      ctx.fillStyle = color + '22';
+      ctx.fill();
+
+      // Arc stroke
+      ctx.beginPath();
+      ctx.arc(cx, cy, arcR, arcStart, arcEnd, true);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Right-angle: replace arc with arc+dot
+      if (deg === 90) {
+        // extra dot at 45° mid-arc
+        const dotX = cx + arcR * Math.cos(-Math.PI / 4);
+        const dotY = cy + arcR * Math.sin(-Math.PI / 4);
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#22c55e';
+        ctx.fill();
+      }
+
+      // Label α in arc center
+      const midA = -rayAngle / 2; // halfway between 0 and -rayAngle
+      const lr = arcR * 0.72;
+      const lx = cx + lr * Math.cos(midA);
+      const ly = cy + lr * Math.sin(midA);
+      if (deg > 8) {
+        ctx.font = 'bold 20px Nunito, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('α', lx, ly);
+      }
+    } else if (deg === 360) {
+      // Full circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.30, 0, Math.PI * 2);
+      ctx.fillStyle = color + '22';
+      ctx.fill();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    // ── Draw Schenkel 1
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(s1x, s1y);
+    ctx.strokeStyle = '#3a56e8';
+    ctx.lineWidth = 3;
+    // Arrowhead
+    ctx.stroke();
+    drawArrow(ctx, cx, cy, s1x, s1y, '#3a56e8');
+
+    // ── Draw Schenkel 2 (same as S1 if deg=0 or 360)
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(s2x, s2y);
+    ctx.strokeStyle = '#3a56e8';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    drawArrow(ctx, cx, cy, s2x, s2y, '#3a56e8');
+
+    // ── Scheitelpunkt
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#3a56e8';
+    ctx.fill();
+  }
+
+  function drawArrow(ctx, fx, fy, tx, ty, color) {
+    const ang = Math.atan2(ty - fy, tx - fx);
+    const len = 10;
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - len * Math.cos(ang - 0.4), ty - len * Math.sin(ang - 0.4));
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - len * Math.cos(ang + 0.4), ty - len * Math.sin(ang + 0.4));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
+  function update() {
+    const deg = parseInt(slider.value);
+    valDisplay.textContent = deg;
+    angleVal.textContent = deg + '°';
+    const type = getType(deg);
+    typeLabel.textContent = type;
+    const colors = { 'Nullwinkel': '#94a3b8', 'spitzer Winkel': '#ff6b35', 'rechter Winkel': '#22c55e', 'stumpfer Winkel': '#9333ea', 'gestreckter Winkel': '#ef4444', 'überstumpfer Winkel': '#e11d48', 'Vollwinkel': '#f59e0b' };
+    typeLabel.style.background = colors[type] + '22';
+    typeLabel.style.color = colors[type];
+    typeLabel.style.border = '2px solid ' + colors[type] + '66';
+    draw(deg);
+  }
+
+  slider.addEventListener('input', update);
+  update();
+}
+
+// ═══════════════════════════════════════
+// INTERSECTING LINES CANVAS
+// ═══════════════════════════════════════
+let linesCanvasReady = false;
+let linesAngle = 60;
+let isDragging = false;
+
+function initLinesCanvas() {
+  if (linesCanvasReady) return;
+  linesCanvasReady = true;
+  const canvas = document.getElementById('lines-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function getAngleType(deg) {
+    if (deg < 90) return 'spitz';
+    if (deg === 90) return 'rechtwinklig';
+    return 'stumpf';
+  }
+
+  function drawLines(angleDeg) {
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2;
+    const len = Math.min(w, h) * 0.42;
+
+    const a = angleDeg * Math.PI / 180;
+    const colors = ['#ff6b35', '#9333ea', '#ff6b35', '#9333ea'];
+    const labels = ['α', 'β', 'γ', 'δ'];
+    const arcAngles = [
+      [-a / 2, a / 2],
+      [a / 2, Math.PI - a / 2],
+      [Math.PI - a / 2, Math.PI + a / 2],
+      [Math.PI + a / 2, 2 * Math.PI - a / 2]
+    ];
+
+    // Draw filled arcs
+    const arcR = 40;
+    arcAngles.forEach(([start, end], i) => {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, arcR, start, end);
+      ctx.closePath();
+      ctx.fillStyle = colors[i] + '30';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, arcR, start, end);
+      ctx.strokeStyle = colors[i];
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    // Draw the two lines
+    const dirs = [a / 2, Math.PI / 2, Math.PI + a / 2, Math.PI * 3 / 2];
+    // Gerade 1: horizontal direction
+    ctx.beginPath();
+    ctx.moveTo(cx - len, cy);
+    ctx.lineTo(cx + len, cy);
+    ctx.strokeStyle = '#3a56e8';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Gerade 2: angled
+    const dx = len * Math.cos(a);
+    const dy = len * Math.sin(a);
+    ctx.beginPath();
+    ctx.moveTo(cx - dx, cy + dy);
+    ctx.lineTo(cx + dx, cy - dy);
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Labels
+    const lr = 58;
+    arcAngles.forEach(([start, end], i) => {
+      const mid = (start + end) / 2;
+      const lx = cx + lr * Math.cos(mid);
+      const ly = cy + lr * Math.sin(mid);
+      ctx.font = 'bold 15px Nunito, sans-serif';
+      ctx.fillStyle = colors[i];
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(labels[i], lx, ly);
+    });
+
+    // Scheitelpunkt
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#1e293b';
+    ctx.fill();
+
+    // Update info boxes
+    const alpha = Math.round(angleDeg);
+    const beta = 180 - alpha;
+    document.getElementById('val-a').textContent = alpha + '°';
+    document.getElementById('val-b').textContent = beta + '°';
+    document.getElementById('val-c').textContent = alpha + '°';
+    document.getElementById('val-d').textContent = beta + '°';
+    document.getElementById('type-a').textContent = getAngleType(alpha);
+    document.getElementById('type-b').textContent = getAngleType(beta);
+    document.getElementById('type-c').textContent = getAngleType(alpha);
+    document.getElementById('type-d').textContent = getAngleType(beta);
+  }
+
+  function getAngle(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = ((e.clientX || e.touches[0].clientX) - rect.left) * scaleX - canvas.width / 2;
+    const y = ((e.clientY || e.touches[0].clientY) - rect.top) * scaleY - canvas.height / 2;
+    let angle = Math.atan2(-y, x) * 180 / Math.PI;
+    if (angle < 0) angle += 360;
+    if (angle > 180) angle = 360 - angle;
+    return Math.max(10, Math.min(170, angle));
+  }
+
+  canvas.addEventListener('mousedown', e => { isDragging = true; linesAngle = getAngle(e); drawLines(linesAngle); });
+  canvas.addEventListener('mousemove', e => { if (isDragging) { linesAngle = getAngle(e); drawLines(linesAngle); } });
+  canvas.addEventListener('mouseup', () => isDragging = false);
+  canvas.addEventListener('mouseleave', () => isDragging = false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); isDragging = true; linesAngle = getAngle(e); drawLines(linesAngle); });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (isDragging) { linesAngle = getAngle(e); drawLines(linesAngle); } });
+  canvas.addEventListener('touchend', () => isDragging = false);
+
+  drawLines(linesAngle);
+}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+const quizQuestions = [
+  {
+    q: "Welche Winkelart liegt vor?",
+    svg: `<svg viewBox="0 0 180 130" width="180" height="130"><line x1="20" y1="100" x2="160" y2="100" stroke="#3a56e8" stroke-width="2.5"/><line x1="20" y1="100" x2="80" y2="20" stroke="#3a56e8" stroke-width="2.5"/><path d="M 60,100 A 40,40 0 0,0 36,66" fill="none" stroke="#ff6b35" stroke-width="2"/><circle cx="20" cy="100" r="4" fill="#3a56e8"/></svg>`,
+    options: ['Rechter Winkel', 'Spitzer Winkel', 'Stumpfer Winkel', 'Gestreckter Winkel'],
+    correct: 1,
+    explanation: 'Dieser Winkel ist kleiner als 90° – also ein spitzer Winkel!'
+  },
+  {
+    q: "Wie groß ist ein gestreckter Winkel?",
+    svg: null,
+    options: ['90°', '180°', '270°', '360°'],
+    correct: 1,
+    explanation: 'Ein gestreckter Winkel hat genau 180° – die beiden Schenkel bilden eine gerade Linie.'
+  },
+  {
+    q: "Zwei Winkel an schneidenden Geraden liegen sich gegenüber. Welche Aussage gilt?",
+    svg: null,
+    options: ['Sie ergänzen sich zu 180°', 'Sie sind gleich groß', 'Zusammen ergeben sie 360°', 'Sie sind immer spitz'],
+    correct: 1,
+    explanation: 'Gegenüberliegende Winkel heißen Scheitelwinkel – sie sind immer gleich groß!'
+  },
+  {
+    q: "Ein Winkel beträgt 130°. Wie groß ist sein Nebenwinkel?",
+    svg: null,
+    options: ['50°', '60°', '130°', '230°'],
+    correct: 0,
+    explanation: 'Nebenwinkel ergänzen sich zu 180°: 180° − 130° = 50°'
+  },
+  {
+    q: "Welche Winkelart siehst du hier?",
+    svg: `<svg viewBox="0 0 160 120" width="160" height="120"><line x1="20" y1="90" x2="140" y2="90" stroke="#3a56e8" stroke-width="2.5"/><line x1="20" y1="90" x2="20" y2="15" stroke="#3a56e8" stroke-width="2.5"/><path d="M 44,90 A 24,24 0 0,0 20,66" fill="none" stroke="#22c55e" stroke-width="2.5"/><circle cx="36.97" cy="72.97" r="3" fill="#22c55e"/><circle cx="20" cy="90" r="4" fill="#3a56e8"/></svg>`,
+    options: ['Spitzer Winkel', 'Stumpfer Winkel', 'Rechter Winkel', 'Vollwinkel'],
+    correct: 2,
+    explanation: 'Der Bogen mit dem Punkt darin ist das Zeichen für einen rechten Winkel (90°)!'
+  },
+  {
+    q: "Ein Winkel ist 35°. Wie groß ist sein Komplementwinkel?",
+    svg: null,
+    options: ['55°', '145°', '325°', '65°'],
+    correct: 0,
+    explanation: 'Komplementwinkel ergänzen sich zu 90°: 90° − 35° = 55°'
+  },
+  {
+    q: "Zwei Geraden schneiden sich. Welche Aussage ist FALSCH?",
+    svg: null,
+    options: [
+      'Es entstehen genau 4 Winkel',
+      'Scheitelwinkel sind gleich groß',
+      'Alle 4 Winkel sind spitz',
+      'Nebenwinkel ergänzen sich zu 180°'
+    ],
+    correct: 2,
+    explanation: 'Falsch: Nicht alle 4 Winkel sind spitz – je zwei gegenüberliegende Paare können verschiedene Größen haben!'
+  },
+  {
+    q: "Wie viele Grad hat ein Vollwinkel?",
+    svg: null,
+    options: ['90°', '180°', '270°', '360°'],
+    correct: 3,
+    explanation: 'Ein Vollwinkel umfasst den gesamten Umlauf = 360°!'
+  }
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (quizIndex >= quizQuestions.length) {
+    const pct = Math.round((quizScore / quizQuestions.length) * 100);
+    let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '💪';
+    let msg = pct >= 80 ? 'Ausgezeichnet! Du beherrschst die Winkel!' : pct >= 60 ? 'Gut gemacht! Übe noch ein wenig weiter.' : 'Nicht schlecht! Schau dir nochmal die Theorie an.';
+    container.innerHTML = `<div class="quiz-result">
+      <div style="font-size:3rem;margin-bottom:0.5rem">${emoji}</div>
+      <div class="big-score">${quizScore}/${quizQuestions.length}</div>
+      <p>${msg}</p>
+      <button class="restart-btn" onclick="restartQuiz()">🔄 Nochmal versuchen</button>
+    </div>`;
+    return;
+  }
+
+  const q = quizQuestions[quizIndex];
+  const progress = ((quizIndex) / quizQuestions.length) * 100;
+  document.getElementById('quiz-progress').style.width = progress + '%';
+  document.getElementById('quiz-score-display').textContent = `${quizScore} / ${quizQuestions.length}`;
+
+  container.innerHTML = `
+    <div class="quiz-question">Frage ${quizIndex + 1} von ${quizQuestions.length}: ${q.q}</div>
+    ${q.svg ? `<div class="quiz-svg-wrap">${q.svg}</div>` : ''}
+    <div class="quiz-options">
+      ${q.options.map((opt, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${opt}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="next-btn" id="quiz-next" onclick="nextQuestion()">Weiter →</button>
+  `;
+  quizAnswered = false;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIndex];
+  const opts = document.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('quiz-feedback');
+  opts.forEach(o => o.disabled = true);
+  opts[q.correct].classList.add('correct');
+  if (idx === q.correct) {
+    quizScore++;
+    fb.textContent = '✅ Richtig! ' + q.explanation;
+    fb.className = 'quiz-feedback correct';
+  } else {
+    opts[idx].classList.add('wrong');
+    fb.textContent = '❌ Leider falsch. ' + q.explanation;
+    fb.className = 'quiz-feedback wrong';
+  }
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  quizIndex++;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  document.getElementById('quiz-progress').style.width = '0%';
+  renderQuiz();
+}
+
+// Init quiz on load
+renderQuiz();
+</script>
+</body>
+</html>
