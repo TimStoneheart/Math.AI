@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volumen zusammengesetzter Körper – Klasse 6</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f6ff;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --accent: #f59e0b;
+      --accent-light: #fef3c7;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 24px rgba(37,99,235,0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+      color: white;
+      padding: 36px 24px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpolygon points='30 0 60 30 30 60 0 30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      margin-bottom: 12px;
+    }
+    header h1 {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    header p {
+      font-size: 1rem;
+      opacity: 0.88;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* PROGRESS NAV */
+    .progress-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 16px 4px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 100px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn.active, .nav-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* MAIN SECTIONS */
+    .section {
+      display: none;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 8px;
+      animation: fadeUp 0.4s ease;
+    }
+    .section.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon {
+      width: 32px; height: 32px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* THEORY */
+    .info-box {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+    .formula-box {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border: 2px solid var(--primary);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 14px 0;
+      text-align: center;
+    }
+    .formula-box .formula {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .formula-box .formula-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* SVG FIGURES */
+    .figure-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+    .figure-card {
+      background: var(--accent-light);
+      border: 2px solid #fcd34d;
+      border-radius: 14px;
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 170px;
+      flex: 1;
+    }
+    .figure-card svg { display: block; margin: 0 auto 8px; }
+    .figure-card .fig-label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #92400e;
+    }
+
+    /* STEPS */
+    .steps { list-style: none; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+      font-size: 0.97rem;
+      line-height: 1.55;
+    }
+    .steps li::before {
+      content: counter(step);
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* EXAMPLE */
+    .example-header {
+      background: linear-gradient(90deg, var(--accent) 0%, #f97316 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      padding: 12px 20px;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .example-body {
+      background: #fffbeb;
+      border: 2px solid #fcd34d;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 18px 20px;
+    }
+    .calc-step {
+      background: white;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      padding: 12px 16px;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+    .calc-step .label {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .highlight { color: var(--primary); font-weight: 800; }
+    .result-box {
+      background: var(--green-light);
+      border: 2px solid var(--green);
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #065f46;
+      text-align: center;
+    }
+
+    /* QUIZ */
+    .quiz-question {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-size: 0.96rem;
+      font-weight: 600;
+      transition: all 0.18s;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
+    }
+    .quiz-opt:hover { border-color: var(--primary); background: var(--primary-light); }
+    .quiz-opt.correct { background: var(--green-light); border-color: var(--green); color: #065f46; }
+    .quiz-opt.wrong   { background: var(--red-light); border-color: var(--red); color: #991b1b; }
+    .quiz-opt:disabled { cursor: default; }
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.97rem;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.ok  { background: var(--green-light); color: #065f46; border: 2px solid var(--green); }
+    .quiz-feedback.err { background: var(--red-light);   color: #991b1b; border: 2px solid var(--red); }
+
+    .quiz-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 100px;
+      padding: 10px 24px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.12s;
+    }
+    .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn.secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+    .btn.secondary:hover { background: #cbd5e1; }
+
+    /* SCORE */
+    .score-display {
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+    .score-display .score-num {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .score-display .score-label {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .stars { font-size: 2rem; margin: 10px 0; }
+
+    /* MERKBOX */
+    .merk-box {
+      background: var(--purple-light);
+      border: 2px solid var(--purple);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .merk-box .merk-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      color: var(--purple);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 500px) {
+      header h1 { font-size: 1.35rem; }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Klasse 6 · Gymnasium Sachsen · Geometrie</div>
+  <h1>📦 Volumen zusammengesetzter Körper</h1>
+  <p>Lernbaustein: Prismen zerlegen und Volumina berechnen</p>
+</header>
+
+<nav class="progress-nav">
+  <button class="nav-btn active" onclick="showSection('theorie')">📖 Theorie</button>
+  <button class="nav-btn" onclick="showSection('beispiele')">🔢 Beispiele</button>
+  <button class="nav-btn" onclick="showSection('uebungen')">✏️ Übungen</button>
+  <button class="nav-btn" onclick="showSection('quiz')">🎯 Quiz</button>
+</nav>
+
+<!-- ========== THEORIE ========== -->
+<div id="theorie" class="section active">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> Was ist ein Prisma?</div>
+    <div class="info-box">
+      Ein <strong>Prisma</strong> ist ein geometrischer Körper mit zwei parallelen, kongruenten Grundflächen
+      (Vieleck) und rechteckigen Seitenflächen. Die Höhe verbindet die beiden Grundflächen senkrecht.
+    </div>
+    <div class="figure-wrap">
+      <!-- QUADER: sauberes Kavalier-Schrägbild -->
+      <div class="figure-card">
+        <svg width="110" height="90" viewBox="0 0 110 90">
+          <defs>
+            <marker id="a1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#2563eb"/>
+            </marker>
+          </defs>
+          <!-- Vorderfläche (Rechteck) -->
+          <rect x="10" y="25" width="55" height="40" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+          <!-- Decke vorne→hinten (45°, halbe Tiefe) -->
+          <line x1="10" y1="25" x2="30" y2="10" stroke="#2563eb" stroke-width="2"/>
+          <line x1="65" y1="25" x2="85" y2="10" stroke="#2563eb" stroke-width="2"/>
+          <line x1="65" y1="65" x2="85" y2="50" stroke="#2563eb" stroke-width="2"/>
+          <!-- Rückfläche oben + rechte Seite -->
+          <line x1="30" y1="10" x2="85" y2="10" stroke="#2563eb" stroke-width="2"/>
+          <line x1="85" y1="10" x2="85" y2="50" stroke="#2563eb" stroke-width="2"/>
+          <!-- Rechte Seitenfläche -->
+          <polygon points="65,25 85,10 85,50 65,65" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/>
+          <!-- Oberfläche -->
+          <polygon points="10,25 30,10 85,10 65,25" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <!-- versteckte Kanten -->
+          <line x1="10" y1="65" x2="30" y2="50" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3"/>
+          <line x1="30" y1="10" x2="30" y2="50" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3"/>
+          <line x1="30" y1="50" x2="85" y2="50" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3"/>
+        </svg>
+        <div class="fig-label">Quader (Rechteck-Grundfläche)</div>
+      </div>
+
+      <!-- DREIECKSPRISMA: Vorderdreieck links, Tiefe nach rechts-oben -->
+      <div class="figure-card">
+        <svg width="110" height="90" viewBox="0 0 110 90">
+          <!-- Vorderdreieck -->
+          <polygon points="10,75 55,75 32,20" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+          <!-- Tiefenkanten vom Dreieck (45°, halbe Tiefe ~20px) -->
+          <line x1="10" y1="75" x2="30" y2="60" stroke="#2563eb" stroke-width="2"/>
+          <line x1="55" y1="75" x2="75" y2="60" stroke="#2563eb" stroke-width="2"/>
+          <line x1="32" y1="20" x2="52" y2="5"  stroke="#2563eb" stroke-width="2"/>
+          <!-- Rückdreieck -->
+          <polygon points="30,60 75,60 52,5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <!-- Rechteckige Seitenfläche rechts -->
+          <polygon points="55,75 75,60 52,5 32,20" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/>
+          <!-- Grundfläche (Rechteck unten, gestrichelt hinten) -->
+          <line x1="10" y1="75" x2="30" y2="60" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3"/>
+          <line x1="30" y1="60" x2="75" y2="60" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="4,3"/>
+        </svg>
+        <div class="fig-label">Dreiecksprisma</div>
+      </div>
+
+      <!-- L-FORM: klare 2D-Frontansicht + Tiefenandeutung -->
+      <div class="figure-card">
+        <svg width="110" height="90" viewBox="0 0 110 90">
+          <!-- L-Grundriss Vorderseite -->
+          <polygon points="10,75 10,10 35,10 35,40 65,40 65,75" fill="#fde68a" stroke="#d97706" stroke-width="2.2"/>
+          <!-- Tiefenkanten (45°, 15px) -->
+          <line x1="10" y1="10" x2="25" y2="0"  stroke="#d97706" stroke-width="1.8"/>
+          <line x1="35" y1="10" x2="50" y2="0"  stroke="#d97706" stroke-width="1.8"/>
+          <line x1="35" y1="40" x2="50" y2="30" stroke="#d97706" stroke-width="1.8"/>
+          <line x1="65" y1="40" x2="80" y2="30" stroke="#d97706" stroke-width="1.8"/>
+          <line x1="65" y1="75" x2="80" y2="65" stroke="#d97706" stroke-width="1.8"/>
+          <!-- Rückkanten sichtbar -->
+          <line x1="25" y1="0"  x2="50" y2="0"  stroke="#d97706" stroke-width="1.8"/>
+          <line x1="50" y1="0"  x2="50" y2="30" stroke="#d97706" stroke-width="1.8"/>
+          <line x1="50" y1="30" x2="80" y2="30" stroke="#d97706" stroke-width="1.8"/>
+          <line x1="80" y1="30" x2="80" y2="65" stroke="#d97706" stroke-width="1.8"/>
+          <!-- Trennlinie Zerlegung -->
+          <line x1="10" y1="40" x2="35" y2="40" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <!-- Beschriftung -->
+          <text x="18" y="27" font-size="9" font-weight="800" fill="#b45309">①</text>
+          <text x="30" y="62" font-size="9" font-weight="800" fill="#b45309">②</text>
+        </svg>
+        <div class="fig-label">Zusammengesetzter Körper (L-Form)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📐</span> Die wichtigste Formel</div>
+    <div class="formula-box">
+      <div class="formula">V = G · h</div>
+      <div class="formula-desc"><strong>V</strong> = Volumen &nbsp;|&nbsp; <strong>G</strong> = Grundfläche &nbsp;|&nbsp; <strong>h</strong> = Höhe des Prismas</div>
+    </div>
+    <div class="info-box">
+      Das Volumen eines Prismas berechnet sich immer als <strong>Grundfläche × Höhe</strong>.
+      Die Einheit des Volumens ist <strong>cm³</strong> (Kubikzentimeter) oder <strong>m³</strong>.
+    </div>
+
+    <div class="merk-box">
+      <div class="merk-title">🧠 Merke: Häufige Grundflächen</div>
+      <table style="width:100%; border-collapse:collapse; font-size:0.93rem;">
+        <tr style="font-weight:700; color:#6d28d9; border-bottom:2px solid #c4b5fd;">
+          <td style="padding:6px 8px;">Grundfläche</td>
+          <td style="padding:6px 8px;">Formel</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e9d5ff;">
+          <td style="padding:6px 8px;">Rechteck</td>
+          <td style="padding:6px 8px; font-weight:700;">G = a · b</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e9d5ff;">
+          <td style="padding:6px 8px;">Dreieck</td>
+          <td style="padding:6px 8px; font-weight:700;">G = (a · h<sub>a</sub>) / 2</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 8px;">L-förmig / T-förmig</td>
+          <td style="padding:6px 8px; font-weight:700;">Zerlegung in Rechtecke</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧩</span> Methode: Zusammengesetzte Körper</div>
+    <ul class="steps">
+      <li><strong>Skizze anfertigen</strong> und den Körper in einfache Prismen aufteilen (z. B. zwei Quader).</li>
+      <li><strong>Maße ablesen</strong> und fehlende Längen durch Subtraktion oder Addition berechnen.</li>
+      <li><strong>Einzelvolumina berechnen:</strong> V₁ = G₁ · h₁, V₂ = G₂ · h₂, …</li>
+      <li><strong>Gesamtvolumen</strong> durch Addition der Einzelvolumina ermitteln:<br>
+        <span class="highlight">V<sub>gesamt</sub> = V₁ + V₂ + …</span></li>
+      <li><strong>Einheit kontrollieren</strong> und Antwort formulieren.</li>
+    </ul>
+    <div class="info-box">
+      💡 <strong>Tipp:</strong> Es gibt oft mehrere Möglichkeiten, einen Körper zu zerlegen – das Ergebnis ist immer gleich!
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== BEISPIELE ========== -->
+<div id="beispiele" class="section">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗️</span> Beispiel 1: L-förmiger Quader (Treppenstufe)</div>
+
+    <div style="text-align:center; margin: 10px 0 18px;">
+      <!--
+        L-Körper: Kavalier-Schrägbild (45°, Tiefe = halbe echte Tiefe = 24px für 8cm)
+        Vorderfläche: L-Polygon, dann alle Ecken um (+24, -24) nach hinten versetzt.
+        Vordere L-Ecken (von oben-links, Uhrzeiger):
+          A(20,50)  B(120,50)  C(120,90)  D(200,90)  E(200,140)  F(20,140)
+        Tiefenversatz: dx=+24, dy=-24
+        Hintere Ecken:
+          A'(44,26) B'(144,26) C'(144,66) D'(224,66) E'(224,116) F'(44,116)
+      -->
+      <svg width="340" height="175" viewBox="0 0 340 175" style="max-width:100%;">
+        <defs>
+          <marker id="L1e" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="L1s" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="L1eo" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+          <marker id="L1so" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+          <marker id="L1ep" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+          <marker id="L1sp" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+        </defs>
+
+        <!-- Obere Deckfläche Quader 2: A-B-B'-A' -->
+        <polygon points="20,50 120,50 144,26 44,26" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+        <!-- Obere Deckfläche Quader 1 rechter Teil: C-D-D'-C' -->
+        <polygon points="120,90 200,90 224,66 144,66" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+        <!-- Rechte Seitenfläche Quader 1: D-E-E'-D' -->
+        <polygon points="200,90 200,140 224,116 224,66" fill="#93c5fd" stroke="#2563eb" stroke-width="1.8"/>
+        <!-- Rechte Seitenfläche Quader 2: B-C-C'-B' -->
+        <polygon points="120,50 120,90 144,66 144,26" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1.8"/>
+
+        <!-- Vorderfläche L-Form -->
+        <polygon points="20,50 120,50 120,90 200,90 200,140 20,140" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+
+        <!-- Gestrichelte hintere Kanten -->
+        <line x1="44" y1="26" x2="44" y2="116" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="5,3"/>
+        <line x1="44" y1="116" x2="224" y2="116" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="5,3"/>
+
+        <!-- Tiefenkanten vorne→hinten -->
+        <line x1="20"  y1="50"  x2="44"  y2="26"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="20"  y1="140" x2="44"  y2="116" stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="200" y1="140" x2="224" y2="116" stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="200" y1="90"  x2="224" y2="66"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="120" y1="50"  x2="144" y2="26"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="120" y1="90"  x2="144" y2="66"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="44"  y1="26"  x2="144" y2="26"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="144" y1="26"  x2="144" y2="66"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="144" y1="66"  x2="224" y2="66"  stroke="#2563eb" stroke-width="1.8"/>
+
+        <!-- Trennlinie -->
+        <line x1="20" y1="90" x2="120" y2="90" stroke="#ef4444" stroke-width="2" stroke-dasharray="7,4"/>
+
+        <!-- ── Bemaßung: Hilfslinien + Pfeile ── -->
+        <!-- 18 cm: von x=20 bis x=200, bei y=153 -->
+        <line x1="20"  y1="141" x2="20"  y2="155" stroke="#475569" stroke-width="1"/>
+        <line x1="200" y1="141" x2="200" y2="155" stroke="#475569" stroke-width="1"/>
+        <line x1="20" y1="152" x2="200" y2="152" stroke="#475569" stroke-width="1.5" marker-start="url(#L1s)" marker-end="url(#L1e)"/>
+        <text x="110" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">18 cm</text>
+
+        <!-- 10 cm: von x=20 bis x=120, bei y=43 -->
+        <line x1="20"  y1="51" x2="20"  y2="41" stroke="#475569" stroke-width="1"/>
+        <line x1="120" y1="51" x2="120" y2="41" stroke="#475569" stroke-width="1"/>
+        <line x1="20" y1="43" x2="120" y2="43" stroke="#475569" stroke-width="1.5" marker-start="url(#L1s)" marker-end="url(#L1e)"/>
+        <text x="70" y="38" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">10 cm</text>
+
+        <!-- 9 cm Gesamthöhe: von y=50 bis y=140, bei x=7 -->
+        <line x1="19" y1="50"  x2="6"  y2="50"  stroke="#d97706" stroke-width="1"/>
+        <line x1="19" y1="140" x2="6"  y2="140" stroke="#d97706" stroke-width="1"/>
+        <line x1="8" y1="50" x2="8" y2="140" stroke="#d97706" stroke-width="1.5" marker-start="url(#L1so)" marker-end="url(#L1eo)"/>
+        <text x="4" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#d97706" transform="rotate(-90,4,99)">9 cm</text>
+
+        <!-- 4 cm Höhe oben: von y=50 bis y=90, bei x=212 -->
+        <line x1="200" y1="50" x2="214" y2="50" stroke="#7c3aed" stroke-width="1"/>
+        <line x1="200" y1="90" x2="214" y2="90" stroke="#7c3aed" stroke-width="1"/>
+        <line x1="212" y1="50" x2="212" y2="90" stroke="#7c3aed" stroke-width="1.5" marker-start="url(#L1sp)" marker-end="url(#L1ep)"/>
+        <text x="224" y="73" font-size="11" font-weight="700" fill="#7c3aed">4 cm</text>
+
+        <!-- Tiefe 8 cm: Schrägkante mit Label -->
+        <line x1="200" y1="140" x2="224" y2="116" stroke="#059669" stroke-width="2"/>
+        <text x="230" y="132" font-size="11" font-weight="700" fill="#059669">8 cm</text>
+        <text x="227" y="143" font-size="9"  font-weight="600" fill="#059669">(Tiefe)</text>
+
+        <!-- Labels -->
+        <text x="90" y="122" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">Quader 1</text>
+        <text x="60" y="74"  text-anchor="middle" font-size="11" font-weight="800" fill="#7c3aed">Quader 2</text>
+      </svg>
+    </div>
+
+    <div class="example-header">📋 Aufgabe</div>
+    <div class="example-body">
+      <p style="margin-bottom:12px;">Eine Treppenstufe hat die oben gezeigte L-Form. Berechne ihr Volumen.<br>
+      <strong>Maße:</strong> Gesamtbreite 18 cm, obere Breite 10 cm, Gesamthöhe 9 cm, obere Teilhöhe 4 cm, Tiefe 8 cm.</p>
+
+      <div class="calc-step">
+        <div class="label">Schritt 1 – Zerlegung</div>
+        Den Körper in zwei Quader aufteilen:<br>
+        • <strong>Quader 1</strong> (unten): 18 cm × 5 cm × 8 cm<br>
+        • <strong>Quader 2</strong> (oben): 10 cm × 4 cm × 8 cm<br>
+        <em style="font-size:0.88rem;color:var(--muted);">Untere Höhe = 9 − 4 = 5 cm</em>
+      </div>
+
+      <div class="calc-step">
+        <div class="label">Schritt 2 – Volumen Quader 1</div>
+        V₁ = G₁ · h₁ = (18 · 5) · 8 = <span class="highlight">720 cm³</span>
+      </div>
+
+      <div class="calc-step">
+        <div class="label">Schritt 3 – Volumen Quader 2</div>
+        V₂ = G₂ · h₂ = (10 · 4) · 8 = <span class="highlight">320 cm³</span>
+      </div>
+
+      <div class="calc-step">
+        <div class="label">Schritt 4 – Gesamtvolumen</div>
+        V = V₁ + V₂ = 720 + 320 = <span class="highlight">1040 cm³</span>
+      </div>
+
+      <div class="result-box">✅ Die Treppenstufe hat ein Volumen von <strong>1 040 cm³</strong>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏠</span> Beispiel 2: Haus (Dreiecksprisma + Quader)</div>
+    <div style="text-align:center; margin: 10px 0 18px;">
+      <!--
+        Haus: Quader unten + Dreiecksprisma oben
+        Kavalier: dx=+20, dy=-20 für Tiefe 12cm
+        Vorderfläche: Rechteck (30,100)→(170,100)→(170,160)→(30,160)
+                      Dreieck: (30,100)→(170,100)→(100,55)
+        Hintere Ecken: +20/-20
+      -->
+      <svg width="300" height="185" viewBox="0 0 300 185" style="max-width:100%;">
+        <defs>
+          <marker id="H1e"  markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="H1s"  markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="H1eb" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#2563eb"/></marker>
+          <marker id="H1sb" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#2563eb"/></marker>
+          <marker id="H1eo" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+          <marker id="H1so" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+        </defs>
+
+        <!-- Hintere Flächen zuerst -->
+        <polygon points="50,80 190,80 120,35" fill="#fef9c3" stroke="#d97706" stroke-width="1.5"/>
+        <polygon points="50,80 190,80 190,140 50,140" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+        <!-- Seitliche Dachfläche rechts -->
+        <polygon points="170,100 190,80 120,35 100,55" fill="#fde68a" stroke="#d97706" stroke-width="1.8"/>
+        <!-- Seitliche Wandfläche rechts -->
+        <polygon points="170,100 190,80 190,140 170,160" fill="#93c5fd" stroke="#2563eb" stroke-width="1.8"/>
+
+        <!-- Tiefenkanten -->
+        <line x1="30"  y1="100" x2="50"  y2="80"  stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="30"  y1="160" x2="50"  y2="140" stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="170" y1="160" x2="190" y2="140" stroke="#2563eb" stroke-width="1.8"/>
+        <line x1="100" y1="55"  x2="120" y2="35"  stroke="#d97706" stroke-width="1.8"/>
+
+        <!-- Vordere Wandfläche -->
+        <rect x="30" y="100" width="140" height="60" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+        <!-- Vordere Dachfläche -->
+        <polygon points="30,100 170,100 100,55" fill="#fcd34d" stroke="#d97706" stroke-width="2.2"/>
+        <!-- Trennlinie Dach/Wand -->
+        <line x1="30" y1="100" x2="170" y2="100" stroke="#ef4444" stroke-width="2" stroke-dasharray="6,4"/>
+
+        <!-- ── Bemaßung ── -->
+        <!-- 14 cm Breite -->
+        <line x1="30"  y1="161" x2="30"  y2="174" stroke="#475569" stroke-width="1"/>
+        <line x1="170" y1="161" x2="170" y2="174" stroke="#475569" stroke-width="1"/>
+        <line x1="30" y1="172" x2="170" y2="172" stroke="#475569" stroke-width="1.5" marker-start="url(#H1s)" marker-end="url(#H1e)"/>
+        <text x="100" y="183" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">14 cm</text>
+
+        <!-- 6 cm Wandhöhe -->
+        <line x1="29" y1="100" x2="14" y2="100" stroke="#2563eb" stroke-width="1"/>
+        <line x1="29" y1="160" x2="14" y2="160" stroke="#2563eb" stroke-width="1"/>
+        <line x1="16" y1="100" x2="16" y2="160" stroke="#2563eb" stroke-width="1.5" marker-start="url(#H1sb)" marker-end="url(#H1eb)"/>
+        <text x="11" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb" transform="rotate(-90,11,134)">6 cm</text>
+
+        <!-- 5 cm Dachhöhe -->
+        <line x1="170" y1="55"  x2="198" y2="55"  stroke="#d97706" stroke-width="1"/>
+        <line x1="170" y1="100" x2="198" y2="100" stroke="#d97706" stroke-width="1"/>
+        <line x1="196" y1="55" x2="196" y2="100" stroke="#d97706" stroke-width="1.5" marker-start="url(#H1so)" marker-end="url(#H1eo)"/>
+        <text x="208" y="82" font-size="11" font-weight="700" fill="#d97706">5 cm</text>
+
+        <!-- 12 cm Tiefe (Schrägkante) -->
+        <line x1="170" y1="160" x2="190" y2="140" stroke="#059669" stroke-width="2"/>
+        <text x="194" y="157" font-size="11" font-weight="700" fill="#059669">12 cm</text>
+        <text x="192" y="168" font-size="9" fill="#059669">(Tiefe)</text>
+
+        <!-- Labels -->
+        <text x="100" y="136" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">Wände (Quader)</text>
+        <text x="100" y="82"  text-anchor="middle" font-size="11" font-weight="800" fill="#92400e">Dach (Dreiecksprisma)</text>
+      </svg>
+    </div>
+
+    <div class="example-header">📋 Aufgabe</div>
+    <div class="example-body">
+      <p style="margin-bottom:12px;">Ein Spielzeughaus besteht aus einem Quader (Wände) und einem Dreiecksprisma (Dach).<br>
+      <strong>Maße:</strong> Breite 14 cm, Wandhöhe 6 cm, Dachscheitelhöhe 5 cm, Tiefe 12 cm.</p>
+
+      <div class="calc-step">
+        <div class="label">Teil 1 – Volumen der Wände (Quader)</div>
+        G_Quader = 14 · 6 = 84 cm²<br>
+        V_Wände = 84 · 12 = <span class="highlight">1 008 cm³</span>
+      </div>
+
+      <div class="calc-step">
+        <div class="label">Teil 2 – Volumen des Dachs (Dreiecksprisma)</div>
+        G_Dreieck = (14 · 5) ÷ 2 = 35 cm²<br>
+        V_Dach = 35 · 12 = <span class="highlight">420 cm³</span>
+      </div>
+
+      <div class="result-box">✅ V<sub>gesamt</sub> = 1 008 + 420 = <strong>1 428 cm³</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== ÜBUNGEN ========== -->
+<div id="uebungen" class="section">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✏️</span> Aufgabe 1 – Schwimmbecken</div>
+    <div style="text-align:center; margin:10px 0 14px;">
+      <!--
+        Schwimmbecken: Querschnitt (Seitenansicht) von vorne.
+        Beckenrand oben = Wasseroberfläche (y=30).
+        Tiefer Teil links: Breite 120px (=12m), Tiefe 80px (=3m Tiefe → bis y=110... warten: Boden bei y=110)
+        Flacher Teil rechts: Breite 80px (=8m), Tiefe 40px (=1m → Boden bei y=70... nein, Beckenboden oben?)
+
+        Sinnvollere Darstellung:
+        Beckenboden tiefer Teil: y=110, Beckenboden flacher Teil: y=70
+        Beckenrand oben: y=30
+        Links: x=30..150 (=12m), von y=30 bis y=110 (3m tief)
+        Rechts: x=150..230 (=8m), von y=30 bis y=70 (1m tief – flacher Teil, Boden höher)
+        Gesamtboden: gestrichelt zeigen wo der tiefere Boden wäre.
+      -->
+      <svg width="320" height="145" viewBox="0 0 320 145" style="max-width:100%;">
+        <defs>
+          <marker id="S1e"  markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="S1s"  markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#475569"/></marker>
+          <marker id="S1eo" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+          <marker id="S1so" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#d97706"/></marker>
+          <marker id="S1ep" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+          <marker id="S1sp" markerWidth="7" markerHeight="7" refX="0" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L6,3.5 L0,7 Z" fill="#7c3aed"/></marker>
+        </defs>
+
+        <!-- Wasserfarbe -->
+        <rect x="30" y="30" width="120" height="80" fill="#bfdbfe"/>
+        <rect x="150" y="30" width="80" height="40" fill="#93c5fd"/>
+
+        <!-- Beckenumriss -->
+        <line x1="30"  y1="20"  x2="30"  y2="110" stroke="#1e293b" stroke-width="2.5"/>
+        <line x1="30"  y1="110" x2="150" y2="110" stroke="#1e293b" stroke-width="2.5"/>
+        <line x1="150" y1="110" x2="150" y2="70"  stroke="#1e293b" stroke-width="2.5"/>
+        <line x1="150" y1="70"  x2="230" y2="70"  stroke="#1e293b" stroke-width="2.5"/>
+        <line x1="230" y1="20"  x2="230" y2="70"  stroke="#1e293b" stroke-width="2.5"/>
+        <line x1="30"  y1="20"  x2="230" y2="20"  stroke="#1e293b" stroke-width="2.5"/>
+
+        <!-- Wasseroberfläche -->
+        <line x1="30" y1="30" x2="230" y2="30" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+        <!-- ── Bemaßungen ── -->
+        <!-- 12 m: Hilfslinien an x=30 und x=150, Pfeil bei y=122 -->
+        <line x1="30"  y1="111" x2="30"  y2="124" stroke="#475569" stroke-width="1"/>
+        <line x1="150" y1="111" x2="150" y2="124" stroke="#475569" stroke-width="1"/>
+        <line x1="30" y1="122" x2="150" y2="122" stroke="#475569" stroke-width="1.5" marker-start="url(#S1s)" marker-end="url(#S1e)"/>
+        <text x="90" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">12 m</text>
+
+        <!-- 8 m: Hilfslinien an x=150 und x=230, Pfeil bei y=122 -->
+        <line x1="230" y1="71"  x2="230" y2="124" stroke="#475569" stroke-width="1"/>
+        <line x1="150" y1="122" x2="230" y2="122" stroke="#475569" stroke-width="1.5" marker-start="url(#S1s)" marker-end="url(#S1e)"/>
+        <text x="190" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">8 m</text>
+
+        <!-- 3 m Tiefe: Hilfslinien bei y=30 und y=110, Pfeil bei x=244 -->
+        <line x1="31"  y1="30"  x2="246" y2="30"  stroke="#d97706" stroke-width="1"/>
+        <line x1="31"  y1="110" x2="246" y2="110" stroke="#d97706" stroke-width="1"/>
+        <line x1="244" y1="30" x2="244" y2="110" stroke="#d97706" stroke-width="1.5" marker-start="url(#S1so)" marker-end="url(#S1eo)"/>
+        <text x="257" y="74" font-size="12" font-weight="700" fill="#d97706">3 m</text>
+
+        <!-- 1 m Tiefe: Hilfslinien bei y=30 und y=70, Pfeil bei x=268 -->
+        <line x1="231" y1="30"  x2="270" y2="30"  stroke="#7c3aed" stroke-width="1"/>
+        <line x1="231" y1="70"  x2="270" y2="70"  stroke="#7c3aed" stroke-width="1"/>
+        <line x1="268" y1="30" x2="268" y2="70" stroke="#7c3aed" stroke-width="1.5" marker-start="url(#S1sp)" marker-end="url(#S1ep)"/>
+        <text x="278" y="54" font-size="12" font-weight="700" fill="#7c3aed">1 m</text>
+
+        <!-- Labels -->
+        <text x="90"  y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">tiefer Teil</text>
+        <text x="190" y="52" text-anchor="middle" font-size="11" font-weight="800" fill="#6d28d9">flacher Teil</text>
+        <text x="130" y="13" text-anchor="middle" font-size="10" font-weight="700" fill="#059669">Breite (in die Tiefe): 20 m</text>
+      </svg>
+      <p style="font-size:0.8rem; color:var(--muted); margin-top:4px;">📐 Ansicht: Querschnitt (von der Seite)</p>
+    </div>
+    <p style="font-size:0.95rem; line-height:1.6;">
+      Ein Schwimmbecken hat einen tiefen Teil (Länge 12 m, Tiefe 3 m) und einen flachen Teil (Länge 8 m, Tiefe 1 m).
+      Die Breite beträgt überall 20 m. Berechne das Fassungsvermögen in m³.
+    </p>
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); font-size:0.95rem;">💡 Lösung anzeigen</summary>
+      <div style="margin-top:12px;">
+        <div class="calc-step"><div class="label">Tiefer Teil</div>V₁ = 12 · 3 · 20 = <span class="highlight">720 m³</span></div>
+        <div class="calc-step"><div class="label">Flacher Teil</div>V₂ = 8 · 1 · 20 = <span class="highlight">160 m³</span></div>
+        <div class="result-box">V = 720 + 160 = <strong>880 m³</strong></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✏️</span> Aufgabe 2 – Podest (T-Form)</div>
+    <p style="font-size:0.95rem; line-height:1.6; margin-bottom:14px;">
+      Ein Podest aus Beton hat eine T-förmige Grundfläche. Die Gesamtbreite beträgt 3 m, die Gesamthöhe 2 m.
+      Der senkrechte Teil ist 1 m breit und 1 m hoch. Der waagerechte Teil ist 3 m breit und 1 m hoch.
+      Die Tiefe des Podestes beträgt 0,5 m. Berechne das Volumen.
+    </p>
+    <details>
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); font-size:0.95rem;">💡 Lösung anzeigen</summary>
+      <div style="margin-top:12px;">
+        <div class="calc-step"><div class="label">Waagerechter Teil (oben)</div>V₁ = (3 · 1) · 0,5 = <span class="highlight">1,5 m³</span></div>
+        <div class="calc-step"><div class="label">Senkrechter Teil (unten)</div>V₂ = (1 · 1) · 0,5 = <span class="highlight">0,5 m³</span></div>
+        <div class="result-box">V = 1,5 + 0,5 = <strong>2,0 m³</strong></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✏️</span> Aufgabe 3 – Knobel-Aufgabe 🧩</div>
+    <p style="font-size:0.95rem; line-height:1.6; margin-bottom:10px;">
+      Aus einem Quader mit den Maßen <strong>10 cm × 8 cm × 6 cm</strong> wird ein kleiner Quader
+      mit den Maßen <strong>4 cm × 4 cm × 6 cm</strong> herausgeschnitten.
+      Wie groß ist das Volumen des verbleibenden Körpers?
+    </p>
+    <details>
+      <summary style="cursor:pointer; font-weight:700; color:var(--primary); font-size:0.95rem;">💡 Lösung anzeigen</summary>
+      <div style="margin-top:12px;">
+        <div class="calc-step"><div class="label">Ausgangsquader</div>V₁ = 10 · 8 · 6 = <span class="highlight">480 cm³</span></div>
+        <div class="calc-step"><div class="label">Herausgeschnittener Teil</div>V₂ = 4 · 4 · 6 = <span class="highlight">96 cm³</span></div>
+        <div class="result-box">V = 480 − 96 = <strong>384 cm³</strong></div>
+        <div class="info-box">💡 Hier wird <strong>subtrahiert</strong> statt addiert – das nennt man auch die <em>Ergänzungsmethode</em>.</div>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<!-- ========== QUIZ ========== -->
+<div id="quiz" class="section">
+
+  <div id="quiz-container">
+    <!-- dynamisch befüllt -->
+  </div>
+
+  <div id="quiz-result" class="card" style="display:none; text-align:center;">
+    <div class="card-title" style="justify-content:center;"><span class="icon">🏆</span> Quiz beendet!</div>
+    <div class="score-display">
+      <div class="score-num" id="score-num">0/0</div>
+      <div class="score-label">Richtige Antworten</div>
+    </div>
+    <div class="stars" id="stars-display"></div>
+    <div id="result-msg" style="font-size:1rem; margin:10px 0 16px;"></div>
+    <button class="btn" onclick="restartQuiz()">🔄 Nochmal versuchen</button>
+  </div>
+
+</div>
+
+<script>
+  // ---- NAV ----
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const btns = document.querySelectorAll('.nav-btn');
+    const labels = ['theorie','beispiele','uebungen','quiz'];
+    btns[labels.indexOf(id)].classList.add('active');
+  }
+
+  // ---- QUIZ DATA ----
+  const quizData = [
+    {
+      q: "Welche Formel berechnet das Volumen eines Prismas?",
+      opts: ["V = G + h", "V = G · h", "V = G · h²", "V = a · b · c"],
+      ans: 1,
+      exp: "Richtig! V = G · h – Grundfläche mal Höhe. Das gilt für jedes Prisma."
+    },
+    {
+      q: "Ein Quader hat die Maße 5 cm × 4 cm × 3 cm. Welches Volumen hat er?",
+      opts: ["47 cm³", "60 cm³", "12 cm³", "24 cm³"],
+      ans: 1,
+      exp: "V = 5 · 4 · 3 = 60 cm³. Alle drei Maße werden multipliziert."
+    },
+    {
+      q: "Wie geht man beim Berechnen des Volumens eines zusammengesetzten Körpers vor?",
+      opts: [
+        "Man misst nur die größte Länge",
+        "Man zerlegt in einfache Prismen und addiert die Einzelvolumina",
+        "Man multipliziert Umfang und Höhe",
+        "Man berechnet nur die Oberfläche"
+      ],
+      ans: 1,
+      exp: "Genau! Zerlegung → Einzelvolumina berechnen → Ergebnisse addieren."
+    },
+    {
+      q: "Ein Dreieck hat die Grundseite 6 cm und die Höhe 4 cm. Wie groß ist seine Fläche?",
+      opts: ["24 cm²", "12 cm²", "10 cm²", "8 cm²"],
+      ans: 1,
+      exp: "G = (6 · 4) / 2 = 12 cm². Die Fläche eines Dreiecks ist immer (Grundseite · Höhe) / 2."
+    },
+    {
+      q: "Ein L-förmiger Körper wird in zwei Quader (V₁ = 80 cm³, V₂ = 45 cm³) aufgeteilt. Wie groß ist das Gesamtvolumen?",
+      opts: ["35 cm³", "125 cm³", "3 600 cm³", "160 cm³"],
+      ans: 1,
+      exp: "V = V₁ + V₂ = 80 + 45 = 125 cm³."
+    },
+    {
+      q: "Welche Einheit hat das Volumen?",
+      opts: ["cm", "cm²", "cm³", "m²"],
+      ans: 2,
+      exp: "Volumen wird in Kubikeinheiten angegeben: cm³, m³ usw."
+    },
+    {
+      q: "Ein Dreiecksprisma hat die Grundfläche G = 15 cm² und die Höhe h = 8 cm. Sein Volumen beträgt …",
+      opts: ["23 cm³", "120 cm³", "45 cm³", "60 cm³"],
+      ans: 1,
+      exp: "V = G · h = 15 · 8 = 120 cm³."
+    }
+  ];
+
+  let current = 0, score = 0, answered = false;
+
+  function renderQuestion() {
+    const qd = quizData[current];
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = `
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:0.82rem; font-weight:700; color:var(--muted);">Frage ${current+1} / ${quizData.length}</span>
+          <span style="font-size:0.82rem; font-weight:700; color:var(--green);">✅ ${score} richtig</span>
+        </div>
+        <div style="height:5px; background:var(--border); border-radius:10px; margin-bottom:18px; overflow:hidden;">
+          <div style="height:100%; width:${((current)/quizData.length)*100}%; background:var(--primary); border-radius:10px; transition:width 0.4s;"></div>
+        </div>
+        <div class="quiz-question">${qd.q}</div>
+        <div class="quiz-options">
+          ${qd.opts.map((o,i) => `<button class="quiz-opt" id="opt-${i}" onclick="selectAnswer(${i})">${o}</button>`).join('')}
+        </div>
+        <div class="quiz-feedback" id="feedback"></div>
+        <div class="quiz-nav">
+          <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none;">
+            ${current < quizData.length-1 ? 'Nächste Frage →' : '🏁 Auswertung'}
+          </button>
+        </div>
+      </div>
+    `;
+    answered = false;
+  }
+
+  function selectAnswer(idx) {
+    if (answered) return;
+    answered = true;
+    const qd = quizData[current];
+    const opts = document.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.disabled = true);
+    const fb = document.getElementById('feedback');
+    if (idx === qd.ans) {
+      score++;
+      opts[idx].classList.add('correct');
+      fb.className = 'quiz-feedback show ok';
+      fb.textContent = '✅ ' + qd.exp;
+    } else {
+      opts[idx].classList.add('wrong');
+      opts[qd.ans].classList.add('correct');
+      fb.className = 'quiz-feedback show err';
+      fb.textContent = '❌ Leider falsch. ' + qd.exp;
+    }
+    document.getElementById('next-btn').style.display = 'inline-block';
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current < quizData.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    document.getElementById('quiz-container').innerHTML = '';
+    const res = document.getElementById('quiz-result');
+    res.style.display = 'block';
+    document.getElementById('score-num').textContent = `${score}/${quizData.length}`;
+    const pct = score / quizData.length;
+    let stars = '', msg = '';
+    if (pct === 1)       { stars = '⭐⭐⭐'; msg = '🎉 Perfekt! Du hast alle Fragen richtig beantwortet!'; }
+    else if (pct >= 0.7) { stars = '⭐⭐';   msg = '👍 Sehr gut! Du hast das Thema gut verstanden.'; }
+    else if (pct >= 0.5) { stars = '⭐';     msg = '📚 Ganz okay! Schau dir die Theorie nochmal an.'; }
+    else                 { stars = '💪';     msg = '🔄 Übe nochmal! Lies die Theorie und versuche es erneut.'; }
+    document.getElementById('stars-display').textContent = stars;
+    document.getElementById('result-msg').textContent = msg;
+  }
+
+  function restartQuiz() {
+    current = 0; score = 0;
+    document.getElementById('quiz-result').style.display = 'none';
+    renderQuestion();
+  }
+
+  // Init quiz
+  renderQuestion();
+</script>
+
+</body>
+</html>
