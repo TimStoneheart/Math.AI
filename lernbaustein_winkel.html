@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kreiswinkel – Lernbaustein Klasse 7</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --orange: #F4631E;
+    --blue: #1A6FBB;
+    --teal: #0FA89B;
+    --yellow: #FFD166;
+    --bg: #F8F4EE;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --correct: #22C55E;
+    --wrong: #EF4444;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--orange);
+    color: white;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '○';
+    font-size: 260px;
+    position: absolute;
+    right: -40px; top: -80px;
+    opacity: 0.08;
+    line-height: 1;
+  }
+  header .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  header h1 { font-size: clamp(22px,4vw,38px); font-weight: 900; line-height: 1.15; }
+  header p { margin-top: 8px; opacity: 0.9; font-size: 16px; }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 8px;
+    padding: 20px 40px;
+    overflow-x: auto;
+    background: white;
+    border-bottom: 2px solid #EEE;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 8px 20px;
+    border: 2px solid #DDD;
+    border-radius: 30px;
+    background: white;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all .2s;
+  }
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: white;
+  }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeUp .35s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .card-orange { border-left: 6px solid var(--orange); }
+  .card-blue   { border-left: 6px solid var(--blue); }
+  .card-teal   { border-left: 6px solid var(--teal); }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: var(--orange);
+  }
+  h2.blue { color: var(--blue); }
+  h2.teal { color: var(--teal); }
+
+  p { line-height: 1.7; font-size: 15px; color: #374151; margin-bottom: 10px; }
+
+  .definition-box {
+    background: #FFF7F0;
+    border: 2px solid var(--orange);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .definition-box.blue-box {
+    background: #EEF5FF;
+    border-color: var(--blue);
+  }
+  .definition-box.teal-box {
+    background: #EDFAF8;
+    border-color: var(--teal);
+  }
+
+  .formula {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 10px;
+    margin: 12px 0;
+  }
+  .formula.blue { background: var(--blue); }
+  .formula.teal { background: var(--teal); }
+
+  /* SVG CANVAS */
+  .canvas-wrap {
+    text-align: center;
+    margin: 20px 0;
+    background: #FAFAFA;
+    border-radius: 12px;
+    padding: 16px;
+    border: 2px solid #EEE;
+  }
+  svg text { font-family: 'Nunito', sans-serif; }
+
+  /* SLIDER */
+  .slider-wrap { margin: 16px 0; }
+  .slider-wrap label { font-weight: 700; font-size: 14px; color: var(--muted); display: block; margin-bottom: 6px; }
+  input[type=range] {
+    width: 100%; height: 6px; accent-color: var(--orange); cursor: pointer;
+  }
+  .slider-val {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+  .slider-val.blue { background: var(--blue); }
+
+  /* MERKSATZ */
+  .merksatz {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--yellow);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .merksatz .icon { font-size: 24px; flex-shrink: 0; }
+  .merksatz p { margin: 0; font-weight: 700; font-size: 15px; color: #1A1A2E; }
+
+  /* QUIZ */
+  .quiz-question { margin-bottom: 28px; }
+  .quiz-question .q-text {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    text-align: left;
+    padding: 12px 18px;
+    border: 2px solid #DDD;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all .2s;
+  }
+  .option-btn:hover { border-color: var(--orange); background: #FFF7F0; }
+  .option-btn.correct { border-color: var(--correct); background: #F0FDF4; color: #15803D; }
+  .option-btn.wrong   { border-color: var(--wrong);   background: #FEF2F2; color: #B91C1C; }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #F0FDF4; color: #15803D; }
+  .feedback.err { background: #FEF2F2; color: #B91C1C; }
+
+  .quiz-progress {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .q-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+    transition: background .3s;
+  }
+  .q-dot.done-ok  { background: var(--correct); color: white; }
+  .q-dot.done-err { background: var(--wrong);   color: white; }
+
+  /* SCORE */
+  .score-box {
+    text-align: center;
+    padding: 32px;
+  }
+  .score-number {
+    font-size: 60px;
+    font-weight: 900;
+    color: var(--orange);
+    font-family: 'Space Mono', monospace;
+    line-height: 1;
+  }
+  .score-msg { font-size: 18px; font-weight: 700; margin-top: 8px; }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    transition: all .2s;
+  }
+  .btn-orange { background: var(--orange); color: white; }
+  .btn-orange:hover { background: #d4541a; }
+  .btn-blue { background: var(--blue); color: white; }
+  .btn-blue:hover { background: #155fa0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  .steps { counter-reset: step; list-style: none; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 10px 0 10px 48px;
+    border-left: 2px dashed #E5E7EB;
+    margin-left: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: -16px;
+    top: 8px;
+    width: 30px; height: 30px;
+    background: var(--orange);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .badge-orange { background: #FFE8DA; color: var(--orange); }
+  .badge-blue   { background: #DBEAFE; color: var(--blue); }
+  .badge-teal   { background: #CCFBF1; color: var(--teal); }
+
+  /* COMPARISON TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--orange); color: white; padding: 12px 16px; text-align: left; }
+  td { padding: 11px 16px; border-bottom: 1px solid #EEE; vertical-align: top; }
+  tr:nth-child(even) td { background: #FFF7F0; }
+
+  /* INTERACTIVE DEMO */
+  .demo-controls {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .info-chip {
+    background: #F3F4F6;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .info-chip span { color: var(--orange); font-family: 'Space Mono', monospace; font-size: 16px; }
+  .info-chip.blue span { color: var(--blue); }
+  .info-chip.teal span { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Klasse 7 · Gymnasium Sachsen · Geometrie</div>
+  <h1>Kreiswinkel: Peripherie- &amp; Zentriwinkel</h1>
+  <p>Interaktiver Lernbaustein · Thüringer Lehrplan-kompatibel</p>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('s1',this)">① Grundbegriffe</button>
+  <button class="nav-btn" onclick="showSection('s2',this)">② Peripheriewinkelsatz</button>
+  <button class="nav-btn" onclick="showSection('s3',this)">③ Zentriwinkel</button>
+  <button class="nav-btn" onclick="showSection('s4',this)">④ Zentri-Peripherie</button>
+  <button class="nav-btn" onclick="showSection('s5',this)">⑤ Interaktiv</button>
+  <button class="nav-btn" onclick="showSection('s6',this)">⑥ Übungen</button>
+</nav>
+
+<main>
+
+<!-- ===== SECTION 1: GRUNDBEGRIFFE ===== -->
+<div id="s1" class="section active">
+  <div class="card card-orange">
+    <h2>Was ist ein Kreiswinkel?</h2>
+    <p>Bevor wir die Sätze kennenlernen, müssen wir zwei wichtige Winkeltypen unterscheiden, die sich auf einen <strong>Kreisbogen AB</strong> beziehen.</p>
+    <div class="two-col" style="margin-top:16px;">
+      <div class="definition-box">
+        <span class="badge badge-orange">Peripheriewinkel</span>
+        <p style="margin-top:10px;"><strong>Scheitelpunkt liegt auf dem Kreis.</strong></p>
+        <p>Die Schenkel gehen durch zwei andere Kreispunkte A und B. Auch <em>Umfangswinkel</em> genannt.</p>
+      </div>
+      <div class="definition-box blue-box">
+        <span class="badge badge-blue">Zentriwinkel</span>
+        <p style="margin-top:10px;"><strong>Scheitelpunkt liegt im Mittelpunkt M.</strong></p>
+        <p>Die Schenkel gehen durch die Kreispunkte A und B.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="blue">Bogen und Winkel – die Verbindung</h2>
+    <p>Ein Kreisbogen <span style="text-decoration:overline;font-weight:700">AB</span> teilt den Kreis in zwei Teile. Winkel, die <em>über demselben Bogen</em> stehen, haben eine besondere Beziehung zueinander – genau das werden wir in den nächsten Abschnitten entdecken!</p>
+    <div class="canvas-wrap">
+      <svg id="svg-intro" width="300" height="280" viewBox="0 0 300 280">
+        <defs>
+          <marker id="arrowO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#F4631E"/>
+          </marker>
+        </defs>
+        <!-- Kreis -->
+        <circle cx="150" cy="140" r="110" fill="none" stroke="#CBD5E1" stroke-width="2"/>
+        <!-- Mittelpunkt -->
+        <circle cx="150" cy="140" r="4" fill="#374151"/>
+        <text x="158" y="145" font-size="14" font-weight="700" fill="#374151">M</text>
+        <!-- Punkte A, B auf Kreis -->
+        <circle cx="58" cy="185" r="5" fill="#F4631E"/>
+        <text x="42" y="200" font-size="14" font-weight="800" fill="#F4631E">A</text>
+        <circle cx="242" cy="185" r="5" fill="#F4631E"/>
+        <text x="248" y="200" font-size="14" font-weight="800" fill="#F4631E">B</text>
+        <!-- Bogen AB (rot) -->
+        <path d="M 58 185 A 110 110 0 0 0 242 185" fill="none" stroke="#F4631E" stroke-width="4" stroke-dasharray="6 3"/>
+        <text x="145" y="268" font-size="13" font-weight="700" fill="#F4631E" text-anchor="middle">Bogen AB</text>
+        <!-- Peripheriepunkt C -->
+        <circle cx="150" cy="30" r="5" fill="#1A6FBB"/>
+        <text x="155" y="26" font-size="14" font-weight="800" fill="#1A6FBB">C (Peripheriepunkt)</text>
+        <!-- Peripheriewinkel -->
+        <line x1="150" y1="30" x2="58" y2="185" stroke="#1A6FBB" stroke-width="2"/>
+        <line x1="150" y1="30" x2="242" y2="185" stroke="#1A6FBB" stroke-width="2"/>
+        <!-- Zentriwinkel -->
+        <line x1="150" y1="140" x2="58" y2="185" stroke="#374151" stroke-width="2" stroke-dasharray="4 3"/>
+        <line x1="150" y1="140" x2="242" y2="185" stroke="#374151" stroke-width="2" stroke-dasharray="4 3"/>
+        <!-- Labels -->
+        <text x="140" y="60" font-size="13" font-weight="700" fill="#1A6FBB">γ (Peripheriewinkel)</text>
+        <text x="95" y="160" font-size="13" font-weight="700" fill="#374151">ε (Zentriwinkel)</text>
+      </svg>
+    </div>
+    <div class="merksatz">
+      <div class="icon">💡</div>
+      <p>Beide Winkel – Peripheriewinkel γ und Zentriwinkel ε – stehen über demselben Bogen AB. Ihre Beziehung ist das Herzstück dieses Lernbausteins!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: PERIPHERIEWINKELSATZ ===== -->
+<div id="s2" class="section">
+  <div class="card card-orange">
+    <h2>Definition Peripheriewinkel</h2>
+    <div class="definition-box">
+      <p>Ein Winkel, dessen <strong>Scheitelpunkt auf einem Kreis liegt</strong> und dessen Schenkel durch die Kreispunkte A und B gehen, heißt <strong>Peripheriewinkel</strong> (auch <em>Umfangswinkel</em>) über dem Bogen <span style="text-decoration:overline">AB</span>.</p>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h2 class="blue">Peripheriewinkelsatz</h2>
+    <div class="definition-box blue-box">
+      <p>Wenn <strong>zwei Peripheriewinkel über demselben Bogen</strong> liegen, dann sind diese Winkel <strong>gleich groß</strong>.</p>
+    </div>
+    <div style="text-align:center; margin:16px 0;">
+      <div class="formula blue">γ₁ = γ₂</div>
+    </div>
+    <p>Egal, wohin du den Scheitelpunkt auf dem Kreis (auf der richtigen Seite des Bogens!) verschiebst – der Winkel bleibt gleich!</p>
+
+    <div class="canvas-wrap">
+      <svg id="svg-periph" width="300" height="280" viewBox="0 0 300 280">
+        <circle cx="150" cy="140" r="110" fill="none" stroke="#CBD5E1" stroke-width="2.5"/>
+        <!-- Bogen AB rot -->
+        <path d="M 50 185 A 110 110 0 0 0 250 185" fill="none" stroke="#F4631E" stroke-width="5" opacity="0.7"/>
+        <!-- A, B -->
+        <circle cx="50" cy="185" r="6" fill="#F4631E"/>
+        <text x="30" y="200" font-size="15" font-weight="800" fill="#F4631E">A</text>
+        <circle cx="250" cy="185" r="6" fill="#F4631E"/>
+        <text x="255" y="200" font-size="15" font-weight="800" fill="#F4631E">B</text>
+        <!-- C1, C2 auf Kreis -->
+        <circle cx="100" cy="38" r="5" fill="#1A6FBB"/>
+        <text x="70" y="38" font-size="14" font-weight="800" fill="#1A6FBB">C₁</text>
+        <circle cx="210" cy="52" r="5" fill="#0FA89B"/>
+        <text x="215" y="52" font-size="14" font-weight="800" fill="#0FA89B">C₂</text>
+        <!-- Lines C1 -->
+        <line x1="100" y1="38" x2="50" y2="185" stroke="#1A6FBB" stroke-width="2"/>
+        <line x1="100" y1="38" x2="250" y2="185" stroke="#1A6FBB" stroke-width="2"/>
+        <!-- Lines C2 -->
+        <line x1="210" y1="52" x2="50" y2="185" stroke="#0FA89B" stroke-width="2"/>
+        <line x1="210" y1="52" x2="250" y2="185" stroke="#0FA89B" stroke-width="2"/>
+        <!-- Angle labels -->
+        <text x="105" y="65" font-size="14" font-weight="800" fill="#1A6FBB">γ₁</text>
+        <text x="185" y="78" font-size="14" font-weight="800" fill="#0FA89B">γ₂</text>
+        <!-- Equal sign -->
+        <text x="135" y="250" font-size="15" font-weight="800" fill="#374151" text-anchor="middle">γ₁ = γ₂</text>
+        <text x="148" y="268" font-size="12" fill="#F4631E" text-anchor="middle">Bogen AB</text>
+      </svg>
+    </div>
+
+    <div class="merksatz">
+      <div class="icon">⚠️</div>
+      <p>Wichtig: Beide Scheitelpunkte müssen auf <em>derselben Seite</em> des Bogens AB liegen! Auf der anderen Seite gilt ein anderer (ergänzender) Winkel.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="teal">Anschauliche Erklärung</h2>
+    <ul class="steps">
+      <li>Zeichne einen Kreis mit zwei festen Punkten A und B auf dem Kreis.</li>
+      <li>Wähle einen beliebigen Punkt C auf dem Kreisbogen (auf der Seite, die nicht AB enthält).</li>
+      <li>Verbinde C mit A und B → du erhältst den Peripheriewinkel γ bei C.</li>
+      <li>Verschiebe C auf dem Bogen → der Winkel γ bleibt <strong>immer gleich groß</strong>!</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: ZENTRIWINKEL ===== -->
+<div id="s3" class="section">
+  <div class="card card-orange">
+    <h2>Definition Zentriwinkel</h2>
+    <div class="definition-box">
+      <p>Ein Winkel ε, dessen <strong>Scheitelpunkt im Kreismittelpunkt M</strong> liegt und dessen Schenkel durch die Kreispunkte A und B gehen, heißt <strong>Zentriwinkel</strong> über dem Bogen <span style="text-decoration:overline">AB</span>.</p>
+    </div>
+    <div class="canvas-wrap">
+      <svg width="240" height="240" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="95" fill="none" stroke="#CBD5E1" stroke-width="2"/>
+        <!-- Bogen -->
+        <path d="M 40 165 A 95 95 0 0 0 200 165" fill="none" stroke="#F4631E" stroke-width="5" opacity="0.7"/>
+        <!-- M -->
+        <circle cx="120" cy="120" r="5" fill="#374151"/>
+        <text x="125" y="115" font-size="14" font-weight="800" fill="#374151">M</text>
+        <!-- A B -->
+        <circle cx="40" cy="165" r="5" fill="#F4631E"/>
+        <text x="22" y="178" font-size="14" font-weight="800" fill="#F4631E">A</text>
+        <circle cx="200" cy="165" r="5" fill="#F4631E"/>
+        <text x="205" y="178" font-size="14" font-weight="800" fill="#F4631E">B</text>
+        <!-- Schenkel vom Mittelpunkt -->
+        <line x1="120" y1="120" x2="40" y2="165" stroke="#374151" stroke-width="2.5"/>
+        <line x1="120" y1="120" x2="200" y2="165" stroke="#374151" stroke-width="2.5"/>
+        <!-- Winkelmarkierung -->
+        <path d="M 120 120 m 30 8 A 32 32 0 0 1 150 108" fill="none" stroke="#374151" stroke-width="1.5"/>
+        <text x="108" y="148" font-size="15" font-weight="900" fill="#374151">ε</text>
+        <!-- kleiner Kreis um M -->
+        <circle cx="120" cy="120" r="30" fill="none" stroke="#374151" stroke-width="1" stroke-dasharray="3 2"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card card-teal">
+    <h2 class="teal">Eigenschaften des Zentriwinkels</h2>
+    <div class="two-col">
+      <div class="definition-box teal-box">
+        <p><strong>Eindeutig bestimmt:</strong> Es gibt für jeden Bogen genau einen Zentriwinkel – nämlich den am Mittelpunkt M.</p>
+      </div>
+      <div class="definition-box teal-box">
+        <p><strong>Zusammenhang mit Bogen:</strong> Größerer Zentriwinkel = größerer Bogen. Bei 360° = vollerKreis.</p>
+      </div>
+    </div>
+    <div class="merksatz" style="margin-top:12px;">
+      <div class="icon">📐</div>
+      <p>Der Zentriwinkel über einem Halbkreis (Durchmesser AB) beträgt genau 180°. Der zugehörige Peripheriewinkel ist dann 90° – das ist der berühmte <strong>Thales-Satz</strong>!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: ZENTRI-PERIPHERIEWINKELSATZ ===== -->
+<div id="s4" class="section">
+  <div class="card card-orange">
+    <h2>Zentri-Peripheriewinkelsatz</h2>
+    <div class="definition-box">
+      <p>Der <strong>Zentriwinkel</strong> über dem Bogen <span style="text-decoration:overline">AB</span> ist <strong>doppelt so groß</strong> wie jeder zugehörige <strong>Peripheriewinkel</strong> über demselben Bogen.</p>
+    </div>
+    <div style="text-align:center; margin:16px 0; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <div class="formula">ε = 2 · γ</div>
+      <div class="formula blue">γ = ε / 2</div>
+    </div>
+    <p><em>Ebenso gilt: φ = 2 · δ</em> (bei einem anderen Peripheriewinkel δ auf der anderen Bogenseite)</p>
+  </div>
+
+  <div class="card card-blue">
+    <h2 class="blue">Warum gilt ε = 2·γ? (Beweisskizze)</h2>
+    <ul class="steps">
+      <li>Zeichne die Verbindungsgerade vom Mittelpunkt M durch den Peripheriepunkt C (Verlängerung zum Kreispunkt D).</li>
+      <li>Das entstehende Dreieck MAC ist <strong>gleichschenklig</strong> (MA = MC = Radius).</li>
+      <li>Daher gilt: Basiswinkel bei A und C sind gleich groß → Winkel bei A = Winkel bei C = α.</li>
+      <li>Der Außenwinkel bei M des Dreiecks AMD = 2·α (Außenwinkelsatz).</li>
+      <li>Durch analoge Betrachtung des anderen Teils folgt: Zentriwinkel ε = 2 · γ ✓</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Übersichtstabelle</h2>
+    <table>
+      <tr><th>Eigenschaft</th><th>Peripheriewinkel γ</th><th>Zentriwinkel ε</th></tr>
+      <tr><td>Scheitelpunkt</td><td>Auf dem Kreis</td><td>Im Mittelpunkt M</td></tr>
+      <tr><td>Anzahl</td><td>Unendlich viele (alle gleich!)</td><td>Genau einer pro Bogen</td></tr>
+      <tr><td>Beziehung</td><td>γ = ε / 2</td><td>ε = 2 · γ</td></tr>
+      <tr><td>Bei Halbkreis</td><td>γ = 90° (Thales!)</td><td>ε = 180°</td></tr>
+    </table>
+    <div class="merksatz" style="margin-top:16px;">
+      <div class="icon">🧠</div>
+      <p>Eselsbrücke: „Der Zentriwinkel ist <strong>doppelt</strong> so groß – er steht ja auch im Zentrum und hat sozusagen mehr Platz!"</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: INTERAKTIV ===== -->
+<div id="s5" class="section">
+  <div class="card card-orange">
+    <h2>Interaktive Demonstration</h2>
+    <p>Verschiebe den Schieberegler und beobachte, wie sich Zentriwinkel und Peripheriewinkel verändern.</p>
+
+    <div class="canvas-wrap">
+      <svg id="svg-demo" width="340" height="320" viewBox="0 0 340 320"></svg>
+    </div>
+
+    <div class="slider-wrap" style="margin-top:16px;">
+      <label>Position von C auf dem Kreis: <span id="sliderCLabel">60°</span></label>
+      <input type="range" id="sliderC" min="5" max="175" value="90" oninput="updateDemo()">
+    </div>
+
+    <div class="demo-controls">
+      <div class="info-chip">Zentriwinkel ε = <span id="valEps">–</span></div>
+      <div class="info-chip blue">Peripheriewinkel γ = <span id="valGamma">–</span></div>
+      <div class="info-chip teal">Verhältnis ε/γ = <span id="valRatio" style="color:var(--teal)">–</span></div>
+    </div>
+  </div>
+
+  <div class="card card-teal">
+    <h2 class="teal">Thales-Satz entdecken</h2>
+    <p>Ein Spezialfall des Zentri-Peripheriewinkelsatzes: Wenn AB ein <strong>Durchmesser</strong> ist, dann gilt für jeden Peripheriewinkel γ:</p>
+    <div style="text-align:center; margin:12px 0;">
+      <div class="formula teal">ε = 180° → γ = 90°</div>
+    </div>
+    <p>Jeder Winkel im Halbkreis ist ein <strong>rechter Winkel</strong> – das ist der Satz des Thales!</p>
+
+    <div class="canvas-wrap">
+      <svg id="svg-thales" width="280" height="240" viewBox="0 0 280 240"></svg>
+    </div>
+    <div class="slider-wrap">
+      <label>Position von C (Thales-Demo):</label>
+      <input type="range" id="sliderThales" min="195" max="345" value="270" oninput="updateThales()">
+    </div>
+    <div class="demo-controls" style="justify-content:center;">
+      <div class="info-chip teal">Winkel bei C = <span id="valThales" style="color:var(--teal)">–</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 6: ÜBUNGEN ===== -->
+<div id="s6" class="section">
+  <div class="card">
+    <h2>Teste dein Wissen!</h2>
+    <p>Beantworte alle Fragen und schau dir dein Ergebnis an.</p>
+    <div class="quiz-progress" id="quizProgress"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+
+  <div id="scoreBox" class="card" style="display:none;">
+    <div class="score-box">
+      <div class="score-number" id="scoreNum">0/6</div>
+      <div class="score-msg" id="scoreMsg"></div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-orange" onclick="resetQuiz()">🔄 Nochmal versuchen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===== NAV =====
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 's5') { updateDemo(); updateThales(); }
+  if (id === 's6') { initQuiz(); }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== HELPER MATH =====
+function deg(r) { return r * 180 / Math.PI; }
+function rad(d) { return d * Math.PI / 180; }
+function ptOnCircle(cx, cy, r, angleDeg) {
+  const a = rad(angleDeg);
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+}
+function angleBetween(px, py, ax, ay, bx, by) {
+  const v1x = ax - px, v1y = ay - py;
+  const v2x = bx - px, v2y = by - py;
+  const dot = v1x*v2x + v1y*v2y;
+  const mag = Math.sqrt((v1x**2+v1y**2)*(v2x**2+v2y**2));
+  return deg(Math.acos(Math.max(-1, Math.min(1, dot/mag))));
+}
+
+// ===== DEMO SECTION 5 =====
+function updateDemo() {
+  const svg = document.getElementById('svg-demo');
+  const cx = 170, cy = 160, r = 120;
+  // A and B on the lower half; the short arc between them is at the bottom
+  const angleA = 210, angleB = 330;
+  // C slides along the TOP arc (opposite side from the short arc AB)
+  const angleC = parseFloat(document.getElementById('sliderC').value);
+
+  const [ax, ay] = ptOnCircle(cx, cy, r, angleA);
+  const [bx, by] = ptOnCircle(cx, cy, r, angleB);
+  const [ccx, ccy] = ptOnCircle(cx, cy, r, angleC);
+
+  const eps = angleBetween(cx, cy, ax, ay, bx, by);
+  const gam = angleBetween(ccx, ccy, ax, ay, bx, by);
+  const ratio = (gam > 0.5) ? (eps/gam).toFixed(2) : '–';
+
+  document.getElementById('valEps').textContent = eps.toFixed(1) + '°';
+  document.getElementById('valGamma').textContent = gam.toFixed(1) + '°';
+  document.getElementById('valRatio').textContent = ratio;
+  document.getElementById('sliderCLabel').textContent = angleC + '°';
+
+  // Arc from A to B going clockwise through bottom (short arc, the reference arc)
+  // SVG arc: A rx ry x-rot large-arc-flag sweep-flag B
+  // From 210° to 330°: clockwise (sweep=1), angle span=120° → large-arc=0
+  svg.innerHTML = `
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#CBD5E1" stroke-width="2"/>
+    <path d="M ${ax} ${ay} A ${r} ${r} 0 0 1 ${bx} ${by}" fill="none" stroke="#F4631E" stroke-width="5" opacity="0.7"/>
+    <circle cx="${ax}" cy="${ay}" r="6" fill="#F4631E"/>
+    <text x="${ax-18}" y="${ay+16}" font-size="14" font-weight="800" fill="#F4631E" font-family="Nunito,sans-serif">A</text>
+    <circle cx="${bx}" cy="${by}" r="6" fill="#F4631E"/>
+    <text x="${bx+6}" y="${by+16}" font-size="14" font-weight="800" fill="#F4631E" font-family="Nunito,sans-serif">B</text>
+    <circle cx="${cx}" cy="${cy}" r="5" fill="#374151"/>
+    <text x="${cx+8}" y="${cy-6}" font-size="14" font-weight="800" fill="#374151" font-family="Nunito,sans-serif">M</text>
+    <circle cx="${ccx}" cy="${ccy}" r="6" fill="#1A6FBB"/>
+    <text x="${ccx+7}" y="${ccy-7}" font-size="14" font-weight="800" fill="#1A6FBB" font-family="Nunito,sans-serif">C</text>
+    <line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="#374151" stroke-width="2" stroke-dasharray="5 3"/>
+    <line x1="${cx}" y1="${cy}" x2="${bx}" y2="${by}" stroke="#374151" stroke-width="2" stroke-dasharray="5 3"/>
+    <line x1="${ccx}" y1="${ccy}" x2="${ax}" y2="${ay}" stroke="#1A6FBB" stroke-width="2"/>
+    <line x1="${ccx}" y1="${ccy}" x2="${bx}" y2="${by}" stroke="#1A6FBB" stroke-width="2"/>
+    <text x="${cx-10}" y="${cy+18}" font-size="15" font-weight="900" fill="#374151" font-family="Nunito,sans-serif">ε = ${eps.toFixed(0)}°</text>
+    <text x="${ccx+10}" y="${ccy+18}" font-size="15" font-weight="900" fill="#1A6FBB" font-family="Nunito,sans-serif">γ = ${gam.toFixed(0)}°</text>
+    <text x="${cx}" y="310" font-size="13" fill="#6B7280" text-anchor="middle" font-family="Nunito,sans-serif">ε = 2·γ → ${eps.toFixed(1)}° = 2 × ${gam.toFixed(1)}°</text>
+  `;
+}
+
+function updateThales() {
+  const svg = document.getElementById('svg-thales');
+  const cx = 140, cy = 115, r = 95;
+  const angleA = 180, angleB = 0;
+  const angleC = parseFloat(document.getElementById('sliderThales').value);
+
+  const [ax, ay] = ptOnCircle(cx, cy, r, angleA);
+  const [bx, by] = ptOnCircle(cx, cy, r, angleB);
+  const [ccx, ccy] = ptOnCircle(cx, cy, r, angleC);
+
+  const gam = angleBetween(ccx, ccy, ax, ay, bx, by);
+  document.getElementById('valThales').textContent = gam.toFixed(1) + '°';
+
+  svg.innerHTML = `
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#CBD5E1" stroke-width="2"/>
+    <line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#F4631E" stroke-width="3"/>
+    <circle cx="${ax}" cy="${ay}" r="5" fill="#F4631E"/>
+    <text x="${ax-18}" y="${ay+16}" font-size="13" font-weight="800" fill="#F4631E" font-family="Nunito,sans-serif">A</text>
+    <circle cx="${bx}" cy="${by}" r="5" fill="#F4631E"/>
+    <text x="${bx+6}" y="${by+14}" font-size="13" font-weight="800" fill="#F4631E" font-family="Nunito,sans-serif">B</text>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="#374151"/>
+    <text x="${cx+5}" y="${cy-5}" font-size="13" font-weight="800" fill="#374151" font-family="Nunito,sans-serif">M</text>
+    <circle cx="${ccx}" cy="${ccy}" r="5" fill="#0FA89B"/>
+    <text x="${ccx+6}" y="${ccy-5}" font-size="13" font-weight="800" fill="#0FA89B" font-family="Nunito,sans-serif">C</text>
+    <line x1="${ccx}" y1="${ccy}" x2="${ax}" y2="${ay}" stroke="#0FA89B" stroke-width="2"/>
+    <line x1="${ccx}" y1="${ccy}" x2="${bx}" y2="${by}" stroke="#0FA89B" stroke-width="2"/>
+    <text x="${ccx+8}" y="${ccy+12}" font-size="14" font-weight="900" fill="#0FA89B" font-family="Nunito,sans-serif">${gam.toFixed(0)}°</text>
+    <text x="${cx}" y="225" font-size="12" fill="#374151" text-anchor="middle" font-family="Nunito,sans-serif">AB = Durchmesser → Winkel bei C = 90°</text>
+  `;
+}
+
+// ===== QUIZ =====
+const questions = [
+  {
+    q: "Ein Peripheriewinkel hat seinen Scheitelpunkt …",
+    options: ["… im Kreismittelpunkt M.", "… auf dem Kreis.", "… außerhalb des Kreises.", "… auf dem Durchmesser."],
+    correct: 1,
+    explanation: "✅ Richtig! Der Scheitelpunkt des Peripheriewinkels liegt auf dem Kreis (daher auch: Umfangswinkel)."
+  },
+  {
+    q: "Zwei Peripheriewinkel γ₁ und γ₂ stehen über demselben Bogen AB. Was gilt?",
+    options: ["γ₁ = 2 · γ₂", "γ₁ + γ₂ = 180°", "γ₁ = γ₂", "γ₁ · γ₂ = 90°"],
+    correct: 2,
+    explanation: "✅ Richtig! Nach dem Peripheriewinkelsatz sind alle Peripheriewinkel über demselben Bogen gleich groß."
+  },
+  {
+    q: "Der Zentriwinkel ε über dem Bogen AB beträgt 80°. Wie groß ist der zugehörige Peripheriewinkel γ?",
+    options: ["160°", "40°", "80°", "20°"],
+    correct: 1,
+    explanation: "✅ Richtig! γ = ε / 2 = 80° / 2 = 40°."
+  },
+  {
+    q: "Der Peripheriewinkel γ über einem Bogen AB beträgt 35°. Wie groß ist der Zentriwinkel ε?",
+    options: ["17,5°", "35°", "70°", "105°"],
+    correct: 2,
+    explanation: "✅ Richtig! ε = 2 · γ = 2 · 35° = 70°."
+  },
+  {
+    q: "AB ist ein Durchmesser des Kreises. Wie groß ist der Peripheriewinkel γ über AB?",
+    options: ["45°", "60°", "90°", "180°"],
+    correct: 2,
+    explanation: "✅ Richtig! Das ist der Satz des Thales: Wenn AB ein Durchmesser ist, beträgt der Peripheriewinkel genau 90°."
+  },
+  {
+    q: "Wie nennt man den Winkel, dessen Scheitelpunkt im Kreismittelpunkt M liegt?",
+    options: ["Peripheriewinkel", "Umfangswinkel", "Zentriwinkel", "Mittelpunktswinkel"],
+    correct: 2,
+    explanation: "✅ Richtig! Der Winkel mit Scheitelpunkt im Kreismittelpunkt M heißt Zentriwinkel. (Mittelpunktswinkel ist kein Fachbegriff.)"
+  }
+];
+
+let answers = new Array(questions.length).fill(null);
+let quizInited = false;
+
+function initQuiz() {
+  if (quizInited) return;
+  quizInited = true;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const prog = document.getElementById('quizProgress');
+  const cont = document.getElementById('quizContainer');
+  prog.innerHTML = '';
+  cont.innerHTML = '';
+  document.getElementById('scoreBox').style.display = 'none';
+  answers = new Array(questions.length).fill(null);
+
+  questions.forEach((q, qi) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot';
+    dot.id = `dot-${qi}`;
+    dot.textContent = qi+1;
+    prog.appendChild(dot);
+
+    const card = document.createElement('div');
+    card.className = 'card quiz-question';
+    card.innerHTML = `
+      <div class="q-text">${qi+1}. ${q.q}</div>
+      <div class="options" id="opts-${qi}">
+        ${q.options.map((o,oi) => `<button class="option-btn" onclick="selectAnswer(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-${qi}"></div>
+    `;
+    cont.appendChild(card);
+  });
+}
+
+function selectAnswer(qi, oi) {
+  if (answers[qi] !== null) return;
+  answers[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#opts-${qi} .option-btn`);
+  const fb = document.getElementById(`fb-${qi}`);
+  const dot = document.getElementById(`dot-${qi}`);
+
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi && oi !== q.correct) btn.classList.add('wrong');
+  });
+
+  if (oi === q.correct) {
+    fb.textContent = q.explanation;
+    fb.className = 'feedback show ok';
+    dot.classList.add('done-ok');
+  } else {
+    fb.textContent = '❌ Nicht ganz. ' + q.explanation;
+    fb.className = 'feedback show err';
+    dot.classList.add('done-err');
+  }
+
+  if (answers.every(a => a !== null)) {
+    setTimeout(showScore, 600);
+  }
+}
+
+function showScore() {
+  const correct = answers.filter((a,i) => a === questions[i].correct).length;
+  const box = document.getElementById('scoreBox');
+  box.style.display = 'block';
+  document.getElementById('scoreNum').textContent = correct + ' / ' + questions.length;
+  const msgs = ['Noch etwas üben! 💪', 'Fast! Versuch es nochmal. 🙂', 'Gut gemacht! 👍', 'Sehr gut! 🌟', 'Ausgezeichnet! 🏆', 'Perfekt! 🎉', 'Perfekt! 🎉'];
+  document.getElementById('scoreMsg').textContent = msgs[correct] || '🎉';
+  box.scrollIntoView({behavior:'smooth'});
+}
+
+function resetQuiz() {
+  quizInited = false;
+  initQuiz();
+  window.scrollTo({top: document.getElementById('s6').offsetTop - 100, behavior:'smooth'});
+}
+
+// init intro svg
+document.addEventListener('DOMContentLoaded', () => {
+  // nothing extra needed
+});
+</script>
+</body>
+</html>
