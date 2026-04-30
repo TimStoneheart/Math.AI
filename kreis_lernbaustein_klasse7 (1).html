@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kreise – Lernbaustein Klasse 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #E2661A;
+    --orange-light: #F5946A;
+    --orange-pale: #FDF0E8;
+    --orange-mid: #FADFCC;
+    --blue: #1A5FAA;
+    --blue-pale: #E8F0FA;
+    --green: #2E7D3A;
+    --green-pale: #E8F5EB;
+    --ink: #1A1714;
+    --ink-mid: #4A4540;
+    --ink-soft: #7A756F;
+    --border: #E8E3DE;
+    --bg: #FAF8F5;
+    --white: #FFFFFF;
+    --shadow: 0 2px 16px rgba(26,23,20,0.08);
+    --shadow-lg: 0 8px 32px rgba(26,23,20,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--ink);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--orange);
+  }
+  .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .header-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 1.5rem 1rem 0;
+    border-right: 1px solid rgba(255,255,255,0.12);
+  }
+  .header-brand .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange-light);
+    margin-bottom: 2px;
+  }
+  .header-brand h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .header-nav {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    padding-left: 1rem;
+    gap: 2px;
+    overflow-x: auto;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 0 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    position: relative;
+    top: 2px;
+  }
+  .nav-btn:hover { color: rgba(255,255,255,0.8); }
+  .nav-btn.active { color: #fff; border-bottom-color: var(--orange); }
+
+  /* ── LAYOUT ── */
+  .main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── SECTION ── */
+  .section { display: none; animation: fadeIn 0.2s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+  .card-desc { font-size: 13.5px; color: var(--ink-mid); line-height: 1.65; margin-bottom: 1rem; }
+
+  /* ── GRID ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── TERM CARDS ── */
+  .term-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 1rem; }
+  .term-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .term-card:hover, .term-card.active { background: var(--orange-pale); border-left-color: var(--orange); }
+  .term-card .term-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .term-card .term-def { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ── HIGHLIGHT BOX ── */
+  .hi-box {
+    background: var(--orange-pale);
+    border: 1px solid var(--orange-mid);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #7A3A10;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+  .hi-box.blue { background: var(--blue-pale); border-color: #B8D0EE; color: #1A3A6A; }
+  .hi-box.green { background: var(--green-pale); border-color: #B0D8B8; color: #1A4A24; }
+
+  /* ── FORMULA ── */
+  .formula {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 2px 4px;
+    color: var(--ink);
+  }
+
+  /* ── SLIDER ── */
+  .slider-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-label { font-size: 13px; color: var(--ink-soft); min-width: 90px; }
+  .slider-val { font-size: 14px; font-weight: 500; min-width: 56px; color: var(--orange); text-align: right; }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--border);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--orange);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 6px rgba(226,102,26,0.3);
+  }
+
+  /* ── RESULT CARDS ── */
+  .result-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .result-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    flex: 1;
+    min-width: 120px;
+  }
+  .result-card .rl { font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
+  .result-card .rv { font-size: 22px; font-family: 'Fraunces', serif; color: var(--ink); }
+  .result-card .ru { font-size: 11px; color: var(--ink-soft); }
+
+  /* ── QUIZ ── */
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 14px; line-height: 1.55; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .quiz-opt {
+    padding: 11px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    background: var(--bg);
+    color: var(--ink);
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .quiz-opt:hover:not(:disabled) { background: var(--orange-pale); border-color: var(--orange-light); }
+  .quiz-opt.correct { background: var(--green-pale) !important; border-color: var(--green) !important; color: var(--green) !important; font-weight: 500; }
+  .quiz-opt.wrong { background: #FCEBEB !important; border-color: #C83232 !important; color: #8B1A1A !important; }
+  .quiz-feedback {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    border: 1px solid transparent;
+  }
+  .quiz-feedback.ok { background: var(--green-pale); border-color: #B0D8B8; color: #1A4A24; }
+  .quiz-feedback.nok { background: #FCEBEB; border-color: #EEB8B8; color: #8B1A1A; }
+  .quiz-nav { display: flex; justify-content: space-between; align-items: center; }
+  .quiz-prog { font-size: 12px; color: var(--ink-soft); }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 4px; margin-bottom: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--orange); border-radius: 4px; transition: width 0.4s ease; }
+
+  /* ── BTN ── */
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn-primary { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .btn-primary:hover { background: #C4560F; }
+
+  /* ── STEPS ── */
+  .steps { counter-reset: step; display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num {
+    counter-increment: step;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-num::before { content: counter(step); }
+  .step-text { font-size: 13.5px; color: var(--ink-mid); line-height: 1.65; padding-top: 3px; }
+  .step-text strong { color: var(--ink); }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-soft); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .leg-line { width: 20px; height: 3px; flex-shrink: 0; border-radius: 2px; }
+  .leg-dashed { width: 20px; height: 0; border-top: 2.5px dashed; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="eyebrow">Mathematik · Klasse 7 · Gymnasium Sachsen</div>
+      <h1>Kreise und ihre Eigenschaften</h1>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn active" onclick="showTab('begriffe',this)">Begriffe</button>
+      <button class="nav-btn" onclick="showTab('rechner',this)">Rechner</button>
+      <button class="nav-btn" onclick="showTab('saetze',this)">Winkelsätze</button>
+      <button class="nav-btn" onclick="showTab('thales',this)">Thales</button>
+      <button class="nav-btn" onclick="showTab('quiz',this)">Quiz</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ═══════════ BEGRIFFE ═══════════ -->
+  <div id="begriffe" class="section active">
+    <div class="two-col">
+      <div class="card" style="grid-row: span 2;">
+        <div class="card-title">Interaktives Kreisdiagramm</div>
+        <p class="card-desc">Klicke auf einen Begriff, um ihn im Kreis hervorzuheben.</p>
+        <svg id="kreissvg" viewBox="0 0 280 280" style="width:100%;display:block;">
+          <defs>
+            <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <path d="M0,0 L7,3.5 L0,7 Z" fill="#666"/>
+            </marker>
+          </defs>
+          <!-- Kreis -->
+          <circle cx="140" cy="140" r="100" fill="#FAFAF8" stroke="#D8D3CC" stroke-width="1.5"/>
+          <!-- Mittelpunkt -->
+          <circle cx="140" cy="140" r="3.5" fill="#4A4540"/>
+          <text x="145" y="136" font-size="11" fill="#7A756F" font-family="DM Sans, sans-serif">M</text>
+
+          <!-- Radius (highlight) -->
+          <line id="hl-radius" x1="140" y1="140" x2="240" y2="140" stroke="#E2661A" stroke-width="2.5" opacity="0" class="hl"/>
+          <text id="lbl-radius" x="184" y="134" font-size="11" fill="#E2661A" opacity="0" class="hl" font-family="Fraunces, serif" font-style="italic">r</text>
+
+          <!-- Durchmesser (highlight) -->
+          <line id="hl-dm" x1="40" y1="140" x2="240" y2="140" stroke="#1A5FAA" stroke-width="2.5" opacity="0" class="hl"/>
+          <text id="lbl-dm" x="126" y="132" font-size="11" fill="#1A5FAA" opacity="0" class="hl" font-family="DM Sans, sans-serif">d</text>
+
+          <!-- Sehne (highlight) — Endpunkte exakt auf dem Kreis (cx=140,cy=140,r=100, y=198 → dy=58 → dx=√(100²-58²)≈81.5) -->
+          <circle id="hl-sehne-p1" cx="58.5" cy="198" r="3.5" fill="#2E7D3A" opacity="0" class="hl"/>
+          <circle id="hl-sehne-p2" cx="221.5" cy="198" r="3.5" fill="#2E7D3A" opacity="0" class="hl"/>
+          <line id="hl-sehne" x1="58.5" y1="198" x2="221.5" y2="198" stroke="#2E7D3A" stroke-width="2.5" opacity="0" class="hl"/>
+          <text id="lbl-sehne" x="123" y="213" font-size="11" fill="#2E7D3A" opacity="0" class="hl" font-family="DM Sans, sans-serif">Sehne</text>
+
+          <!-- Tangente (highlight) -->
+          <line id="hl-tang" x1="50" y1="40" x2="230" y2="40" stroke="#993C1D" stroke-width="2" stroke-dasharray="6,3" opacity="0" class="hl"/>
+          <circle id="hl-bp" cx="140" cy="40" r="4" fill="#993C1D" opacity="0" class="hl"/>
+          <text id="lbl-tang" x="232" y="44" font-size="10" fill="#993C1D" opacity="0" class="hl" font-family="DM Sans, sans-serif">Tangente</text>
+          <!-- Berührradius -->
+          <line id="hl-brad" x1="140" y1="140" x2="140" y2="40" stroke="#993C1D" stroke-width="1.5" stroke-dasharray="3,3" opacity="0" class="hl"/>
+
+          <!-- Sekante (highlight) -->
+          <line id="hl-sek" x1="30" y1="80" x2="260" y2="175" stroke="#6B3AB7" stroke-width="2" opacity="0" class="hl"/>
+          <text id="lbl-sek" x="245" y="170" font-size="10" fill="#6B3AB7" opacity="0" class="hl" font-family="DM Sans, sans-serif">Sekante</text>
+
+          <!-- Passante (highlight) -->
+          <line id="hl-pass" x1="30" y1="260" x2="250" y2="260" stroke="#888780" stroke-width="2" stroke-dasharray="5,3" opacity="0" class="hl"/>
+          <text id="lbl-pass" x="234" y="256" font-size="10" fill="#888780" opacity="0" class="hl" font-family="DM Sans, sans-serif">Passante</text>
+        </svg>
+
+        <!-- Buttons -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('radius',this)">Radius</button>
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('dm',this)">Durchmesser</button>
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('sehne',this)">Sehne</button>
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('tang',this)">Tangente</button>
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('sek',this)">Sekante</button>
+          <button class="quiz-opt" style="flex:none;padding:6px 12px;font-size:12px;" onclick="highlightTerm('pass',this)">Passante</button>
+        </div>
+        <div id="term-info" class="hi-box" style="display:none;margin-top:10px;"></div>
+      </div>
+
+      <div>
+        <div class="term-grid" style="grid-template-columns:1fr;">
+          <div class="term-card"><div class="term-name">Radius (r)</div><div class="term-def">Abstand vom Mittelpunkt M zu jedem Punkt auf dem Kreis. Alle Radien sind gleich lang.</div></div>
+          <div class="term-card"><div class="term-name">Durchmesser (d)</div><div class="term-def">Sehne durch den Mittelpunkt M. Es gilt: d = 2·r. Der Durchmesser ist die längste Sehne.</div></div>
+          <div class="term-card"><div class="term-name">Sehne</div><div class="term-def">Verbindungsstrecke zweier Punkte auf dem Kreis (nicht zwingend durch M).</div></div>
+          <div class="term-card"><div class="term-name">Tangente</div><div class="term-def">Gerade mit genau einem Berührpunkt P. Steht senkrecht auf dem Radius MP.</div></div>
+          <div class="term-card"><div class="term-name">Sekante</div><div class="term-def">Gerade, die den Kreis in genau zwei Punkten schneidet.</div></div>
+          <div class="term-card"><div class="term-name">Passante</div><div class="term-def">Gerade ohne gemeinsamen Punkt mit dem Kreis – liegt vollständig außerhalb.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ RECHNER ═══════════ -->
+  <div id="rechner" class="section">
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Kreisrechner</div>
+        <p class="card-desc">Verschiebe den Regler – alle Werte werden sofort berechnet.</p>
+        <div class="slider-wrap">
+          <span class="slider-label">Radius r</span>
+          <input type="range" min="0.5" max="20" value="5" step="0.1" id="rSlider" oninput="updateCircle()">
+          <span class="slider-val" id="rVal">5,0 cm</span>
+        </div>
+        <div class="result-row">
+          <div class="result-card"><div class="rl">Durchmesser d</div><div class="rv" id="rDm">10,0</div><div class="ru">cm</div></div>
+          <div class="result-card"><div class="rl">Umfang U</div><div class="rv" id="rU">31,4</div><div class="ru">cm</div></div>
+          <div class="result-card"><div class="rl">Fläche A</div><div class="rv" id="rA">78,5</div><div class="ru">cm²</div></div>
+        </div>
+        <div class="hi-box" style="margin-top:14px;">
+          <strong>Formeln:</strong><br>
+          <span class="formula">d = 2 · r</span>
+          <span class="formula">U = 2 · π · r</span>
+          <span class="formula">A = π · r²</span>
+        </div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;justify-content:center;">
+        <svg id="circleViz" viewBox="0 0 220 220" style="width:100%;max-width:220px;display:block;">
+          <circle id="dynCircle" cx="110" cy="110" r="75" fill="#FDF0E8" stroke="#E2661A" stroke-width="2"/>
+          <line id="dynRadius" x1="110" y1="110" x2="185" y2="110" stroke="#E2661A" stroke-width="2"/>
+          <circle cx="110" cy="110" r="3" fill="#C4560F"/>
+          <text id="dynRLabel" x="144" y="105" font-size="12" fill="#E2661A" font-family="Fraunces,serif" font-style="italic">r = 5</text>
+          <text x="110" y="200" font-size="11" fill="#7A756F" text-anchor="middle" font-family="DM Sans,sans-serif" id="dynULabel">U ≈ 31,4 cm</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ WINKELSÄTZE ═══════════ -->
+  <div id="saetze" class="section">
+
+    <!-- Peripherie + Zentriwinkel -->
+    <div class="card">
+      <div class="card-title">Peripheriewinkelsatz &amp; Zentri-Peripheriewinkelsatz</div>
+      <p class="card-desc">
+        Alle Peripheriewinkel über demselben Bogen AB sind gleich groß.<br>
+        Der Zentriwinkel ε über demselben Bogen ist doppelt so groß wie jeder Peripheriewinkel γ.
+      </p>
+
+      <div class="two-col" style="align-items:start;">
+        <!-- SVG Diagramm -->
+        <div>
+          <svg viewBox="0 0 300 310" style="width:100%;max-width:340px;display:block;margin:0 auto;">
+            <!-- Kreis -->
+            <circle cx="150" cy="155" r="108" fill="#FAFAF8" stroke="#D8D3CC" stroke-width="1.5"/>
+
+            <!-- Mittelpunkt M -->
+            <circle cx="150" cy="155" r="3.5" fill="#4A4540"/>
+            <text x="155" y="151" font-size="11" fill="#7A756F" font-family="DM Sans,sans-serif">M</text>
+
+            <!--
+              Bogen AB: A links oben, B rechts oben
+              A = 150 + 108·cos(205°) ≈ 52,  155 + 108·sin(205°) ≈ 109
+              B = 150 + 108·cos(335°) ≈ 248, 155 + 108·sin(335°) ≈ 109
+              (Bogen von A nach B durch den UNTEREN Teil = großer Bogen markiert oben)
+            -->
+            <!-- Grauer Hintergrundkreis-Bogen (Restbogen) -->
+            <path d="M 52,109 A 108,108 0 0,1 248,109" fill="none" stroke="#D8D3CC" stroke-width="1.5"/>
+            <!-- Oranger Bogen AB (der untere, größere Bogen) -->
+            <path d="M 52,109 A 108,108 0 1,0 248,109" fill="none" stroke="#E2661A" stroke-width="3.5"/>
+
+            <!-- Punkte A und B -->
+            <circle cx="52" cy="109" r="4.5" fill="#E2661A"/>
+            <circle cx="248" cy="109" r="4.5" fill="#E2661A"/>
+            <text x="32" y="113" font-size="13" font-weight="500" fill="#E2661A" font-family="Fraunces,serif">A</text>
+            <text x="254" y="113" font-size="13" font-weight="500" fill="#E2661A" font-family="Fraunces,serif">B</text>
+
+            <!-- ── Zentriwinkel ε (gestrichelt, von M) ── -->
+            <line x1="150" y1="155" x2="52" y2="109" stroke="#E2661A" stroke-width="2" stroke-dasharray="5,3" opacity="0.7"/>
+            <line x1="150" y1="155" x2="248" y2="109" stroke="#E2661A" stroke-width="2" stroke-dasharray="5,3" opacity="0.7"/>
+            <!-- Zentriwinkel-Bogen bei M: kleiner Bogen zwischen den beiden Schenkeln -->
+            <!-- Richtung A: ca. 205° → Richtung B: ca. −25° (335°), Winkel ~130° -->
+            <!-- Kleiner Bogen bei M mit r=28: -->
+            <!-- Start: 150+28·cos(205°)≈124.6, 155+28·sin(205°)≈143.2 -->
+            <!-- End:   150+28·cos(335°)≈175.4, 155+28·sin(335°)≈143.2 -->
+            <path d="M 124.6,143.2 A 28,28 0 0,1 175.4,143.2" fill="none" stroke="#E2661A" stroke-width="1.8"/>
+            <!-- Label ε mittig über dem Bogen: bei ~270° (oben) = 150, 155-28=127 -->
+            <text x="150" y="124" font-size="13" font-weight="500" fill="#E2661A" text-anchor="middle" font-family="Fraunces,serif" font-style="italic">ε</text>
+
+            <!-- ── Peripheriewinkel C₁ (blau) ── -->
+            <!-- C1 auf dem oberen Bogen, z.B. bei 90° → (150, 155-108) = (150, 47) -->
+            <circle cx="150" cy="47" r="4.5" fill="#1A5FAA"/>
+            <text x="142" y="36" font-size="13" font-weight="500" fill="#1A5FAA" font-family="Fraunces,serif">C₁</text>
+            <line x1="150" y1="47" x2="52" y2="109" stroke="#1A5FAA" stroke-width="1.8"/>
+            <line x1="150" y1="47" x2="248" y2="109" stroke="#1A5FAA" stroke-width="1.8"/>
+            <!--
+              Winkel γ₁ bei C₁: Schenkel gehen nach A (links-unten) und B (rechts-unten).
+              Richtung C1→A: atan2(109−47, 52−150) = atan2(62,−98) ≈ 147.7°
+              Richtung C1→B: atan2(109−47, 248−150) = atan2(62, 98)  ≈  32.3°
+              Mittelbisektrix ≈ 90° (genau nach unten)
+              Bogen r=20 von 147.7° nach 32.3° (im Uhrzeigersinn, large-arc=0):
+              Start: 150+20·cos(147.7°)≈133.1, 47+20·sin(147.7°)≈57.7
+              End:   150+20·cos(32.3°) ≈166.9, 47+20·sin(32.3°) ≈57.7
+            -->
+            <path d="M 133.1,57.7 A 20,20 0 0,0 166.9,57.7" fill="none" stroke="#1A5FAA" stroke-width="1.8"/>
+            <text x="150" y="74" font-size="12" font-weight="500" fill="#1A5FAA" text-anchor="middle" font-family="Fraunces,serif" font-style="italic">γ₁</text>
+
+            <!-- ── Peripheriewinkel C₂ (grün) ── -->
+            <!-- C2 auf dem oberen Bogen, z.B. bei 130° → 150+108·cos(130°)≈80.5, 155+108·sin(130°)=155−69.5... 
+                 Besser: 150+108·cos(50°)≈219.4, 155−108·sin(50°)≈72.3 (rechts oben) -->
+            <circle cx="219" cy="72" r="4.5" fill="#2E7D3A"/>
+            <text x="225" y="68" font-size="13" font-weight="500" fill="#2E7D3A" font-family="Fraunces,serif">C₂</text>
+            <line x1="219" y1="72" x2="52" y2="109" stroke="#2E7D3A" stroke-width="1.8"/>
+            <line x1="219" y1="72" x2="248" y2="109" stroke="#2E7D3A" stroke-width="1.8"/>
+            <!--
+              Winkel γ₂ bei C₂:
+              Richtung C2→A: atan2(109−72, 52−219) = atan2(37,−167) ≈ 167.5°
+              Richtung C2→B: atan2(109−72, 248−219) = atan2(37,29)  ≈  51.9°
+              Mittelbisektrix ≈ 109.7°
+              Bogen r=22:
+              Start: 219+22·cos(167.5°)≈197.5, 72+22·sin(167.5°)≈76.7
+              End:   219+22·cos(51.9°) ≈232.6, 72+22·sin(51.9°) ≈89.3
+            -->
+            <path d="M 197.5,76.7 A 22,22 0 0,0 232.6,89.3" fill="none" stroke="#2E7D3A" stroke-width="1.8"/>
+            <text x="211" y="101" font-size="12" font-weight="500" fill="#2E7D3A" text-anchor="middle" font-family="Fraunces,serif" font-style="italic">γ₂</text>
+
+            <!-- Gleichung -->
+            <text x="150" y="298" font-size="12" text-anchor="middle" fill="#4A4540" font-family="Fraunces,serif" font-style="italic">γ₁ = γ₂ &nbsp;und&nbsp; ε = 2γ</text>
+          </svg>
+
+          <div class="legend">
+            <div class="leg"><div class="leg-line" style="background:#E2661A;"></div>Bogen AB</div>
+            <div class="leg"><div class="leg-dashed" style="border-color:#E2661A;"></div>Zentriwinkel ε (von M)</div>
+            <div class="leg"><div class="leg-line" style="background:#1A5FAA;"></div>Peripheriewinkel γ₁ bei C₁</div>
+            <div class="leg"><div class="leg-line" style="background:#2E7D3A;"></div>Peripheriewinkel γ₂ bei C₂</div>
+          </div>
+        </div>
+
+        <!-- Erläuterungen + interaktiver Regler -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="hi-box">
+            <strong>Peripheriewinkelsatz:</strong><br>
+            Alle Peripheriewinkel (Umfangswinkel) über demselben Bogen AB sind gleich groß:<br>
+            <span class="formula">γ₁ = γ₂</span>
+          </div>
+          <div class="hi-box">
+            <strong>Zentri-Peripheriewinkelsatz:</strong><br>
+            Der Zentriwinkel ε über Bogen AB (vom Mittelpunkt M) ist doppelt so groß wie jeder Peripheriewinkel:<br>
+            <span class="formula">ε = 2 · γ</span>
+          </div>
+
+          <!-- Interaktiver Regler -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title" style="font-size:14px;">Ausprobieren</div>
+            <div class="slider-wrap">
+              <span class="slider-label">Peripheriewinkel γ</span>
+              <input type="range" min="5" max="85" value="35" step="1" id="gammaSlider" oninput="updateWinkel()">
+              <span class="slider-val" id="gammaVal">35°</span>
+            </div>
+            <div class="result-row">
+              <div class="result-card"><div class="rl">Peripheriewinkel γ</div><div class="rv" id="wGamma">35°</div></div>
+              <div class="result-card"><div class="rl">Zentriwinkel ε = 2γ</div><div class="rv" id="wEps">70°</div></div>
+            </div>
+          </div>
+
+          <!-- Sehnenviereck -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title" style="font-size:14px;">Sehnenviereck</div>
+            <p style="font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:8px;">
+              Ein Viereck, dessen alle vier Seiten Sehnen eines Kreises sind. Gegenüberliegende Innenwinkel ergänzen sich zu 180°.
+            </p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="formula">α + γ = 180°</span>
+              <span class="formula">β + δ = 180°</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ THALES ═══════════ -->
+  <div id="thales" class="section">
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Satz des Thales</div>
+        <p class="card-desc">Liegt C auf dem Halbkreis über AB (dem Durchmesser), dann ist das Dreieck bei C rechtwinklig.</p>
+
+        <svg id="thalesSvg" viewBox="0 0 280 240" style="width:100%;max-width:300px;display:block;margin:0 auto;">
+          <!-- Halbkreis -->
+          <path d="M 40,140 A 100,100 0 0,1 240,140" fill="#FDF0E8" stroke="#E2661A" stroke-width="2"/>
+          <line x1="40" y1="140" x2="240" y2="140" stroke="#E2661A" stroke-width="2"/>
+          <!-- Mittelpunkt -->
+          <circle cx="140" cy="140" r="3" fill="#C4560F"/>
+          <text x="144" y="136" font-size="10" fill="#7A756F" font-family="DM Sans,sans-serif">M</text>
+          <!-- A, B -->
+          <circle cx="40" cy="140" r="4.5" fill="#E2661A"/>
+          <circle cx="240" cy="140" r="4.5" fill="#E2661A"/>
+          <text x="26" y="155" font-size="13" font-weight="500" fill="#E2661A" font-family="Fraunces,serif">A</text>
+          <text x="244" y="155" font-size="13" font-weight="500" fill="#E2661A" font-family="Fraunces,serif">B</text>
+          <!-- C dynamisch -->
+          <circle id="thalesC" cx="209" cy="71" r="4.5" fill="#1A5FAA"/>
+          <text id="thalesCLabel" x="214" y="67" font-size="13" font-weight="500" fill="#1A5FAA" font-family="Fraunces,serif">C</text>
+          <!-- Schenkel AC, BC -->
+          <line id="thalesAC" x1="40" y1="140" x2="209" y2="71" stroke="#1A5FAA" stroke-width="1.8"/>
+          <line id="thalesBC" x1="240" y1="140" x2="209" y2="71" stroke="#1A5FAA" stroke-width="1.8"/>
+          <!-- Rechter Winkel bei C: kleines Quadrat -->
+          <g id="thalesRight">
+            <!-- Winkel bei C als kleines Quadrat -->
+            <path id="rightAngle" d="M 200,83 L 196,78 L 204,73" fill="none" stroke="#1A5FAA" stroke-width="1.5"/>
+          </g>
+          <!-- γ = 90° label -->
+          <text id="thalesAngleLabel" x="188" y="92" font-size="12" font-weight="500" fill="#1A5FAA" text-anchor="middle" font-family="Fraunces,serif" font-style="italic">γ = 90°</text>
+        </svg>
+
+        <div class="slider-wrap" style="margin-top:12px;">
+          <span class="slider-label">C verschieben</span>
+          <input type="range" min="8" max="172" value="30" step="1" id="thalesSlider" oninput="updateThales()">
+        </div>
+        <p style="font-size:12px;color:var(--ink-soft);margin-top:4px;">Der Winkel bei C bleibt immer 90°, egal wo C auf dem Halbkreis liegt.</p>
+
+        <div class="hi-box" style="margin-top:12px;">
+          <strong>Umkehrung:</strong> Ist γ = 90°, dann liegt C auf dem Thaleskreis über AB.
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Umkreis eines Dreiecks</div>
+          <p class="card-desc">Der Umkreis geht durch alle drei Eckpunkte. Sein Mittelpunkt M<sub>U</sub> liegt im Schnittpunkt der Mittelsenkrechten.</p>
+          <div class="steps">
+            <div class="step"><div class="step-num"></div><div class="step-text">Konstruiere die <strong>Mittelsenkrechte</strong> jeder der drei Seiten (Menge aller Punkte mit gleichem Abstand zu beiden Endpunkten).</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text">Der <strong>Schnittpunkt M<sub>U</sub></strong> aller drei Mittelsenkrechten ist der Umkreismittelpunkt.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text">Schlage einen Kreis mit Radius <span class="formula" style="font-size:12px;">r<sub>U</sub> = |M<sub>U</sub>A|</span> – er geht durch alle drei Eckpunkte.</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Inkreis eines Dreiecks</div>
+          <p class="card-desc">Der Inkreis berührt alle drei Seiten von innen. Sein Mittelpunkt M<sub>I</sub> liegt im Schnittpunkt der Winkelhalbierenden.</p>
+          <div class="steps">
+            <div class="step"><div class="step-num"></div><div class="step-text">Konstruiere die <strong>Winkelhalbierende</strong> jedes der drei Innenwinkel.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text">Der <strong>Schnittpunkt M<sub>I</sub></strong> aller drei Winkelhalbierenden ist der Inkreismittelpunkt.</div></div>
+            <div class="step"><div class="step-num"></div><div class="step-text">Fälle das <strong>Lot</strong> von M<sub>I</sub> auf eine Seite – die Länge des Lotes ist der Inradius r<sub>I</sub>.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUIZ ═══════════ -->
+  <div id="quiz" class="section">
+    <div class="card" style="max-width:640px;margin:0 auto;">
+      <div class="card-title">Wissens-Quiz — Kreise</div>
+      <div id="quizBody">
+        <div class="progress-bar"><div class="progress-fill" id="qBar" style="width:0%"></div></div>
+        <div class="quiz-prog" id="qProg">Frage 1 von 8</div>
+        <div id="qQuestion" class="quiz-q" style="margin-top:14px;"></div>
+        <div class="quiz-opts" id="qOpts"></div>
+        <div id="qFeedback" class="quiz-feedback" style="display:none;"></div>
+        <div class="quiz-nav">
+          <span></span>
+          <button class="btn btn-primary" id="qNext" style="display:none;" onclick="nextQ()">Weiter →</button>
+        </div>
+      </div>
+      <div id="quizResult" style="display:none;text-align:center;padding:2rem 0;">
+        <div style="font-size:48px;font-family:'Fraunces',serif;color:var(--orange);" id="qScore"></div>
+        <div style="font-size:14px;color:var(--ink-soft);margin:8px 0 20px;" id="qScoreText"></div>
+        <button class="btn btn-primary" onclick="resetQuiz()">Nochmal versuchen</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ── TAB NAVIGATION ── */
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+/* ── BEGRIFFE: Highlight ── */
+const termData = {
+  radius: { ids:['hl-radius','lbl-radius'], info:'<strong>Radius r:</strong> Strecke vom Mittelpunkt M zu einem Kreispunkt. Alle Radien sind gleich lang. Zusammenhang: d = 2·r.' },
+  dm:     { ids:['hl-dm','lbl-dm'],         info:'<strong>Durchmesser d:</strong> Die längste Sehne – geht durch den Mittelpunkt M. Es gilt d = 2·r.' },
+  sehne:  { ids:['hl-sehne','hl-sehne-p1','hl-sehne-p2','lbl-sehne'], info:'<strong>Sehne:</strong> Verbindungsstrecke zweier Punkte auf dem Kreis. Geht die Sehne durch M, heißt sie Durchmesser.' },
+  tang:   { ids:['hl-tang','hl-bp','lbl-tang','hl-brad'], info:'<strong>Tangente:</strong> Gerade mit genau einem Berührpunkt P. Sie steht senkrecht auf dem Radius MP.' },
+  sek:    { ids:['hl-sek','lbl-sek'],        info:'<strong>Sekante:</strong> Gerade, die den Kreis in genau zwei Punkten schneidet.' },
+  pass:   { ids:['hl-pass','lbl-pass'],      info:'<strong>Passante:</strong> Gerade ganz außerhalb des Kreises – kein gemeinsamer Punkt.' },
+};
+let activeTerm = null;
+function highlightTerm(term, btn) {
+  document.querySelectorAll('.hl').forEach(e => e.setAttribute('opacity','0'));
+  document.querySelectorAll('[onclick^="highlightTerm"]').forEach(b => b.classList.remove('correct'));
+  if(activeTerm === term) { activeTerm = null; document.getElementById('term-info').style.display='none'; return; }
+  activeTerm = term;
+  termData[term].ids.forEach(id => { const el=document.getElementById(id); if(el) el.setAttribute('opacity','1'); });
+  const box = document.getElementById('term-info');
+  box.style.display = 'block';
+  box.innerHTML = termData[term].info;
+  if(btn) btn.classList.add('correct');
+}
+
+/* ── RECHNER ── */
+function updateCircle() {
+  const r = parseFloat(document.getElementById('rSlider').value);
+  document.getElementById('rVal').textContent = r.toFixed(1).replace('.',',') + ' cm';
+  document.getElementById('rDm').textContent = (2*r).toFixed(1).replace('.',',');
+  document.getElementById('rU').textContent = (2*Math.PI*r).toFixed(1).replace('.',',');
+  document.getElementById('rA').textContent = (Math.PI*r*r).toFixed(1).replace('.',',');
+  const maxR = 88, scaled = Math.max(6, Math.round((r/20)*maxR));
+  document.getElementById('dynCircle').setAttribute('r', scaled);
+  document.getElementById('dynRadius').setAttribute('x2', 110+scaled);
+  document.getElementById('dynRLabel').setAttribute('x', 110+scaled/2-4);
+  document.getElementById('dynRLabel').textContent = 'r = '+r.toFixed(1).replace('.',',');
+  document.getElementById('dynULabel').textContent = 'U ≈ '+(2*Math.PI*r).toFixed(1).replace('.',',')+' cm';
+}
+
+/* ── WINKELSÄTZE ── */
+function updateWinkel() {
+  const g = parseInt(document.getElementById('gammaSlider').value);
+  document.getElementById('gammaVal').textContent = g+'°';
+  document.getElementById('wGamma').textContent = g+'°';
+  document.getElementById('wEps').textContent = (2*g)+'°';
+}
+
+/* ── THALES ── */
+function updateThales() {
+  const deg = parseInt(document.getElementById('thalesSlider').value);
+  const rad = deg * Math.PI / 180;
+  const cx=140, cy=140, r=100;
+  const px = Math.round(cx + r*Math.cos(Math.PI - rad));
+  const py = Math.round(cy - r*Math.sin(rad));
+
+  document.getElementById('thalesC').setAttribute('cx', px);
+  document.getElementById('thalesC').setAttribute('cy', py);
+  document.getElementById('thalesCLabel').setAttribute('x', px+5);
+  document.getElementById('thalesCLabel').setAttribute('y', py-5);
+  document.getElementById('thalesAC').setAttribute('x2', px);
+  document.getElementById('thalesAC').setAttribute('y2', py);
+  document.getElementById('thalesBC').setAttribute('x2', px);
+  document.getElementById('thalesBC').setAttribute('y2', py);
+
+  // Rechter Winkel: kleines Quadrat bei C
+  // Richtung CA und CB
+  const ax=40,ay=140, bx=240,by=140;
+  const dax=ax-px, day=ay-py, dbx=bx-px, dby=by-py;
+  const la=Math.sqrt(dax*dax+day*day), lb=Math.sqrt(dbx*dbx+dby*dby);
+  const s=10;
+  const uax=dax/la*s, uay=day/la*s, ubx=dbx/lb*s, uby=dby/lb*s;
+  const p1x=Math.round(px+uax), p1y=Math.round(py+uay);
+  const p2x=Math.round(px+uax+ubx), p2y=Math.round(py+uay+uby);
+  const p3x=Math.round(px+ubx), p3y=Math.round(py+uby);
+  document.getElementById('rightAngle').setAttribute('d',
+    `M ${p1x},${p1y} L ${p2x},${p2y} L ${p3x},${p3y}`);
+
+  // Label γ = 90° leicht versetzt von C
+  const mx=(uax+ubx)/2, my=(uay+uby)/2;
+  const len=Math.sqrt(mx*mx+my*my);
+  const lx=Math.round(px+mx/len*22), ly=Math.round(py+my/len*22);
+  document.getElementById('thalesAngleLabel').setAttribute('x', lx);
+  document.getElementById('thalesAngleLabel').setAttribute('y', ly+4);
+}
+// Initialisieren
+updateThales();
+
+/* ── QUIZ ── */
+const questions = [
+  {q:'Was versteht man unter dem Radius eines Kreises?',
+   opts:['Die längste Sehne des Kreises','Abstand vom Mittelpunkt zu einem Kreispunkt','Abstand zweier Kreispunkte','Umfang geteilt durch π'],
+   ans:1, exp:'Der Radius r ist die Strecke vom Mittelpunkt M zu einem beliebigen Punkt auf dem Kreis. Alle Radien sind gleich lang.'},
+  {q:'Eine Gerade, die den Kreis in genau einem Punkt berührt, heißt …',
+   opts:['Sekante','Passante','Sehne','Tangente'],
+   ans:3, exp:'Die Tangente berührt den Kreis in genau einem Punkt (Berührpunkt) und steht senkrecht auf dem Radius.'},
+  {q:'Der Durchmesser eines Kreises mit Radius r = 4,5 cm beträgt …',
+   opts:['2,25 cm','9 cm','4,5 cm','14,1 cm'],
+   ans:1, exp:'Durchmesser d = 2 · r = 2 · 4,5 cm = 9 cm.'},
+  {q:'Wie heißt der Kreis, der durch alle drei Eckpunkte eines Dreiecks verläuft?',
+   opts:['Inkreis','Thaleskreis','Umkreis','Ankreis'],
+   ans:2, exp:'Der Umkreis verläuft durch alle drei Eckpunkte. Sein Mittelpunkt ist der Schnittpunkt der Mittelsenkrechten.'},
+  {q:'Welche Gerade hat keinen gemeinsamen Punkt mit dem Kreis?',
+   opts:['Tangente','Sekante','Passante','Sehne'],
+   ans:2, exp:'Die Passante liegt vollständig außerhalb des Kreises und hat keinen gemeinsamen Punkt mit ihm.'},
+  {q:'Satz des Thales: Liegt C auf dem Halbkreis über AB, dann gilt …',
+   opts:['AB ist eine Sehne','Winkel γ bei C = 90°','M ist der Inkreismittelpunkt','AB ∥ CM'],
+   ans:1, exp:'Der Winkel bei C beträgt genau 90°. Das Dreieck ABC ist bei C rechtwinklig.'},
+  {q:'Der Zentriwinkel ε = 80°. Wie groß ist der Peripheriewinkel über demselben Bogen?',
+   opts:['160°','80°','40°','20°'],
+   ans:2, exp:'Der Peripheriewinkel ist halb so groß wie der Zentriwinkel: γ = ε ÷ 2 = 80° ÷ 2 = 40°.'},
+  {q:'In einem Sehnenviereck beträgt ein Innenwinkel 110°. Wie groß ist der gegenüberliegende Winkel?',
+   opts:['70°','110°','80°','250°'],
+   ans:0, exp:'Gegenüberliegende Innenwinkel eines Sehnenvierecks ergänzen sich zu 180°: 180° − 110° = 70°.'}
+];
+
+let qIdx=0, qScore=0, answered=false;
+
+function loadQ() {
+  const q = questions[qIdx];
+  document.getElementById('qProg').textContent = 'Frage '+(qIdx+1)+' von '+questions.length;
+  document.getElementById('qBar').style.width = ((qIdx/questions.length)*100)+'%';
+  document.getElementById('qQuestion').textContent = q.q;
+  const optsDiv = document.getElementById('qOpts');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((o,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.onclick = () => selectOpt(i);
+    optsDiv.appendChild(btn);
+  });
+  document.getElementById('qFeedback').style.display='none';
+  document.getElementById('qNext').style.display='none';
+  answered = false;
+}
+
+function selectOpt(i) {
+  if(answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled=true);
+  btns[i].classList.add(i===q.ans ? 'correct' : 'wrong');
+  if(i===q.ans) qScore++;
+  else btns[q.ans].classList.add('correct');
+  const fb = document.getElementById('qFeedback');
+  fb.style.display='block';
+  fb.className='quiz-feedback '+(i===q.ans?'ok':'nok');
+  fb.textContent=(i===q.ans?'✓ Richtig! ':'✗ Leider falsch. ')+q.exp;
+  document.getElementById('qNext').style.display='block';
+}
+
+function nextQ() {
+  qIdx++;
+  if(qIdx >= questions.length) {
+    document.getElementById('quizBody').style.display='none';
+    document.getElementById('quizResult').style.display='block';
+    document.getElementById('qScore').textContent = qScore+' / '+questions.length;
+    const p = Math.round((qScore/questions.length)*100);
+    const msgs=['Weiterüben – du schaffst das! 💪','Guter Anfang – noch einmal versuchen!','Solide – fast geschafft!','Sehr gut – du hast es drauf! 🎉','Hervorragend – Bestnote! ⭐'];
+    document.getElementById('qScoreText').textContent = msgs[Math.min(4, Math.floor(p/21))];
+  } else loadQ();
+}
+
+function resetQuiz() {
+  qIdx=0; qScore=0;
+  document.getElementById('quizBody').style.display='block';
+  document.getElementById('quizResult').style.display='none';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>
