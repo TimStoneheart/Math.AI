@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vier Prismen mit Maßlinien</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --ink: #111827;
+      --muted: #5b6b80;
+      --line: #d4deea;
+      --accent: #3157e8;
+      --accent-dark: #2343ba;
+      --front: #dcebf8;
+      --top: #f3f8fd;
+      --side: #b7cfe6;
+      --back: #c9d9e9;
+      --edge: #203044;
+      --measure: #111827;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, rgba(49, 87, 232, 0.10), transparent 34%), var(--bg);
+      color: var(--ink);
+      padding: 24px;
+    }
+
+    main { max-width: 1280px; margin: 0 auto; }
+
+    .header, .prism-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+    }
+
+    .header { padding: 24px; margin-bottom: 20px; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.9rem, 3vw, 2.9rem);
+      letter-spacing: -0.04em;
+    }
+
+    p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    .toolbar {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-left {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, select {
+      border: 0;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(49, 87, 232, 0.22);
+      transition: 0.15s ease;
+    }
+
+    button:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+    select {
+      appearance: none;
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      padding: 12px 42px 12px 16px;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position: calc(100% - 20px) 18px, calc(100% - 14px) 18px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .hint { color: var(--muted); font-size: 0.95rem; }
+
+    .variant-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: #eef4ff;
+      border: 1px solid #dbe5fa;
+      color: #1e293b;
+      font-weight: 850;
+    }
+
+    .variant-number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 900;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .prism-card { padding: 18px; }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      background: #f8fbff;
+      white-space: nowrap;
+    }
+
+    .viewport {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      overflow: hidden;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 470px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    svg.dragging { cursor: grabbing; }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #eef4ff;
+      color: #334155;
+      line-height: 1.5;
+      border: 1px solid #dbe5fa;
+    }
+
+    @media (max-width: 920px) {
+      body { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      svg { height: 410px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="header">
+      <h1>Vier Prismen mit Maßlinien</h1>
+      <p>
+        Jede Variante zeigt vier einzelne Prismen mit Maßlinien direkt an der Figur. Die Körper sind nicht zusammengesetzt.
+        Die Art des Prismas wird bewusst nicht angegeben.
+      </p>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button id="randomBtn">Variante würfeln</button>
+          <button id="resetBtn">Ansichten zurücksetzen</button>
+        </div>
+        <span class="hint">20 mögliche Varianten · zufällig gewürfelt · Maße in cm · Werte ≤ 10 · Ziehen zum Drehen</span>
+      </div>
+
+      <div class="variant-banner" aria-live="polite">
+        <span class="variant-number" id="variantNumber">1</span>
+        <span id="variantText">Variante 1 von 20</span>
+      </div>
+    </section>
+
+    <section class="grid" id="grid"></section>
+
+    <div class="note">
+      Die Maßlinien gehören direkt zu den sichtbaren Kanten der Prismen. Beim Drehen werden sie automatisch neu platziert.
+    </div>
+  </main>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const variantNumber = document.getElementById("variantNumber");
+    const variantText = document.getElementById("variantText");
+
+    const VARIANT_COUNT = 20;
+    let currentVariant = 1;
+    const states = [];
+
+    const PRISMS = [
+      { kind: "rect", make: makeRectData },
+      { kind: "tri", make: makeTriData },
+      { kind: "trap", make: makeTrapData },
+      { kind: "para", make: makeParaData }
+    ];
+
+    function createRng(seed) {
+      let t = seed >>> 0;
+      return function() {
+        t += 0x6D2B79F5;
+        let r = Math.imul(t ^ (t >>> 15), 1 | t);
+        r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+        return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    let rng = createRng(1);
+    function rand(min, max) { return rng() * (max - min) + min; }
+    function randCm(min, max) { return Math.round(rand(min, max) * 10) / 10; }
+    function cm(v) { return v.toFixed(1).replace(".", ","); }
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function makeRectData() {
+      const width = randCm(3.5, 9.5);
+      const height = randCm(2.8, 8.5);
+      const depth = randCm(2.8, 9.0);
+      return {
+        type: "rect",
+        width,
+        height,
+        depth,
+        front: [[0,0], [width,0], [width,height], [0,height]],
+        dimensions: [
+          { label: cm(width), a: "front-bottom-left", b: "front-bottom-right", kind: "edge" },
+          { label: cm(height), a: "front-bottom-right", b: "front-top-right", kind: "edge" },
+          { label: cm(depth), a: "front-bottom-right", b: "back-bottom-right", kind: "depth" }
+        ]
+      };
+    }
+
+    function makeTriData() {
+      const base = randCm(4.0, 9.0);
+      const triHeight = randCm(3.0, 7.4);
+      const depth = randCm(3.0, 8.8);
+      const apexFactor = rand(0.40, 0.62);
+      const apexX = Math.round(base * apexFactor * 10) / 10;
+      return {
+        type: "tri",
+        base,
+        triHeight,
+        depth,
+        apexX,
+        front: [[0,0], [base,0], [apexX,triHeight]],
+        dimensions: [
+          { label: cm(base), a: "front-bottom-left", b: "front-bottom-right", kind: "base", priority: 1 },
+          { label: cm(triHeight), a: "front-apex-foot", b: "front-apex", kind: "height", priority: 2 },
+          { label: cm(depth), a: "front-bottom-right", b: "back-bottom-right", kind: "depth", priority: 3 }
+        ]
+      };
+    }
+
+    function makeTrapData() {
+      const bottom = randCm(5.2, 9.2);
+      const top = randCm(3.0, Math.min(6.8, bottom - 1.3));
+      const height = randCm(3.0, 7.2);
+      const depth = randCm(3.0, 8.6);
+      const maxShift = Math.max(0.9, bottom - top - 0.6);
+      const shift = randCm(0.6, maxShift);
+      return {
+        type: "trap",
+        bottom,
+        top,
+        height,
+        depth,
+        shift,
+        front: [[0,0], [bottom,0], [shift + top,height], [shift,height]],
+        dimensions: [
+          { label: cm(bottom), a: "front-bottom-left", b: "front-bottom-right", kind: "base", priority: 1 },
+          { label: cm(top), a: "front-top-left", b: "front-top-right", kind: "top", priority: 2 },
+          { label: cm(height), a: "front-bottom-left-vertical", b: "front-top-left", kind: "height", priority: 3 },
+          { label: cm(depth), a: "front-bottom-right", b: "back-bottom-right", kind: "depth", priority: 4 }
+        ]
+      };
+    }
+
+    function makeParaData() {
+      const base = randCm(4.4, 8.8);
+      const height = randCm(3.0, 7.2);
+      const shift = randCm(1.0, Math.min(2.4, base * 0.35));
+      const depth = randCm(3.0, 8.8);
+      return {
+        type: "para",
+        base,
+        height,
+        shift,
+        depth,
+        front: [[shift,0], [shift + base,0], [base,height], [0,height]],
+        dimensions: [
+          { label: cm(base), a: "front-bottom-left", b: "front-bottom-right", kind: "base", priority: 1 },
+          { label: cm(height), a: "front-bottom-left", b: "front-top-left-vertical", kind: "height", priority: 2 },
+          { label: cm(depth), a: "front-bottom-right", b: "back-bottom-right", kind: "depth", priority: 3 }
+        ]
+      };
+    }
+
+    function svgEl(tag, attrs = {}) {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+      return node;
+    }
+
+    function avg(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+
+    function rotatePoint(p, yaw, pitch) {
+      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      const cx = Math.cos(pitch), sx = Math.sin(pitch);
+      const x1 = p.x * cy + p.z * sy;
+      const z1 = -p.x * sy + p.z * cy;
+      const y2 = p.y * cx - z1 * sx;
+      const z2 = p.y * sx + z1 * cx;
+      return { x: x1, y: y2, z: z2 };
+    }
+
+    function buildGeometry(data) {
+      const front = data.front.map(([x, y]) => ({ x, y, z: 0 }));
+      const back = data.front.map(([x, y]) => ({ x, y, z: data.depth }));
+      const n = front.length;
+      const vertices = [...front, ...back];
+      const faces = [];
+      faces.push({ indices: [...Array(n).keys()], kind: "front" });
+      faces.push({ indices: [...Array(n).keys()].map(i => i + n).reverse(), kind: "back" });
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        const yAvg = (front[i].y + front[j].y) / 2;
+        const yMax = Math.max(...front.map(p => p.y));
+        faces.push({ indices: [i, j, n + j, n + i], kind: yAvg > yMax * 0.55 ? "top" : "side" });
+      }
+      return { vertices, faces, n };
+    }
+
+    function namedPoints(data) {
+      const f = data.front;
+      const n = f.length;
+      const by = f.map((p, i) => ({ x: p[0], y: p[1], i })).sort((a, b) => a.y - b.y || a.x - b.x);
+      const minY = Math.min(...f.map(p => p[1]));
+      const maxY = Math.max(...f.map(p => p[1]));
+      const bottom = f.map((p, i) => ({ p, i })).filter(o => Math.abs(o.p[1] - minY) < 0.001).sort((a, b) => a.p[0] - b.p[0]);
+      const top = f.map((p, i) => ({ p, i })).filter(o => Math.abs(o.p[1] - maxY) < 0.001).sort((a, b) => a.p[0] - b.p[0]);
+      const map = {};
+      map["front-bottom-left"] = bottom[0].i;
+      map["front-bottom-right"] = bottom[bottom.length - 1].i;
+      map["back-bottom-right"] = bottom[bottom.length - 1].i + n;
+      map["front-top-left"] = top[0].i;
+      map["front-top-right"] = top[top.length - 1].i;
+      map["front-apex"] = by[by.length - 1].i;
+      if (data.type === "tri") map["front-apex-foot"] = { x: data.apexX, y: 0, z: 0, virtual: true };
+      if (data.type === "trap") map["front-bottom-left-vertical"] = { x: data.shift, y: 0, z: 0, virtual: true };
+      if (data.type === "trap") map["front-top-left-vertical"] = { x: data.shift, y: data.height, z: 0, virtual: true };
+      if (data.type === "para") map["front-top-left-vertical"] = { x: data.shift, y: data.height, z: 0, virtual: true };
+      return map;
+    }
+
+    function getWorldPoint(ref, data, nameMap, vertices) {
+      const item = nameMap[ref];
+      if (typeof item === "number") return vertices[item];
+      return item;
+    }
+
+    function render(state) {
+      const svg = state.svg;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+      const defs = svgEl("defs");
+      const arrow = svgEl("marker", {
+        id: `arrow-${state.uid}`,
+        markerWidth: 10,
+        markerHeight: 10,
+        refX: 5,
+        refY: 5,
+        orient: "auto-start-reverse",
+        markerUnits: "strokeWidth"
+      });
+      arrow.appendChild(svgEl("path", { d: "M 1 1 L 9 5 L 1 9 z", fill: "#111827" }));
+      defs.appendChild(arrow);
+
+      const shadow = svgEl("filter", { id: `shadow-${state.uid}`, x: "-20%", y: "-20%", width: "140%", height: "150%" });
+      shadow.appendChild(svgEl("feDropShadow", { dx: 0, dy: 9, stdDeviation: 9, "flood-color": "#0f172a", "flood-opacity": 0.10 }));
+      defs.appendChild(shadow);
+      svg.appendChild(defs);
+
+      const width = svg.clientWidth || 560;
+      const height = svg.clientHeight || 430;
+      const { vertices, faces } = buildGeometry(state.data);
+      const nameMap = namedPoints(state.data);
+      const allWorld = [...vertices];
+      state.data.dimensions.forEach(d => {
+        const a = getWorldPoint(d.a, state.data, nameMap, vertices);
+        const b = getWorldPoint(d.b, state.data, nameMap, vertices);
+        if (a.virtual) allWorld.push(a);
+        if (b.virtual) allWorld.push(b);
+      });
+
+      const center = { x: avg(allWorld.map(p => p.x)), y: avg(allWorld.map(p => p.y)), z: avg(allWorld.map(p => p.z)) };
+      const rotatedWorld = p => rotatePoint({ x: p.x - center.x, y: p.y - center.y, z: p.z - center.z }, state.yaw, state.pitch);
+      const rotatedAll = allWorld.map(rotatedWorld);
+      const minX = Math.min(...rotatedAll.map(p => p.x));
+      const maxX = Math.max(...rotatedAll.map(p => p.x));
+      const minY = Math.min(...rotatedAll.map(p => p.y));
+      const maxY = Math.max(...rotatedAll.map(p => p.y));
+      const pad = 72;
+      const s = Math.min((width - pad * 2) / Math.max(1, maxX - minX), (height - pad * 2) / Math.max(1, maxY - minY));
+
+      function projectWorld(p) {
+        const r = rotatedWorld(p);
+        return { x: width / 2 + r.x * s, y: height / 2 - r.y * s, z: r.z };
+      }
+
+      const screen = vertices.map(projectWorld);
+      const drawableFaces = faces.map(face => ({ ...face, pts: face.indices.map(i => screen[i]), avgZ: avg(face.indices.map(i => screen[i].z)) })).sort((a, b) => a.avgZ - b.avgZ);
+      const g = svgEl("g", { filter: `url(#shadow-${state.uid})` });
+      svg.appendChild(g);
+
+      drawableFaces.forEach(face => {
+        const poly = svgEl("polygon", {
+          points: face.pts.map(p => `${p.x},${p.y}`).join(" "),
+          fill: face.kind === "front" ? "var(--front)" : face.kind === "top" ? "var(--top)" : face.kind === "back" ? "var(--back)" : "var(--side)",
+          stroke: "#203044",
+          "stroke-width": 2.2,
+          "stroke-linejoin": "round"
+        });
+        g.appendChild(poly);
+      });
+
+      const edges = new Set();
+      faces.forEach(face => {
+        for (let i = 0; i < face.indices.length; i++) {
+          const a = face.indices[i];
+          const b = face.indices[(i + 1) % face.indices.length];
+          const key = a < b ? `${a}-${b}` : `${b}-${a}`;
+          if (edges.has(key)) continue;
+          edges.add(key);
+          const p1 = screen[a];
+          const p2 = screen[b];
+          svg.appendChild(svgEl("line", { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: "#203044", "stroke-width": 2.2, "stroke-linecap": "round" }));
+        }
+      });
+
+      drawDimensions(svg, state, vertices, nameMap, projectWorld);
+
+      const hint = svgEl("text", { x: 18, y: 28, fill: "#64748b", "font-size": 13, "font-weight": 700 });
+      hint.textContent = "Ziehen zum Drehen";
+      svg.appendChild(hint);
+    }
+
+    function drawDimensions(svg, state, vertices, nameMap, projectWorld) {
+      const cx = svg.clientWidth / 2 || 280;
+      const cy = svg.clientHeight / 2 || 235;
+      const occupied = [];
+      const dims = [...state.data.dimensions].sort((a, b) => (a.priority || 0) - (b.priority || 0));
+
+      function overlaps(a, b, gap = 8) {
+        return !(a.x + a.w + gap < b.x || b.x + b.w + gap < a.x || a.y + a.h + gap < b.y || b.y + b.h + gap < a.y);
+      }
+
+      function clampBox(box, width, height) {
+        box.x = Math.max(8, Math.min(width - box.w - 8, box.x));
+        box.y = Math.max(38, Math.min(height - box.h - 8, box.y));
+        return box;
+      }
+
+      function chooseLabelPosition(baseX, baseY, nx, ny, labelW, labelH, svgW, svgH) {
+        const candidates = [22, 42, 62, 82, 104, 128, -36, -58, -80].map(dist => {
+          const x = baseX + nx * dist;
+          const y = baseY + ny * dist;
+          return clampBox({ x: x - labelW / 2, y: y - labelH / 2, w: labelW, h: labelH, cx: x, cy: y }, svgW, svgH);
+        });
+
+        let best = candidates[0];
+        let bestScore = Infinity;
+        candidates.forEach(candidate => {
+          let score = 0;
+          occupied.forEach(box => {
+            if (overlaps(candidate, box)) score += 1000;
+            const dx = candidate.cx - box.cx;
+            const dy = candidate.cy - box.cy;
+            score += Math.max(0, 120 - Math.hypot(dx, dy));
+          });
+          const edgePenalty = candidate.x < 16 || candidate.y < 46 || candidate.x + candidate.w > svgW - 16 || candidate.y + candidate.h > svgH - 16 ? 120 : 0;
+          score += edgePenalty;
+          if (score < bestScore) {
+            bestScore = score;
+            best = candidate;
+          }
+        });
+        occupied.push(best);
+        return best;
+      }
+
+      dims.forEach(dim => {
+        const aWorld = getWorldPoint(dim.a, state.data, nameMap, vertices);
+        const bWorld = getWorldPoint(dim.b, state.data, nameMap, vertices);
+        const a = projectWorld(aWorld);
+        const b = projectWorld(bWorld);
+        const vx = b.x - a.x;
+        const vy = b.y - a.y;
+        const len = Math.max(1, Math.hypot(vx, vy));
+        let nx = -vy / len;
+        let ny = vx / len;
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+        if ((mx - cx) * nx + (my - cy) * ny < 0) { nx *= -1; ny *= -1; }
+
+        const baseOffset = dim.kind === "depth" ? 34 : dim.kind === "height" ? 32 : dim.kind === "top" ? 30 : 28;
+        const ax = a.x + nx * baseOffset;
+        const ay = a.y + ny * baseOffset;
+        const bx = b.x + nx * baseOffset;
+        const by = b.y + ny * baseOffset;
+
+        svg.appendChild(svgEl("line", { x1: a.x, y1: a.y, x2: ax, y2: ay, stroke: "#111827", "stroke-width": 1.35, opacity: 0.82, "stroke-linecap": "round" }));
+        svg.appendChild(svgEl("line", { x1: b.x, y1: b.y, x2: bx, y2: by, stroke: "#111827", "stroke-width": 1.35, opacity: 0.82, "stroke-linecap": "round" }));
+        svg.appendChild(svgEl("line", { x1: ax, y1: ay, x2: bx, y2: by, stroke: "#111827", "stroke-width": 2, "stroke-linecap": "round", "marker-start": `url(#arrow-${state.uid})`, "marker-end": `url(#arrow-${state.uid})` }));
+
+        if (dim.kind === "height") {
+          svg.appendChild(svgEl("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: "#111827", "stroke-width": 1.25, "stroke-dasharray": "5 5", opacity: 0.38, "stroke-linecap": "round" }));
+        }
+
+        const labelW = Math.max(58, dim.label.length * 11 + 22);
+        const labelH = 31;
+        const label = chooseLabelPosition((ax + bx) / 2, (ay + by) / 2, nx, ny, labelW, labelH, svg.clientWidth || 560, svg.clientHeight || 470);
+
+        svg.appendChild(svgEl("line", {
+          x1: (ax + bx) / 2,
+          y1: (ay + by) / 2,
+          x2: label.cx,
+          y2: label.cy,
+          stroke: "#111827",
+          "stroke-width": 1,
+          opacity: 0.25,
+          "stroke-linecap": "round"
+        }));
+
+        svg.appendChild(svgEl("rect", { x: label.x, y: label.y, width: label.w, height: label.h, rx: 7, fill: "#ffffff", stroke: "#cbd5e1", "stroke-width": 1.25 }));
+        const txt = svgEl("text", { x: label.cx, y: label.cy + 6, "text-anchor": "middle", "font-size": 17, "font-weight": 850, fill: "#111827", "paint-order": "stroke", stroke: "#ffffff", "stroke-width": 5, "stroke-linejoin": "round" });
+        txt.textContent = dim.label;
+        svg.appendChild(txt);
+      });
+    }
+
+    function getVariantPrisms(variant) {
+      rng = createRng(1000 + variant * 7919);
+      const orderSets = [
+        [0,1,2,3], [1,2,3,0], [2,3,0,1], [3,0,1,2],
+        [0,2,1,3], [1,3,2,0], [2,0,3,1], [3,1,0,2],
+        [0,3,1,2], [1,0,2,3], [2,1,3,0], [3,2,0,1],
+        [0,1,3,2], [1,2,0,3], [2,3,1,0], [3,0,2,1],
+        [0,2,3,1], [1,3,0,2], [2,0,1,3], [3,1,2,0]
+      ];
+      return orderSets[variant - 1].map(i => PRISMS[i].make());
+    }
+
+    function makeCard(data, index) {
+      const card = document.createElement("article");
+      card.className = "prism-card";
+      const head = document.createElement("div");
+      head.className = "card-head";
+      head.innerHTML = `<h2>Körper ${index + 1}</h2><span class="badge">Volumen berechnen</span>`;
+      const viewport = document.createElement("div");
+      viewport.className = "viewport";
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      viewport.appendChild(svg);
+      card.appendChild(head);
+      card.appendChild(viewport);
+      const state = {
+        uid: `v${currentVariant}-p${index}-${Math.random().toString(36).slice(2)}`,
+        svg,
+        data,
+        yaw: -0.72,
+        pitch: 0.48,
+        dragging: false,
+        startX: 0,
+        startY: 0,
+        startYaw: 0,
+        startPitch: 0
+      };
+      attachDrag(state);
+      requestAnimationFrame(() => render(state));
+      return { card, state };
+    }
+
+    function attachDrag(state) {
+      state.svg.addEventListener("pointerdown", e => {
+        state.dragging = true;
+        state.startX = e.clientX;
+        state.startY = e.clientY;
+        state.startYaw = state.yaw;
+        state.startPitch = state.pitch;
+        state.svg.classList.add("dragging");
+        state.svg.setPointerCapture(e.pointerId);
+      });
+      state.svg.addEventListener("pointermove", e => {
+        if (!state.dragging) return;
+        const dx = e.clientX - state.startX;
+        const dy = e.clientY - state.startY;
+        state.yaw = state.startYaw + dx * 0.01;
+        state.pitch = clamp(state.startPitch + dy * 0.01, -1.15, 1.15);
+        render(state);
+      });
+      function stop() {
+        state.dragging = false;
+        state.svg.classList.remove("dragging");
+      }
+      state.svg.addEventListener("pointerup", stop);
+      state.svg.addEventListener("pointercancel", stop);
+    }
+
+    function buildVariant(variant) {
+      currentVariant = variant;
+      states.length = 0;
+      grid.innerHTML = "";
+      variantNumber.textContent = String(variant);
+      variantText.textContent = `Variante ${variant} von ${VARIANT_COUNT}`;
+
+      getVariantPrisms(variant).forEach((data, index) => {
+        const { card, state } = makeCard(data, index);
+        states.push(state);
+        grid.appendChild(card);
+      });
+    }
+
+    function resetViews() {
+      states.forEach(state => {
+        state.yaw = -0.72;
+        state.pitch = 0.48;
+        render(state);
+      });
+    }
+    function rollVariant() {
+      let next = Math.floor(Math.random() * VARIANT_COUNT) + 1;
+      if (VARIANT_COUNT > 1 && next === currentVariant) {
+        next = (next % VARIANT_COUNT) + 1;
+      }
+      buildVariant(next);
+    }
+
+    randomBtn.addEventListener("click", rollVariant);
+    resetBtn.addEventListener("click", resetViews);
+    window.addEventListener("resize", () => states.forEach(render));
+
+    rollVariant();
+  </script>
+</body>
+</html>
