@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zusammengesetzter Körper mit Hohlraum</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --ink: #111827;
+      --muted: #5b6b80;
+      --line: #d4deea;
+      --accent: #3157e8;
+      --accent-dark: #2343ba;
+
+      --body-front: #dcebf8;
+      --body-top: #f2f8fd;
+      --body-side: #b4cfe8;
+      --body-back: #c8d9e9;
+
+      --roof-front: #d8efd8;
+      --roof-top: #eff9ef;
+      --roof-side: #a9d6ad;
+      --roof-back: #c4dfc7;
+
+      --chimney-front: #ffd8b2;
+      --chimney-top: #fff0df;
+      --chimney-side: #efad78;
+      --chimney-back: #f1bd8f;
+
+      --back: #c8d9e9;
+      --edge: #203044;
+      --tunnel: #eef3f8;
+      --tunnel-dark: #dce6f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, rgba(49, 87, 232, 0.10), transparent 34%), var(--bg);
+      color: var(--ink);
+      padding: 24px;
+    }
+
+    main { max-width: 1240px; margin: 0 auto; }
+
+    .header, .body-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+    }
+
+    .header { padding: 24px; margin-bottom: 20px; }
+    .body-card { padding: 18px; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.9rem, 3vw, 2.9rem);
+      letter-spacing: -0.04em;
+    }
+
+    p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    .toolbar {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-left { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(49, 87, 232, 0.22);
+      transition: 0.15s ease;
+    }
+
+    button:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .hint { color: var(--muted); font-size: 0.95rem; }
+
+    .variant-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: #eef4ff;
+      border: 1px solid #dbe5fa;
+      color: #1e293b;
+      font-weight: 850;
+    }
+
+    .variant-number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 900;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .card-head h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.02em; }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      background: #f8fbff;
+      white-space: nowrap;
+    }
+
+    .viewport {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      overflow: hidden;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 680px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    svg.dragging { cursor: grabbing; }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #eef4ff;
+      color: #334155;
+      line-height: 1.5;
+      border: 1px solid #dbe5fa;
+    }
+
+    @media (max-width: 920px) {
+      body { padding: 14px; }
+      svg { height: 540px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="header">
+      <h1>Zusammengesetzter Körper mit Hohlraum</h1>
+      <p>
+        Quader mit durchgehendem quaderförmigem Hohlraum, darauf ein Dreiecksprisma als Dach und daran ein Schornsteinprisma.
+        Die drei Haupt-Teilkörper sind farblich getrennt dargestellt.
+      </p>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button id="randomBtn">Variante würfeln</button>
+          <button id="resetBtn">Ansicht zurücksetzen</button>
+        </div>
+        <span class="hint">20 mögliche Varianten · zufällig gewürfelt · Maße in cm · Werte ≤ 10 · Ziehen zum Drehen</span>
+      </div>
+
+      <div class="variant-banner" aria-live="polite">
+        <span class="variant-number" id="variantNumber">1</span>
+        <span id="variantText">Variante 1 von 20</span>
+      </div>
+    </section>
+
+    <article class="body-card">
+      <div class="card-head">
+        <h2>Körper</h2>
+        <span class="badge">Volumen berechnen</span>
+      </div>
+      <div class="viewport">
+        <svg id="drawing" role="img" aria-label="Drehbarer zusammengesetzter Körper mit Dach, Schornstein und Hohlraum"></svg>
+      </div>
+    </article>
+
+    <div class="note">
+      Grundidee: <strong>Quader − Hohlraum + Dachprisma + Schornsteinprisma</strong>. Der Hohlraum geht vollständig durch den Quader.
+    </div>
+  </main>
+
+  <script>
+    const svg = document.getElementById("drawing");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const variantNumber = document.getElementById("variantNumber");
+    const variantText = document.getElementById("variantText");
+
+    const VARIANT_COUNT = 20;
+    let currentVariant = 1;
+    let rng = createRng(1);
+
+    const state = {
+      data: null,
+      yaw: -0.72,
+      pitch: 0.50,
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      startYaw: 0,
+      startPitch: 0
+    };
+
+    function createRng(seed) {
+      let t = seed >>> 0;
+      return function() {
+        t += 0x6D2B79F5;
+        let r = Math.imul(t ^ (t >>> 15), 1 | t);
+        r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+        return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function rand(min, max) { return rng() * (max - min) + min; }
+    function randCm(min, max) { return Math.round(rand(min, max) * 10) / 10; }
+    function round1(v) { return Math.round(v * 10) / 10; }
+    function cm(v) { return v.toFixed(1).replace(".", ","); }
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function avg(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+
+    function svgEl(tag, attrs = {}) {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+      return node;
+    }
+
+    function point3(x, y, z) { return { x, y, z }; }
+
+    function dim(value, a, b, kind, priority) {
+      return { label: cm(value), value, a, b, kind, priority };
+    }
+
+    function rotatePoint(p, yaw, pitch) {
+      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      const cx = Math.cos(pitch), sx = Math.sin(pitch);
+      const x1 = p.x * cy + p.z * sy;
+      const z1 = -p.x * sy + p.z * cy;
+      const y2 = p.y * cx - z1 * sx;
+      const z2 = p.y * sx + z1 * cx;
+      return { x: x1, y: y2, z: z2 };
+    }
+
+    function rectShape(w, h) { return [[0,0],[w,0],[w,h],[0,h]]; }
+    function triRoofShape(w, h) { return [[0,0],[w,0],[w/2,h]]; }
+
+    function roofSurfaceY(W, roofH, x) {
+      const mid = W / 2;
+      if (x <= mid) return round1((roofH / mid) * x);
+      return round1((roofH / mid) * (W - x));
+    }
+
+    function roofUnitVectors(W, roofH) {
+      const slope = -roofH / (W / 2);
+      const len = Math.hypot(1, slope);
+      const u = { x: 1 / len, y: slope / len };
+      const n = { x: -u.y, y: u.x };
+      return { u, n };
+    }
+
+    function add2(p, v, scale = 1) {
+      return { x: round1(p.x + v.x * scale), y: round1(p.y + v.y * scale) };
+    }
+
+    function component(part, front, offset, depth) {
+      return { part, front, offset, depth };
+    }
+
+    function makeVariant(variant) {
+      rng = createRng(24000 + variant * 7919);
+
+      const chimneyKind = variant % 2 === 0 ? "trap" : "para";
+      const W = randCm(6.8, 9.4);
+      const Hq = randCm(3.6, 5.8);
+      const D = randCm(4.2, 8.2);
+      const roofH = randCm(1.8, 3.0);
+
+      const holeW = randCm(1.7, Math.min(3.8, W - 2.8));
+      const holeH = randCm(1.2, Math.min(2.8, Hq - 1.8));
+      const holeX = round1((W - holeW) / 2);
+      const holeY = randCm(0.6, Math.max(0.7, Hq - holeH - 0.7));
+
+      const chimneyBase = randCm(1.1, 1.7);
+      const chimneyHeight = randCm(1.4, 2.5);
+      const chimneyDepth = randCm(1.6, Math.min(3.5, D - 0.4));
+      const chimneyZ = round1((D - chimneyDepth) / 2);
+
+      const { u, n } = roofUnitVectors(W, roofH);
+      const cxMin = round1(W * 0.56);
+      const cxMax = round1(W * 0.82 - chimneyBase);
+      const cx = randCm(cxMin, Math.max(cxMin + 0.2, cxMax));
+      const roofBaseLeft = { x: cx, y: round1(Hq + roofSurfaceY(W, roofH, cx)) };
+      const roofBaseRight = add2(roofBaseLeft, u, chimneyBase);
+
+      let chimneyFront;
+      let chimneyDims;
+
+      if (chimneyKind === "trap") {
+        const topBase = randCm(0.75, Math.max(0.85, chimneyBase - 0.2));
+        const chimneyTopLeft = add2(roofBaseLeft, n, chimneyHeight);
+        const chimneyTopRight = add2(chimneyTopLeft, u, topBase);
+
+        chimneyFront = [
+          [roofBaseLeft.x, roofBaseLeft.y],
+          [roofBaseRight.x, roofBaseRight.y],
+          [chimneyTopRight.x, chimneyTopRight.y],
+          [chimneyTopLeft.x, chimneyTopLeft.y]
+        ];
+
+        chimneyDims = [
+          dim(chimneyBase, point3(roofBaseLeft.x, roofBaseLeft.y, chimneyZ), point3(roofBaseRight.x, roofBaseRight.y, chimneyZ), "inner", 7),
+          dim(topBase, point3(chimneyTopLeft.x, chimneyTopLeft.y, chimneyZ), point3(chimneyTopRight.x, chimneyTopRight.y, chimneyZ), "top", 8),
+          dim(chimneyHeight, point3(roofBaseLeft.x, roofBaseLeft.y, chimneyZ), point3(chimneyTopLeft.x, chimneyTopLeft.y, chimneyZ), "height", 9),
+          dim(chimneyDepth, point3(roofBaseRight.x, roofBaseRight.y, chimneyZ), point3(roofBaseRight.x, roofBaseRight.y, round1(chimneyZ + chimneyDepth)), "depth", 10)
+        ];
+      } else {
+        const shift = randCm(0.25, 0.65);
+        const heightLeft = add2(roofBaseLeft, n, chimneyHeight);
+        const heightRight = add2(roofBaseRight, n, chimneyHeight);
+        const chimneyTopLeft = add2(heightLeft, u, shift);
+        const chimneyTopRight = add2(heightRight, u, shift);
+
+        chimneyFront = [
+          [roofBaseLeft.x, roofBaseLeft.y],
+          [roofBaseRight.x, roofBaseRight.y],
+          [chimneyTopRight.x, chimneyTopRight.y],
+          [chimneyTopLeft.x, chimneyTopLeft.y]
+        ];
+
+        chimneyDims = [
+          dim(chimneyBase, point3(roofBaseLeft.x, roofBaseLeft.y, chimneyZ), point3(roofBaseRight.x, roofBaseRight.y, chimneyZ), "inner", 7),
+          dim(chimneyHeight, point3(roofBaseLeft.x, roofBaseLeft.y, chimneyZ), point3(heightLeft.x, heightLeft.y, chimneyZ), "height", 8),
+          dim(chimneyDepth, point3(roofBaseRight.x, roofBaseRight.y, chimneyZ), point3(roofBaseRight.x, roofBaseRight.y, round1(chimneyZ + chimneyDepth)), "depth", 9)
+        ];
+      }
+
+      const components = [];
+
+      if (holeY > 0.05) components.push(component(0, rectShape(W, holeY), {x:0, y:0, z:0}, D));
+      const topH = round1(Hq - holeY - holeH);
+      if (topH > 0.05) components.push(component(0, rectShape(W, topH), {x:0, y:round1(holeY + holeH), z:0}, D));
+      if (holeX > 0.05) components.push(component(0, rectShape(holeX, holeH), {x:0, y:holeY, z:0}, D));
+      const rightW = round1(W - holeX - holeW);
+      if (rightW > 0.05) components.push(component(0, rectShape(rightW, holeH), {x:round1(holeX + holeW), y:holeY, z:0}, D));
+
+      components.push(component(1, triRoofShape(W, roofH), {x:0, y:Hq, z:0}, D));
+      components.push(component(2, chimneyFront, {x:0, y:0, z:chimneyZ}, chimneyDepth));
+
+      const dims = [
+        dim(W, point3(0, 0, 0), point3(W, 0, 0), "base", 1),
+        dim(Hq, point3(W, 0, 0), point3(W, Hq, 0), "height", 2),
+        dim(D, point3(W, 0, 0), point3(W, 0, D), "depth", 3),
+        dim(roofH, point3(W/2, Hq, 0), point3(W/2, round1(Hq + roofH), 0), "height", 4),
+        dim(holeW, point3(holeX, holeY, 0), point3(round1(holeX + holeW), holeY, 0), "inner", 5),
+        dim(holeH, point3(round1(holeX + holeW), holeY, 0), point3(round1(holeX + holeW), round1(holeY + holeH), 0), "height", 6),
+        ...chimneyDims
+      ];
+
+      return {
+        components,
+        hole: { x: holeX, y: holeY, w: holeW, h: holeH, depth: D },
+        dimensions: dims
+      };
+    }
+
+    function buildGeometry(data) { return data.components.map(comp => makeSolid(comp)); }
+
+    function classifySideFace(a, b, part) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const length = Math.hypot(dx, dy) || 1;
+      const nx = -dy / length;
+      const ny = dx / length;
+
+      // Horizontale obere Kanten und Dach-/Schornstein-Schrägen sollen hell als Deck-/Oberflächen erscheinen.
+      if (Math.abs(dy) < 0.001) {
+        return a.y > 0 ? "top" : "side";
+      }
+
+      // Beim Dach und Schornstein sind schräge Dach-/Deckflächen ebenfalls Oberflächen.
+      if ((part === 1 || part === 2) && dy < 0) {
+        return "top";
+      }
+
+      // Alle übrigen vertikalen oder fallenden Kanten sind Seitenflächen.
+      return "side";
+    }
+
+    function makeSolid(comp) {
+      const front = comp.front.map(([x, y]) => ({ x: round1(x + comp.offset.x), y: round1(y + comp.offset.y), z: comp.offset.z }));
+      const back = comp.front.map(([x, y]) => ({ x: round1(x + comp.offset.x), y: round1(y + comp.offset.y), z: round1(comp.offset.z + comp.depth) }));
+      const n = front.length;
+      const vertices = [...front, ...back];
+      const faces = [];
+      faces.push({ indices: [...Array(n).keys()], side: "front", part: comp.part });
+      faces.push({ indices: [...Array(n).keys()].map(i => i + n).reverse(), side: "back", part: comp.part });
+
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        faces.push({
+          indices: [i, j, n + j, n + i],
+          side: classifySideFace(front[i], front[j], comp.part),
+          part: comp.part
+        });
+      }
+      return { vertices, faces, part: comp.part };
+    }
+
+    function faceFill(face) {
+      const palette = [
+        {
+          front: "var(--body-front)",
+          top: "var(--body-top)",
+          side: "var(--body-side)",
+          back: "var(--body-back)"
+        },
+        {
+          front: "var(--roof-front)",
+          top: "var(--roof-top)",
+          side: "var(--roof-side)",
+          back: "var(--roof-back)"
+        },
+        {
+          front: "var(--chimney-front)",
+          top: "var(--chimney-top)",
+          side: "var(--chimney-side)",
+          back: "var(--chimney-back)"
+        }
+      ];
+      return palette[face.part]?.[face.side] || "var(--body-front)";
+    }
+
+    function defineDefs() {
+      const defs = svgEl("defs");
+      const arrow = svgEl("marker", { id: "arrow", markerWidth: 10, markerHeight: 10, refX: 5, refY: 5, orient: "auto-start-reverse", markerUnits: "strokeWidth" });
+      arrow.appendChild(svgEl("path", { d: "M 1 1 L 9 5 L 1 9 z", fill: "#111827" }));
+      defs.appendChild(arrow);
+      const shadow = svgEl("filter", { id: "shadow", x: "-20%", y: "-20%", width: "140%", height: "160%" });
+      shadow.appendChild(svgEl("feDropShadow", { dx: 0, dy: 10, stdDeviation: 10, "flood-color": "#0f172a", "flood-opacity": 0.10 }));
+      defs.appendChild(shadow);
+      svg.appendChild(defs);
+    }
+
+    function render() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      defineDefs();
+      const width = svg.clientWidth || 1000;
+      const height = svg.clientHeight || 680;
+      const solids = buildGeometry(state.data);
+      const worldPoints = [];
+      solids.forEach(s => s.vertices.forEach(v => worldPoints.push(v)));
+      state.data.dimensions.forEach(d => worldPoints.push(d.a, d.b));
+      const h = state.data.hole;
+      worldPoints.push(
+        point3(h.x, h.y, 0),
+        point3(h.x + h.w, h.y + h.h, h.depth),
+        point3(h.x + h.w, h.y, h.depth),
+        point3(h.x, h.y + h.h, h.depth)
+      );
+
+      const center = { x: avg(worldPoints.map(p => p.x)), y: avg(worldPoints.map(p => p.y)), z: avg(worldPoints.map(p => p.z)) };
+      function rotated(p) { return rotatePoint({ x:p.x-center.x, y:p.y-center.y, z:p.z-center.z }, state.yaw, state.pitch); }
+      const rotatedAll = worldPoints.map(rotated);
+      const minX = Math.min(...rotatedAll.map(p => p.x));
+      const maxX = Math.max(...rotatedAll.map(p => p.x));
+      const minY = Math.min(...rotatedAll.map(p => p.y));
+      const maxY = Math.max(...rotatedAll.map(p => p.y));
+      const pad = 108;
+      const scale = Math.min((width - pad * 2) / Math.max(1, maxX - minX), (height - pad * 2) / Math.max(1, maxY - minY));
+      function project(p) {
+        const r = rotated(p);
+        return { x: width/2 + r.x*scale, y: height/2 - r.y*scale, z: r.z };
+      }
+
+      const allFaces = [];
+      solids.forEach(solid => {
+        const screen = solid.vertices.map(project);
+        solid.faces.forEach(face => {
+          const pts = face.indices.map(i => screen[i]);
+          allFaces.push({ ...face, pts, avgZ: avg(pts.map(p => p.z)) });
+        });
+      });
+      allFaces.sort((a,b) => a.avgZ - b.avgZ);
+
+      const g = svgEl("g", { filter: "url(#shadow)" });
+      svg.appendChild(g);
+      allFaces.forEach(face => {
+        g.appendChild(svgEl("polygon", {
+          points: face.pts.map(p => `${p.x},${p.y}`).join(" "),
+          fill: faceFill(face),
+          stroke: "#203044",
+          "stroke-width": 2.05,
+          "stroke-linejoin": "round"
+        }));
+      });
+
+      drawEdges(solids, project);
+      drawTunnelGuide(state.data.hole, project);
+      drawDimensions(state.data, project);
+
+      const hint = svgEl("text", { x: 20, y: 30, fill: "#64748b", "font-size": 13, "font-weight": 700 });
+      hint.textContent = "Ziehen zum Drehen";
+      svg.appendChild(hint);
+    }
+
+    function drawEdges(solids, project) {
+      solids.forEach(solid => {
+        const screen = solid.vertices.map(project);
+        const edges = new Set();
+        solid.faces.forEach(face => {
+          for (let i = 0; i < face.indices.length; i++) {
+            const a = face.indices[i];
+            const b = face.indices[(i+1) % face.indices.length];
+            const key = a < b ? `${a}-${b}` : `${b}-${a}`;
+            if (edges.has(key)) continue;
+            edges.add(key);
+            const p1 = screen[a], p2 = screen[b];
+            svg.appendChild(svgEl("line", { x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, stroke:"#203044", "stroke-width":2.15, "stroke-linecap":"round" }));
+          }
+        });
+      });
+    }
+
+    function drawTunnelGuide(hole, project) {
+      const corners = [
+        point3(hole.x, hole.y, 0), point3(hole.x + hole.w, hole.y, 0),
+        point3(hole.x + hole.w, hole.y + hole.h, 0), point3(hole.x, hole.y + hole.h, 0),
+        point3(hole.x, hole.y, hole.depth), point3(hole.x + hole.w, hole.y, hole.depth),
+        point3(hole.x + hole.w, hole.y + hole.h, hole.depth), point3(hole.x, hole.y + hole.h, hole.depth)
+      ].map(project);
+      const pairs = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+      pairs.forEach(([i,j]) => {
+        svg.appendChild(svgEl("line", { x1:corners[i].x, y1:corners[i].y, x2:corners[j].x, y2:corners[j].y, stroke:"#203044", "stroke-width":1.6, opacity:0.80, "stroke-linecap":"round" }));
+      });
+    }
+
+    function drawDimensions(data, project) {
+      const width = svg.clientWidth || 1000;
+      const height = svg.clientHeight || 680;
+      const cx = width / 2, cy = height / 2;
+      const occupied = [];
+      const dims = [...data.dimensions].sort((a,b) => a.priority - b.priority);
+
+      function overlaps(a,b,gap=8) { return !(a.x+a.w+gap < b.x || b.x+b.w+gap < a.x || a.y+a.h+gap < b.y || b.y+b.h+gap < a.y); }
+      function clampBox(box) {
+        box.x = Math.max(8, Math.min(width - box.w - 8, box.x));
+        box.y = Math.max(42, Math.min(height - box.h - 8, box.y));
+        return box;
+      }
+      function chooseLabel(baseX, baseY, nx, ny, w, h) {
+        const distances = [24,42,60,80,102,126,152,-36,-58,-80,-104,-128];
+        let best = null, bestScore = Infinity;
+        distances.forEach(dist => {
+          const cx2 = baseX + nx * dist;
+          const cy2 = baseY + ny * dist;
+          const box = clampBox({x:cx2-w/2, y:cy2-h/2, w, h, cx:cx2, cy:cy2});
+          let score = Math.abs(dist) * 0.25;
+          occupied.forEach(o => {
+            if (overlaps(box, o)) score += 1000;
+            score += Math.max(0, 120 - Math.hypot(box.cx-o.cx, box.cy-o.cy));
+          });
+          if (score < bestScore) { bestScore = score; best = box; }
+        });
+        occupied.push(best);
+        return best;
+      }
+
+      dims.forEach(dim => {
+        const a = project(dim.a), b = project(dim.b);
+        const vx = b.x - a.x, vy = b.y - a.y;
+        const len = Math.max(1, Math.hypot(vx, vy));
+        let nx = -vy / len, ny = vx / len;
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        if ((mx - cx) * nx + (my - cy) * ny < 0) { nx *= -1; ny *= -1; }
+        const offset = dim.kind === "depth" ? 40 : dim.kind === "top" ? 34 : dim.kind === "inner" ? 30 : 32;
+        const ax = a.x + nx * offset, ay = a.y + ny * offset;
+        const bx = b.x + nx * offset, by = b.y + ny * offset;
+
+        svg.appendChild(svgEl("line", { x1:a.x, y1:a.y, x2:ax, y2:ay, stroke:"#111827", "stroke-width":1.35, opacity:0.82, "stroke-linecap":"round" }));
+        svg.appendChild(svgEl("line", { x1:b.x, y1:b.y, x2:bx, y2:by, stroke:"#111827", "stroke-width":1.35, opacity:0.82, "stroke-linecap":"round" }));
+        svg.appendChild(svgEl("line", { x1:ax, y1:ay, x2:bx, y2:by, stroke:"#111827", "stroke-width":2, "stroke-linecap":"round", "marker-start":"url(#arrow)", "marker-end":"url(#arrow)" }));
+
+        if (dim.kind === "height" || dim.kind === "inner") {
+          svg.appendChild(svgEl("line", { x1:a.x, y1:a.y, x2:b.x, y2:b.y, stroke:"#111827", "stroke-width":1.05, "stroke-dasharray":"5 5", opacity:0.28, "stroke-linecap":"round" }));
+        }
+
+        const labelW = Math.max(58, dim.label.length * 11 + 22);
+        const labelH = 31;
+        const label = chooseLabel((ax+bx)/2, (ay+by)/2, nx, ny, labelW, labelH);
+        svg.appendChild(svgEl("line", { x1:(ax+bx)/2, y1:(ay+by)/2, x2:label.cx, y2:label.cy, stroke:"#111827", "stroke-width":1, opacity:0.22, "stroke-linecap":"round" }));
+        svg.appendChild(svgEl("rect", { x:label.x, y:label.y, width:label.w, height:label.h, rx:7, fill:"#ffffff", stroke:"#cbd5e1", "stroke-width":1.25 }));
+        const txt = svgEl("text", { x:label.cx, y:label.cy+6, "text-anchor":"middle", "font-size":17, "font-weight":850, fill:"#111827", "paint-order":"stroke", stroke:"#ffffff", "stroke-width":5, "stroke-linejoin":"round" });
+        txt.textContent = dim.label;
+        svg.appendChild(txt);
+      });
+    }
+
+    function runInternalTests() {
+      console.assert(typeof point3 === "function", "point3 must be a function");
+      console.assert(point3(1, 2, 3).x === 1 && point3(1, 2, 3).y === 2 && point3(1, 2, 3).z === 3, "point3 should create a 3D point");
+      for (let variant = 1; variant <= VARIANT_COUNT; variant++) {
+        const generated = makeVariant(variant);
+        console.assert(generated.components.length >= 3, `variant ${variant}: should have body, roof, and chimney components`);
+        console.assert(generated.hole.w > 0 && generated.hole.h > 0 && generated.hole.depth > 0, `variant ${variant}: hole dimensions must be positive`);
+        console.assert(generated.dimensions.every(d => d.a && d.b && Number.isFinite(d.value)), `variant ${variant}: every dimension must be valid`);
+
+        const solids = buildGeometry(generated);
+        const roofBack = solids.some(solid => solid.faces.some(face => face.part === 1 && face.side === "back" && faceFill(face) === "var(--roof-back)"));
+        const chimneyBack = solids.some(solid => solid.faces.some(face => face.part === 2 && face.side === "back" && faceFill(face) === "var(--chimney-back)"));
+        console.assert(roofBack, `variant ${variant}: roof back face should use roof color`);
+        console.assert(chimneyBack, `variant ${variant}: chimney back face should use chimney color`);
+      }
+    }
+
+    function buildVariant(variant) {
+      currentVariant = variant;
+      variantNumber.textContent = String(variant);
+      variantText.textContent = `Variante ${variant} von ${VARIANT_COUNT}`;
+      state.data = makeVariant(variant);
+      state.yaw = -0.72;
+      state.pitch = 0.50;
+      render();
+    }
+
+    function rollVariant() {
+      let next = Math.floor(Math.random() * VARIANT_COUNT) + 1;
+      if (VARIANT_COUNT > 1 && next === currentVariant) next = (next % VARIANT_COUNT) + 1;
+      buildVariant(next);
+    }
+
+    function resetView() {
+      state.yaw = -0.72;
+      state.pitch = 0.50;
+      render();
+    }
+
+    svg.addEventListener("pointerdown", e => {
+      state.dragging = true;
+      state.startX = e.clientX;
+      state.startY = e.clientY;
+      state.startYaw = state.yaw;
+      state.startPitch = state.pitch;
+      svg.classList.add("dragging");
+      svg.setPointerCapture(e.pointerId);
+    });
+
+    svg.addEventListener("pointermove", e => {
+      if (!state.dragging) return;
+      const dx = e.clientX - state.startX;
+      const dy = e.clientY - state.startY;
+      state.yaw = state.startYaw + dx * 0.01;
+      state.pitch = clamp(state.startPitch + dy * 0.01, -1.15, 1.15);
+      render();
+    });
+
+    function stopDrag() { state.dragging = false; svg.classList.remove("dragging"); }
+    svg.addEventListener("pointerup", stopDrag);
+    svg.addEventListener("pointercancel", stopDrag);
+    randomBtn.addEventListener("click", rollVariant);
+    resetBtn.addEventListener("click", resetView);
+    window.addEventListener("resize", render);
+
+    runInternalTests();
+    rollVariant();
+  </script>
+</body>
+</html>
