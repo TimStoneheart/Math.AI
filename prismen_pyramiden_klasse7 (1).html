@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prismen &amp; Pyramiden – Klasse 7 Gymnasium</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #e8edf3;
+    --border: #c8d4e0;
+    --text: #1a2332;
+    --text2: #4a5a6e;
+    --prism: #2563eb;
+    --prism-light: #dbeafe;
+    --prism-mid: #93c5fd;
+    --pyramid: #d97706;
+    --pyramid-light: #fef3c7;
+    --pyramid-mid: #fcd34d;
+    --green: #059669;
+    --green-light: #d1fae5;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --radius: 14px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1a2d4f 0%, #2563eb 60%, #0ea5e9 100%);
+    padding: 28px 32px 22px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  header p {
+    font-size: 14px;
+    opacity: 0.82;
+    font-weight: 600;
+  }
+
+  /* ── MAIN TABS ── */
+  .main-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 28px;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .main-tab {
+    padding: 14px 24px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text2);
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: -2px;
+  }
+  .main-tab:hover { color: var(--text); background: var(--bg); }
+  .main-tab.active-prism {
+    color: var(--prism);
+    border-bottom-color: var(--prism);
+    background: var(--prism-light);
+  }
+  .main-tab.active-pyramid {
+    color: var(--pyramid);
+    border-bottom-color: var(--pyramid);
+    background: var(--pyramid-light);
+  }
+  .main-tab.active-compare {
+    color: var(--purple);
+    border-bottom-color: var(--purple);
+    background: var(--purple-light);
+  }
+  .main-tab.active-quiz {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    background: var(--green-light);
+  }
+
+  /* ── CONTENT PANELS ── */
+  .panel { display: none; padding: 24px 28px; }
+  .panel.active { display: block; }
+
+  /* ── SUBTABS ── */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .sub-tab {
+    padding: 8px 18px;
+    border-radius: 25px;
+    border: 2px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+    transition: all .2s;
+  }
+  .sub-tab:hover { border-color: var(--prism); color: var(--prism); }
+  .sub-tab.active-prism { background: var(--prism); color: white; border-color: var(--prism); }
+  .sub-tab.active-pyramid { background: var(--pyramid); color: white; border-color: var(--pyramid); }
+
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .icon-prism { background: var(--prism-light); }
+  .icon-pyramid { background: var(--pyramid-light); }
+  .icon-green { background: var(--green-light); }
+  .icon-purple { background: var(--purple-light); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── FORMULA BOXES ── */
+  .formula-box {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    border-left: 4px solid var(--prism);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .formula-box.pyramid-border { border-left-color: var(--pyramid); }
+  .formula-box.green-border { border-left-color: var(--green); }
+  .formula-box sup { font-size: 0.7em; vertical-align: super; }
+
+  /* ── INFO BOXES ── */
+  .info-box {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .info-blue { background: var(--prism-light); border: 1.5px solid var(--prism-mid); color: var(--prism); }
+  .info-yellow { background: var(--pyramid-light); border: 1.5px solid var(--pyramid-mid); color: #92400e; }
+  .info-green { background: var(--green-light); border: 1.5px solid #6ee7b7; color: #065f46; }
+
+  /* ── SVG CONTAINER ── */
+  .svg-wrap {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 180px;
+  }
+
+  /* ── CALCULATOR ── */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 540px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text2);
+    margin-bottom: 5px;
+  }
+  .input-group input, .input-group select {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    background: white;
+    transition: border-color .2s;
+    outline: none;
+  }
+  .input-group input:focus, .input-group select:focus { border-color: var(--prism); }
+  .input-group.pyramid input:focus, .input-group.pyramid select:focus { border-color: var(--pyramid); }
+
+  .calc-btn {
+    padding: 11px 24px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    transition: all .18s;
+    width: 100%;
+  }
+  .btn-prism { background: var(--prism); color: white; }
+  .btn-prism:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
+  .btn-pyramid { background: var(--pyramid); color: white; }
+  .btn-pyramid:hover { background: #b45309; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(217,119,6,0.35); }
+
+  .result-area {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 14px;
+    min-height: 60px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .result-area .result-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-area .result-line:last-child { border-bottom: none; }
+  .result-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .result-val.prism-val { color: var(--prism); }
+  .result-val.pyramid-val { color: var(--pyramid); }
+
+  /* ── NET CANVAS ── */
+  .net-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .net-controls label { font-size: 13px; font-weight: 700; color: var(--text2); }
+  .net-controls input[type=range] { width: 120px; accent-color: var(--prism); }
+  .net-controls input[type=range].pyr { accent-color: var(--pyramid); }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 26px;
+    margin-bottom: 18px;
+  }
+  .quiz-q {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 500px) { .quiz-options { grid-template-columns: 1fr; } }
+  .quiz-opt {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all .18s;
+    text-align: center;
+    background: white;
+  }
+  .quiz-opt:hover { border-color: var(--prism); background: var(--prism-light); }
+  .quiz-opt.correct { border-color: var(--green); background: var(--green-light); color: #065f46; }
+  .quiz-opt.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); }
+  .quiz-opt.disabled { cursor: default; pointer-events: none; }
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 12px 16px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--green-light); color: #065f46; }
+  .quiz-feedback.nok { background: var(--red-light); color: var(--red); }
+
+  .quiz-score {
+    background: linear-gradient(135deg, var(--prism), var(--purple));
+    color: white;
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    text-align: center;
+    display: none;
+  }
+  .quiz-score.show { display: block; }
+  .quiz-score h3 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+  .quiz-score p { font-size: 15px; opacity: 0.9; }
+
+  /* ── COMPARE TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .compare-table th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .compare-table th:nth-child(1) { background: #334155; color: white; }
+  .compare-table th:nth-child(2) { background: var(--prism); color: white; }
+  .compare-table th:nth-child(3) { background: var(--pyramid); color: white; }
+  .compare-table td {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-weight: 600;
+    color: var(--text);
+    background: white;
+  }
+  .compare-table tr:nth-child(even) td { background: var(--surface2); }
+  .compare-table td:first-child { font-weight: 800; color: var(--text2); }
+  .compare-table code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── ZWEITAFELBILD ── */
+  .ztb-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 640px) { .ztb-wrap { grid-template-columns: 1fr; } }
+  .ztb-view {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .ztb-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  /* ── STEP EXPLANATION ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    min-width: 28px; height: 28px;
+    background: var(--prism);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .step-num.pyr { background: var(--pyramid); }
+  .step-body { font-size: 14px; font-weight: 600; line-height: 1.6; padding-top: 3px; }
+  .step-body strong { font-weight: 800; }
+
+  /* ── TOOLTIPS ── */
+  .tip { cursor: help; border-bottom: 1.5px dotted var(--text2); }
+
+  /* ── 3D TOGGLE ANIMATION ── */
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .sub-panel.active { animation: fadeIn .22s ease; }
+  .panel.active { animation: fadeIn .2s ease; }
+
+  /* ── DEFINITION ── */
+  .def-term {
+    font-weight: 800;
+    color: var(--prism);
+    font-size: 15px;
+  }
+  .def-term.pyr { color: var(--pyramid); }
+  .def-text { font-size: 14px; font-weight: 600; line-height: 1.7; color: var(--text2); margin-bottom: 12px; }
+
+  /* ── RESPONSIVE SVG ── */
+  svg { max-width: 100%; height: auto; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    margin-bottom: 8px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Klasse 7 · Gymnasium Sachsen · Mathematik</div>
+  <h1>📐 Prismen &amp; Pyramiden</h1>
+  <p>Körper, Netze, Oberflächen, Volumen &amp; Zweitafelbilder</p>
+</header>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <div class="main-tab active-prism" onclick="switchMain('prism',this)" id="tab-prism">🔷 Prisma</div>
+  <div class="main-tab" onclick="switchMain('pyramid',this)" id="tab-pyramid">🔶 Pyramide</div>
+  <div class="main-tab" onclick="switchMain('compare',this)" id="tab-compare">⚖️ Vergleich</div>
+  <div class="main-tab" onclick="switchMain('quiz',this)" id="tab-quiz">🎯 Quiz</div>
+</div>
+
+<!-- ══════════ PRISMA PANEL ══════════ -->
+<div class="panel active" id="panel-prism">
+  <div class="sub-tabs">
+    <div class="sub-tab active-prism" onclick="switchSub('prism','definition',this)">📖 Definition</div>
+    <div class="sub-tab" onclick="switchSub('prism','netz',this)">📦 Netz</div>
+    <div class="sub-tab" onclick="switchSub('prism','oberflaeche',this)">📏 Oberfläche</div>
+    <div class="sub-tab" onclick="switchSub('prism','volumen',this)">🧊 Volumen</div>
+    <div class="sub-tab" onclick="switchSub('prism','ztb',this)">👁️ Zweitafelbild</div>
+    <div class="sub-tab" onclick="switchSub('prism','rechner',this)">🔢 Rechner</div>
+  </div>
+
+  <!-- DEFINITION -->
+  <div class="sub-panel active" id="prism-definition">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-prism">🔷</div>Was ist ein Prisma?</div>
+          <p class="def-term">Prisma</p>
+          <p class="def-text">Ein Prisma ist ein geometrischer Körper mit zwei <strong>kongruenten, parallelen Grundflächen</strong> (Vielecke) und rechteckigen (oder parallelogrammförmigen) Seitenflächen, die die Grundflächen verbinden.</p>
+
+          <p class="def-term">Gerade Prisma</p>
+          <p class="def-text">Bei einem <em>geraden</em> Prisma stehen die Seitenflächen senkrecht auf den Grundflächen. Die Seitenkanten sind dann Höhen.</p>
+
+          <div class="info-box info-blue">
+            <span>💡</span>
+            <span>Die <strong>Grundfläche</strong> kann ein beliebiges Vieleck sein: Dreieck → Dreiecksprisma, Viereck → Quader/Würfel, Fünfeck → usw.</span>
+          </div>
+
+          <p class="section-label">Wichtige Begriffe</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;font-weight:600;">
+            <div style="background:var(--prism-light);border-radius:8px;padding:8px 12px;">🔵 Grundfläche <span style="color:var(--text2);display:block;font-size:12px;font-weight:600;">oberes & unteres Vieleck</span></div>
+            <div style="background:var(--prism-light);border-radius:8px;padding:8px 12px;">📐 Seitenfläche <span style="color:var(--text2);display:block;font-size:12px;font-weight:600;">verbindet Grundflächen</span></div>
+            <div style="background:var(--prism-light);border-radius:8px;padding:8px 12px;">↕️ Höhe h <span style="color:var(--text2);display:block;font-size:12px;font-weight:600;">Abstand der Grundflächen</span></div>
+            <div style="background:var(--prism-light);border-radius:8px;padding:8px 12px;">📏 Seitenkante <span style="color:var(--text2);display:block;font-size:12px;font-weight:600;">Kante zw. Seitenflächen</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-prism">🎨</div>Dreiecksprisma – Darstellung</div>
+          <div class="svg-wrap">
+            <!--
+              Schrägbild eines geraden Dreiecksprismas.
+              Vordere Grundfläche: gleichschenkliges Dreieck A-B-C (links unten / rechts unten / oben Mitte)
+              Hintere Grundfläche: A'-B'-C'  (um dx=40, dy=-28 nach rechts-oben versetzt)
+              Alle sichtbaren Kanten: durchgezogen, verdeckte: gestrichelt.
+            -->
+            <svg viewBox="0 0 370 280" xmlns="http://www.w3.org/2000/svg" style="max-height:260px;">
+              <defs>
+                <marker id="arrH" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+                  <path d="M0,0 L0,7 L7,3.5 z" fill="#dc2626"/>
+                </marker>
+                <marker id="arrHs" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">
+                  <path d="M0,0 L0,7 L7,3.5 z" fill="#dc2626"/>
+                </marker>
+              </defs>
+
+              <!--
+                Koordinaten (Schrägprojektion, Winkel 45°, Faktor 0.5):
+                Vordere Grundfläche (z=0):
+                  A = (60, 220)   linke untere Ecke
+                  B = (200, 220)  rechte untere Ecke
+                  C = (130, 80)   obere Spitze (Mitte)
+                Hintere Grundfläche (z=Tiefe, dx=50 dy=-30):
+                  A' = (110, 190)
+                  B' = (250, 190)
+                  C' = (180, 50)
+              -->
+
+              <!-- ── Verdeckte Hinterkanten (gestrichelt) ── -->
+              <!-- A–A' (linke untere Seitenkante, hinten verdeckt) -->
+              <line x1="60" y1="220" x2="110" y2="190" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5,4"/>
+              <!-- A'–B' (hintere Grundkante unten) -->
+              <line x1="110" y1="190" x2="250" y2="190" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5,4"/>
+              <!-- A'–C' (hintere linke Schräge) -->
+              <line x1="110" y1="190" x2="180" y2="50" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5,4"/>
+
+              <!-- ── Sichtbare Seitenflächen (Füllung zuerst, dann Rahmen) ── -->
+              <!-- Seitenfläche rechts unten: A-B-B'-A' -->
+              <polygon points="60,220 200,220 250,190 110,190" fill="#bfdbfe" stroke="none"/>
+              <!-- Seitenfläche rechts schräg: B-C-C'-B' -->
+              <polygon points="200,220 130,80 180,50 250,190" fill="#93c5fd" stroke="none"/>
+              <!-- Hintere Grundfläche: A'-B'-C' (schattiert, leicht sichtbar) -->
+              <polygon points="110,190 250,190 180,50" fill="#dbeafe" stroke="none"/>
+
+              <!-- ── Kanten der sichtbaren Seitenflächen ── -->
+              <line x1="200" y1="220" x2="250" y2="190" stroke="#1d4ed8" stroke-width="2"/>
+              <line x1="250" y1="190" x2="180" y2="50" stroke="#1d4ed8" stroke-width="2"/>
+              <line x1="130" y1="80"  x2="180" y2="50" stroke="#1d4ed8" stroke-width="2"/>
+              <!-- B–B' untere rechte Seitenkante -->
+              <line x1="200" y1="220" x2="250" y2="190" stroke="#1d4ed8" stroke-width="2"/>
+              <!-- C–C' obere Seitenkante -->
+              <line x1="130" y1="80"  x2="180" y2="50" stroke="#1d4ed8" stroke-width="2"/>
+
+              <!-- ── Vordere Grundfläche (oben drauf, ganz sichtbar) ── -->
+              <polygon points="60,220 200,220 130,80" fill="#60a5fa" fill-opacity="0.55" stroke="#1d4ed8" stroke-width="2.4"/>
+
+              <!-- ── Seitenkanten vorne sichtbar ── -->
+              <!-- A–C (linke Schräge vorne, sichtbar) -->
+              <line x1="60"  y1="220" x2="130" y2="80"  stroke="#1d4ed8" stroke-width="2.4"/>
+              <!-- B–C (rechte Schräge vorne) -->
+              <line x1="200" y1="220" x2="130" y2="80"  stroke="#1d4ed8" stroke-width="2.4"/>
+              <!-- A–B (untere Grundkante vorne) -->
+              <line x1="60"  y1="220" x2="200" y2="220" stroke="#1d4ed8" stroke-width="2.4"/>
+
+              <!-- ── Seitenkanten (Länge des Prismas): B-B' und C-C' sichtbar ── -->
+              <line x1="200" y1="220" x2="250" y2="190" stroke="#1d4ed8" stroke-width="2.4"/>
+              <line x1="130" y1="80"  x2="180" y2="50"  stroke="#1d4ed8" stroke-width="2.4"/>
+
+              <!-- ── Höhenlinie h (außen rechts) ── -->
+              <line x1="290" y1="220" x2="290" y2="80" stroke="#dc2626" stroke-width="1.8"
+                    marker-end="url(#arrH)" marker-start="url(#arrHs)"/>
+              <!-- gestrichelte Hilfslinie von B nach Höhenanfang -->
+              <line x1="200" y1="220" x2="290" y2="220" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,3"/>
+              <line x1="130" y1="80"  x2="290" y2="80"  stroke="#dc2626" stroke-width="1" stroke-dasharray="4,3"/>
+              <text x="298" y="156" font-size="14" fill="#dc2626" font-weight="800" font-family="Nunito,sans-serif">h</text>
+
+              <!-- ── Beschriftungen ── -->
+              <!-- Vordere Grundfläche -->
+              <text x="108" y="178" font-size="12" fill="#1e40af" font-weight="800" font-family="Nunito,sans-serif" text-anchor="middle">Grundfläche</text>
+
+              <!-- Seitenfläche links (unten) -->
+              <text x="124" y="236" font-size="11" fill="#1e40af" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">Seitenfläche</text>
+
+              <!-- Seitenfläche rechts schräg -->
+              <text x="196" y="148" font-size="11" fill="#1e40af" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">Seitenfläche</text>
+
+              <!-- Hintere Grundfläche -->
+              <text x="180" y="120" font-size="11" fill="#6b7280" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">(Grundfläche</text>
+              <text x="180" y="133" font-size="11" fill="#6b7280" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">hinten)</text>
+
+              <!-- Seitenkante-Label -->
+              <text x="232" y="140" font-size="12" fill="#1d4ed8" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">Seitenkante</text>
+
+              <!-- Ecken-Punkte und Labels -->
+              <circle cx="60"  cy="220" r="3.5" fill="#1d4ed8"/>
+              <circle cx="200" cy="220" r="3.5" fill="#1d4ed8"/>
+              <circle cx="130" cy="80"  r="3.5" fill="#1d4ed8"/>
+              <circle cx="110" cy="190" r="3"   fill="#2563eb"/>
+              <circle cx="250" cy="190" r="3"   fill="#2563eb"/>
+              <circle cx="180" cy="50"  r="3"   fill="#2563eb"/>
+              <text x="42"  y="232" font-size="12" fill="#1d4ed8" font-weight="800" font-family="Nunito,sans-serif">A</text>
+              <text x="205" y="235" font-size="12" fill="#1d4ed8" font-weight="800" font-family="Nunito,sans-serif">B</text>
+              <text x="126" y="70"  font-size="12" fill="#1d4ed8" font-weight="800" font-family="Nunito,sans-serif">C</text>
+              <text x="94"  y="202" font-size="11" fill="#6b7280" font-weight="700" font-family="Nunito,sans-serif">A'</text>
+              <text x="254" y="202" font-size="11" fill="#6b7280" font-weight="700" font-family="Nunito,sans-serif">B'</text>
+              <text x="182" y="44"  font-size="11" fill="#6b7280" font-weight="700" font-family="Nunito,sans-serif">C'</text>
+            </svg>
+          </div>
+          <div class="info-box info-blue" style="margin-top:10px;">
+            <span>📌</span>
+            <span>Das Dreiecksprisma hat <strong>5 Flächen</strong>, <strong>9 Kanten</strong> und <strong>6 Ecken</strong>. Gestrichelte Linien = verdeckte (nicht sichtbare) Kanten. (Eulersche Formel: E – K + F = 2)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NETZ -->
+  <div class="sub-panel" id="prism-netz">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-prism">📦</div>Netz eines Dreiecksprismas</div>
+      <p style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:14px;">
+        Das <strong>Netz</strong> entsteht, wenn man alle Flächen des Prismas aufklappt und flach hinlegt. Es zeigt alle Flächen in einer Ebene.
+      </p>
+
+      <div class="net-controls">
+        <label>Grundseite a:</label>
+        <input type="range" id="pNet_a" min="40" max="100" value="70" oninput="drawPrismNet()">
+        <label>Höhe h:</label>
+        <input type="range" id="pNet_h" min="40" max="120" value="80" oninput="drawPrismNet()">
+        <label>Dreieckshöhe h_G:</label>
+        <input type="range" id="pNet_hg" min="30" max="90" value="60" oninput="drawPrismNet()">
+      </div>
+
+      <div class="svg-wrap" style="min-height:360px;">
+        <canvas id="prismNetCanvas" width="640" height="380" style="max-width:100%;border-radius:8px;background:white;"></canvas>
+      </div>
+
+      <div class="info-box info-blue" style="margin-top:14px;">
+        <span>💡</span>
+        <span>Das Netz des Dreiecksprismas besteht aus <strong>2 Dreiecken</strong> (Grundflächen) und <strong>3 Rechtecken</strong> (Seitenflächen). Jedes Rechteck hat die Breite = eine Seite des Dreiecks und die Höhe = Prisma-Höhe h.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBERFLAECHE -->
+  <div class="sub-panel" id="prism-oberflaeche">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-prism">📏</div>Formel – Oberfläche</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">Berechne den Flächeninhalt einer <strong>Grundfläche</strong> A<sub>G</sub>.</div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">Berechne den <strong>Mantel</strong>: Alle Seitenflächen zusammen. Bei geradem Prisma: A<sub>M</sub> = Umfang der Grundfläche × Höhe</div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">Addiere: <strong>2 Grundflächen + Mantel</strong></div>
+            </div>
+          </div>
+
+          <div class="formula-box">O = 2 · A<sub>G</sub> + A<sub>M</sub></div>
+          <div class="formula-box">A<sub>M</sub> = u<sub>G</sub> · h</div>
+          <div class="formula-box">O = 2 · A<sub>G</sub> + u<sub>G</sub> · h</div>
+
+          <div class="info-box info-blue">
+            <span>📐</span>
+            <span>u<sub>G</sub> = Umfang der Grundfläche<br>h = Höhe des Prismas<br>A<sub>G</sub> = Flächeninhalt der Grundfläche</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-green">✏️</div>Beispiel – Dreiecksprisma</div>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">
+            Gleichseitiges Dreieck: a = 4 cm, Prisma-Höhe h = 6 cm
+          </p>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">Grundfläche (gleichseitiges Dreieck):<br><strong>A<sub>G</sub> = (√3/4) · a² = (√3/4) · 16 ≈ 6,93 cm²</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">Mantel:<br><strong>A<sub>M</sub> = (3 · 4) · 6 = 12 · 6 = 72 cm²</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">Oberfläche:<br><strong>O = 2 · 6,93 + 72 ≈ 85,86 cm²</strong></div>
+            </div>
+          </div>
+          <div class="info-box info-green">
+            <span>✅</span>
+            <span><strong>O ≈ 85,86 cm²</strong> (beim gleichseitigen Dreiecksprisma)</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-prism">📦</div>Quader (Sonderfall)</div>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;">
+            Grundfläche = Rechteck mit a und b, Höhe h:
+          </p>
+          <div class="formula-box">O = 2·(a·b + a·h + b·h)</div>
+          <div class="info-box info-blue">
+            <span>💡</span>
+            <span>Der <strong>Würfel</strong> (a = b = h) hat: O = 6 · a²</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOLUMEN -->
+  <div class="sub-panel" id="prism-volumen">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-prism">🧊</div>Formel – Volumen</div>
+          <div class="formula-box" style="font-size:20px;text-align:center;padding:22px;">
+            V = A<sub>G</sub> · h
+          </div>
+          <p style="font-size:14px;font-weight:600;color:var(--text2);line-height:1.7;margin-bottom:14px;">
+            Das Volumen eines Prismas ist das Produkt aus dem <strong>Flächeninhalt der Grundfläche</strong> A<sub>G</sub> und der <strong>Höhe</strong> h des Prismas.
+          </p>
+
+          <div class="info-box info-blue">
+            <span>💡</span>
+            <span>Diese Formel gilt für <strong>jedes gerade Prisma</strong>, egal wie die Grundfläche aussieht – Dreieck, Viereck, Sechseck, …</span>
+          </div>
+
+          <p class="section-label" style="margin-top:14px;">Grundflächen-Formeln</p>
+          <div style="font-size:13px;font-weight:700;line-height:2;">
+            <div>Dreieck: A = ½ · g · h<sub>g</sub></div>
+            <div>Rechteck: A = a · b</div>
+            <div>Gleichseitiges △: A = (√3/4) · a²</div>
+            <div>Parallelogramm: A = g · h</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-green">✏️</div>Beispiele</div>
+          <p class="section-label">Dreiecksprisma</p>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);">Grunddreieck: g = 6 cm, h<sub>g</sub> = 4 cm; Prisma-Höhe: h = 10 cm</p>
+          <div class="formula-box green-border" style="margin-top:8px;">V = ½ · 6 · 4 · 10 = 120 cm³</div>
+
+          <p class="section-label" style="margin-top:16px;">Quader</p>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);">a = 5 cm, b = 3 cm, h = 8 cm</p>
+          <div class="formula-box green-border" style="margin-top:8px;">V = 5 · 3 · 8 = 120 cm³</div>
+
+          <p class="section-label" style="margin-top:16px;">Würfel</p>
+          <div class="formula-box green-border">V = a³</div>
+
+          <div class="info-box info-green" style="margin-top:12px;">
+            <span>🏊</span>
+            <span>Einheiten: 1 m³ = 1 000 dm³ = 1 000 000 cm³<br>1 dm³ = 1 Liter (l)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZWEITAFELBILD -->
+  <div class="sub-panel" id="prism-ztb">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-prism">👁️</div>Zweitafelbild des Dreiecksprismas</div>
+      <p style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:16px;">
+        Das <strong>Zweitafelbild</strong> (auch: Zwei-Tafel-Projektion) zeigt einen Körper in zwei Ansichten: Vorderansicht (Aufriss) und Draufsicht (Grundriss). Beide liegen auf einer Ebene aufgeklappt.
+      </p>
+
+      <div class="ztb-wrap">
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Vorderansicht (Aufriss)</div>
+          <svg viewBox="0 0 160 200" style="width:100%;max-height:200px;">
+            <!-- Rectangle representing front view of prism -->
+            <rect x="30" y="30" width="100" height="130" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+            <!-- Hidden inner line (apex projection) -->
+            <line x1="80" y1="30" x2="80" y2="160" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Dimension h -->
+            <line x1="148" y1="30" x2="148" y2="160" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="154" y="100" font-size="12" fill="#dc2626" font-weight="800" font-family="Nunito">h</text>
+            <!-- Dimension a -->
+            <line x1="30" y1="176" x2="130" y2="176" stroke="#059669" stroke-width="1.5"/>
+            <text x="73" y="191" font-size="12" fill="#059669" font-weight="800" font-family="Nunito">a</text>
+            <text x="55" y="22" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Aufriss</text>
+          </svg>
+        </div>
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Seitenansicht (Seitenriss)</div>
+          <svg viewBox="0 0 160 200" style="width:100%;max-height:200px;">
+            <!-- Triangle = side view of triangular prism -->
+            <polygon points="80,30 145,160 15,160" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+            <!-- Height line -->
+            <line x1="80" y1="30" x2="80" y2="160" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Dimension b (depth) -->
+            <line x1="15" y1="176" x2="145" y2="176" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="73" y="191" font-size="12" fill="#7c3aed" font-weight="800" font-family="Nunito">b</text>
+            <text x="49" y="22" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Seitenriss</text>
+          </svg>
+        </div>
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Draufsicht (Grundriss)</div>
+          <svg viewBox="0 0 160 160" style="width:100%;max-height:180px;">
+            <!-- Top view = triangle -->
+            <polygon points="80,20 145,140 15,140" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+            <!-- Height line inside -->
+            <line x1="80" y1="20" x2="80" y2="140" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Labels -->
+            <text x="49" y="14" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Grundriss</text>
+            <text x="73" y="92" font-size="12" fill="#dc2626" font-weight="800" font-family="Nunito">A<tspan font-size="10" baseline-shift="-25%">G</tspan></text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="info-box info-blue" style="margin-top:16px;">
+        <span>📌</span>
+        <span><strong>Merkhilfe:</strong> Aufriss = Blick von vorne | Seitenriss = Blick von der Seite | Grundriss = Blick von oben. Verbindungslinien zwischen Aufriss und Grundriss sind immer senkrecht.</span>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="card-title" style="margin-bottom:12px;"><div class="icon icon-prism">📐</div>Zweitafelbild – Quader (Sonderfall)</div>
+        <div class="ztb-wrap">
+          <div class="ztb-view">
+            <div class="ztb-label">Aufriss</div>
+            <svg viewBox="0 0 160 180" style="width:100%;max-height:180px;">
+              <rect x="25" y="25" width="110" height="130" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+              <text x="70" y="16" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Aufriss</text>
+              <text x="70" y="96" font-size="11" fill="#1d4ed8" font-weight="700" font-family="Nunito">a × h</text>
+            </svg>
+          </div>
+          <div class="ztb-view">
+            <div class="ztb-label">Seitenriss</div>
+            <svg viewBox="0 0 160 180" style="width:100%;max-height:180px;">
+              <rect x="35" y="25" width="90" height="130" fill="#dbeafe" stroke="#2563eb" stroke-width="2.2"/>
+              <text x="65" y="16" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Seitenriss</text>
+              <text x="65" y="96" font-size="11" fill="#1d4ed8" font-weight="700" font-family="Nunito">b × h</text>
+            </svg>
+          </div>
+          <div class="ztb-view">
+            <div class="ztb-label">Grundriss</div>
+            <svg viewBox="0 0 160 130" style="width:100%;max-height:140px;">
+              <rect x="25" y="20" width="110" height="90" fill="#eff6ff" stroke="#2563eb" stroke-width="2.2"/>
+              <text x="68" y="14" font-size="11" fill="#1d4ed8" font-weight="800" font-family="Nunito">Grundriss</text>
+              <text x="68" y="70" font-size="11" fill="#1d4ed8" font-weight="700" font-family="Nunito">a × b</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECHNER -->
+  <div class="sub-panel" id="prism-rechner">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-prism">🔢</div>Rechner – Dreiecksprisma</div>
+      <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:16px;">
+        Gib die Maße ein, um Oberfläche und Volumen zu berechnen.
+      </p>
+
+      <p class="section-label">Grundfläche: Dreieck</p>
+      <div class="calc-grid">
+        <div class="input-group">
+          <label>Seite a (cm)</label>
+          <input type="number" id="pa" value="4" min="0.1" step="0.1">
+        </div>
+        <div class="input-group">
+          <label>Seite b (cm)</label>
+          <input type="number" id="pb" value="4" min="0.1" step="0.1">
+        </div>
+        <div class="input-group">
+          <label>Seite c (cm)</label>
+          <input type="number" id="pc" value="4" min="0.1" step="0.1">
+        </div>
+        <div class="input-group">
+          <label>Prisma-Höhe h (cm)</label>
+          <input type="number" id="ph" value="6" min="0.1" step="0.1">
+        </div>
+      </div>
+      <button class="calc-btn btn-prism" onclick="calcPrism()">📐 Berechnen</button>
+
+      <div class="result-area" id="prismResult">
+        <em>Trage Maße ein und klicke auf „Berechnen".</em>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-prism">📦</div>Rechner – Quader</div>
+      <div class="calc-grid">
+        <div class="input-group">
+          <label>Länge a (cm)</label>
+          <input type="number" id="qa" value="5" min="0.1" step="0.1">
+        </div>
+        <div class="input-group">
+          <label>Breite b (cm)</label>
+          <input type="number" id="qb" value="3" min="0.1" step="0.1">
+        </div>
+        <div class="input-group">
+          <label>Höhe h (cm)</label>
+          <input type="number" id="qh" value="8" min="0.1" step="0.1">
+        </div>
+      </div>
+      <button class="calc-btn btn-prism" onclick="calcQuader()">📐 Berechnen</button>
+      <div class="result-area" id="quaderResult">
+        <em>Trage Maße ein und klicke auf „Berechnen".</em>
+      </div>
+    </div>
+  </div>
+</div><!-- end prism panel -->
+
+
+<!-- ══════════ PYRAMIDE PANEL ══════════ -->
+<div class="panel" id="panel-pyramid">
+  <div class="sub-tabs">
+    <div class="sub-tab active-pyramid" onclick="switchSub('pyramid','definition',this)">📖 Definition</div>
+    <div class="sub-tab" onclick="switchSub('pyramid','netz',this)">📦 Netz</div>
+    <div class="sub-tab" onclick="switchSub('pyramid','oberflaeche',this)">📏 Oberfläche</div>
+    <div class="sub-tab" onclick="switchSub('pyramid','volumen',this)">🏔️ Volumen</div>
+    <div class="sub-tab" onclick="switchSub('pyramid','ztb',this)">👁️ Zweitafelbild</div>
+    <div class="sub-tab" onclick="switchSub('pyramid','rechner',this)">🔢 Rechner</div>
+  </div>
+
+  <!-- DEFINITION -->
+  <div class="sub-panel active" id="pyramid-definition">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-pyramid">🔶</div>Was ist eine Pyramide?</div>
+          <p class="def-term pyr">Pyramide</p>
+          <p class="def-text">Eine Pyramide ist ein geometrischer Körper mit einer <strong>Grundfläche</strong> (Vieleck) und <strong>dreieckigen Seitenflächen</strong>, die alle in einer gemeinsamen Spitze (Apex) zusammenlaufen.</p>
+
+          <p class="def-term pyr">Gerade / schiefe Pyramide</p>
+          <p class="def-text">Bei einer <em>geraden</em> Pyramide liegt die Spitze senkrecht über dem Mittelpunkt der Grundfläche.</p>
+
+          <div class="info-box info-yellow">
+            <span>💡</span>
+            <span>Typische Grundflächen: Quadrat → vierseitige Pyramide, Dreieck → dreiseitige Pyramide (Tetraeder), usw.</span>
+          </div>
+
+          <p class="section-label" style="margin-top:14px;">Wichtige Begriffe</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;font-weight:600;">
+            <div style="background:var(--pyramid-light);border-radius:8px;padding:8px 12px;">🔵 Grundfläche <span style="color:#92400e;display:block;font-size:12px;">Vieleck unten</span></div>
+            <div style="background:var(--pyramid-light);border-radius:8px;padding:8px 12px;">🔺 Seitenfläche <span style="color:#92400e;display:block;font-size:12px;">Dreieck zur Spitze</span></div>
+            <div style="background:var(--pyramid-light);border-radius:8px;padding:8px 12px;">↕️ Höhe h <span style="color:#92400e;display:block;font-size:12px;">Spitze → Grundfläche</span></div>
+            <div style="background:var(--pyramid-light);border-radius:8px;padding:8px 12px;">📐 Höhe der Seitenfläche h<sub>s</sub> <span style="color:#92400e;display:block;font-size:12px;">Höhe eines Seiten­dreiecks</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-pyramid">🎨</div>Quadratische Pyramide – Darstellung</div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 280 260" style="max-height:240px;">
+              <!-- Base square (parallelogram for 3D effect) -->
+              <polygon points="50,180 150,200 230,180 130,160" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+              <!-- Back edges (dashed) -->
+              <line x1="130" y1="160" x2="140" y2="40" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+              <line x1="230" y1="180" x2="140" y2="40" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+              <!-- Side face left -->
+              <polygon points="50,180 130,160 140,40" fill="#fcd34d" stroke="#b45309" stroke-width="2"/>
+              <!-- Side face front -->
+              <polygon points="50,180 150,200 140,40" fill="#fbbf24" stroke="#b45309" stroke-width="2"/>
+              <!-- Side face right -->
+              <polygon points="150,200 230,180 140,40" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+              <!-- Apex label -->
+              <circle cx="140" cy="40" r="4" fill="#dc2626"/>
+              <text x="148" y="38" font-size="12" fill="#dc2626" font-weight="800" font-family="Nunito">S (Spitze)</text>
+              <!-- Height line -->
+              <line x1="140" y1="40" x2="140" y2="180" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="6,3"/>
+              <text x="145" y="120" font-size="13" fill="#dc2626" font-weight="800" font-family="Nunito">h</text>
+              <!-- Base label -->
+              <text x="120" y="218" font-size="12" fill="#92400e" font-weight="800" font-family="Nunito">Grundfläche</text>
+              <!-- Height of side face (hs) label -->
+              <line x1="140" y1="40" x2="100" y2="190" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="96" y="130" font-size="11" fill="#7c3aed" font-weight="700" font-family="Nunito">h&#x209B;</text>
+            </svg>
+          </div>
+          <div class="info-box info-yellow" style="margin-top:10px;">
+            <span>📌</span>
+            <span>Die quadratische Pyramide hat <strong>5 Flächen</strong>, <strong>8 Kanten</strong> und <strong>5 Ecken</strong>. (Eulersche Formel: 5 – 8 + 5 = 2 ✓)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NETZ PYRAMIDE -->
+  <div class="sub-panel" id="pyramid-netz">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-pyramid">📦</div>Netz einer quadratischen Pyramide</div>
+      <p style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:14px;">
+        Das Netz der Pyramide besteht aus <strong>1 Quadrat</strong> (Grundfläche) und <strong>4 gleichschenkligen Dreiecken</strong> (Seitenflächen). Die Höhe der Dreiecke im Netz ist die <strong>Höhe der Seitenfläche h<sub>s</sub></strong>.
+      </p>
+
+      <div class="net-controls">
+        <label>Grundseite a:</label>
+        <input type="range" class="pyr" id="pyrNet_a" min="40" max="120" value="80" oninput="drawPyramidNet()">
+        <label>Höhe der Seitenfläche h<sub>s</sub>:</label>
+        <input type="range" class="pyr" id="pyrNet_ha" min="40" max="130" value="90" oninput="drawPyramidNet()">
+      </div>
+
+      <div class="svg-wrap" style="min-height:360px;">
+        <canvas id="pyramidNetCanvas" width="620" height="380" style="max-width:100%;border-radius:8px;background:white;"></canvas>
+      </div>
+
+      <div class="info-box info-yellow" style="margin-top:14px;">
+        <span>💡</span>
+        <span>h<sub>s</sub> ist die Höhe eines Seiten­dreiecks im aufgeklappten Netz. Sie ist <em>nicht</em> die Körperhöhe h! Es gilt: h<sub>s</sub>² = h² + (a/2)²</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBERFLAECHE PYRAMIDE -->
+  <div class="sub-panel" id="pyramid-oberflaeche">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-pyramid">📏</div>Formel – Oberfläche</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num pyr">1</div>
+              <div class="step-body">Berechne <strong>Grundfläche</strong> A<sub>G</sub>.</div>
+            </div>
+            <div class="step">
+              <div class="step-num pyr">2</div>
+              <div class="step-body">Berechne den <strong>Mantel</strong>: Summe aller Seitendreiecke. Jedes Dreieck: A = ½ · a · h<sub>s</sub></div>
+            </div>
+            <div class="step">
+              <div class="step-num pyr">3</div>
+              <div class="step-body">Addiere: <strong>1 Grundfläche + Mantel</strong></div>
+            </div>
+          </div>
+
+          <div class="formula-box pyramid-border">O = A<sub>G</sub> + A<sub>M</sub></div>
+          <p class="section-label" style="margin-top:12px;">Quadratische Pyramide (n = 4 Seiten):</p>
+          <div class="formula-box pyramid-border">A<sub>M</sub> = 4 · ½ · a · h<sub>s</sub> = 2 · a · h<sub>s</sub></div>
+          <div class="formula-box pyramid-border">O = a² + 2 · a · h<sub>s</sub></div>
+          <div class="info-box info-yellow">
+            <span>📐</span>
+            <span>h<sub>s</sub> = Höhe der Seitenfläche (Höhe eines Seiten­dreiecks)<br>a = Grundkante<br>A<sub>G</sub> = Grundfläche (a² beim Quadrat)</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-green">✏️</div>Beispiel – Quadratische Pyramide</div>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">
+            Grundquadrat: a = 6 cm; Höhe der Seitenfläche h<sub>s</sub> = 5 cm
+          </p>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num pyr">1</div>
+              <div class="step-body">Grundfläche (Quadrat):<br><strong>A<sub>G</sub> = 6² = 36 cm²</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-num pyr">2</div>
+              <div class="step-body">Mantel:<br><strong>A<sub>M</sub> = 2 · 6 · 5 = 60 cm²</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-num pyr">3</div>
+              <div class="step-body">Oberfläche:<br><strong>O = 36 + 60 = 96 cm²</strong></div>
+            </div>
+          </div>
+          <div class="info-box info-green">
+            <span>✅</span>
+            <span><strong>O = 96 cm²</strong></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-pyramid">📐</div>Höhe der Seitenfläche h<sub>s</sub> berechnen</div>
+          <div class="formula-box pyramid-border">h<sub>s</sub>² = h² + (a/2)²</div>
+          <div class="formula-box pyramid-border">h<sub>s</sub> = √(h² + (a/2)²)</div>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);">Beispiel: h = 4 cm, a = 6 cm</p>
+          <div class="formula-box green-border">h<sub>s</sub> = √(16 + 9) = √25 = 5 cm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOLUMEN PYRAMIDE -->
+  <div class="sub-panel" id="pyramid-volumen">
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-pyramid">🏔️</div>Formel – Volumen</div>
+          <div class="formula-box pyramid-border" style="font-size:20px;text-align:center;padding:22px;">
+            V = ⅓ · A<sub>G</sub> · h
+          </div>
+          <p style="font-size:14px;font-weight:600;color:var(--text2);line-height:1.7;margin-bottom:14px;">
+            Das Volumen einer Pyramide ist <strong>ein Drittel</strong> des Volumens eines Prismas mit gleicher Grundfläche und gleicher Höhe.
+          </p>
+
+          <div class="info-box info-yellow">
+            <span>🔑</span>
+            <span><strong>Merkregel:</strong> 3 Pyramiden ergeben ein Prisma (gleiche Grundfläche, gleiche Höhe).</span>
+          </div>
+
+          <div style="margin-top:16px;background:var(--pyramid-light);border-radius:10px;padding:16px;">
+            <p style="font-size:13px;font-weight:800;margin-bottom:8px;">Prisma vs. Pyramide</p>
+            <div style="font-size:13px;font-weight:700;">
+              <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fcd34d;">
+                <span>Prisma:</span><span style="font-family:'JetBrains Mono',monospace;">V = A<sub>G</sub> · h</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:5px 0;">
+                <span>Pyramide:</span><span style="font-family:'JetBrains Mono',monospace;">V = <strong>⅓</strong> · A<sub>G</sub> · h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="icon icon-green">✏️</div>Beispiele</div>
+          <p class="section-label">Quadratische Pyramide</p>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);">a = 6 cm, h = 4 cm</p>
+          <div class="formula-box green-border" style="margin-top:8px;">V = ⅓ · 36 · 4 = ⅓ · 144 = 48 cm³</div>
+
+          <p class="section-label" style="margin-top:16px;">Dreieckige Pyramide (Tetraeder)</p>
+          <p style="font-size:13px;font-weight:600;color:var(--text2);">Grunddreieck: g = 6 cm, h<sub>g</sub> = 4 cm; h = 5 cm</p>
+          <div class="formula-box green-border" style="margin-top:8px;">A<sub>G</sub> = ½·6·4 = 12 cm²<br>V = ⅓ · 12 · 5 = 20 cm³</div>
+
+          <div class="info-box info-yellow" style="margin-top:12px;">
+            <span>🏛️</span>
+            <span>Die Cheops-Pyramide: a ≈ 230 m, h ≈ 139 m → V = ⅓·230²·139 ≈ 2 458 000 m³!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZWEITAFELBILD PYRAMIDE -->
+  <div class="sub-panel" id="pyramid-ztb">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-pyramid">👁️</div>Zweitafelbild der quadratischen Pyramide</div>
+      <p style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:16px;">
+        Im Zweitafelbild (Zwei-Tafel-Projektion) wird die Pyramide von vorne (Aufriss) und von oben (Grundriss) gezeichnet.
+      </p>
+
+      <div class="ztb-wrap">
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Aufriss (Vorderansicht)</div>
+          <svg viewBox="0 0 160 200" style="width:100%;max-height:200px;">
+            <!-- Isosceles triangle = front view of pyramid -->
+            <polygon points="80,25 145,165 15,165" fill="#fef3c7" stroke="#d97706" stroke-width="2.2"/>
+            <!-- Center height line -->
+            <line x1="80" y1="25" x2="80" y2="165" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Dimension h -->
+            <line x1="152" y1="25" x2="152" y2="165" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="157" y="100" font-size="12" fill="#dc2626" font-weight="800" font-family="Nunito">h</text>
+            <!-- Dimension a -->
+            <line x1="15" y1="180" x2="145" y2="180" stroke="#059669" stroke-width="1.5"/>
+            <text x="73" y="195" font-size="12" fill="#059669" font-weight="800" font-family="Nunito">a</text>
+            <text x="55" y="18" font-size="11" fill="#92400e" font-weight="800" font-family="Nunito">Aufriss</text>
+          </svg>
+        </div>
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Seitenriss</div>
+          <svg viewBox="0 0 160 200" style="width:100%;max-height:200px;">
+            <!-- Same triangle from side -->
+            <polygon points="80,25 145,165 15,165" fill="#fef3c7" stroke="#d97706" stroke-width="2.2"/>
+            <line x1="80" y1="25" x2="80" y2="165" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <line x1="15" y1="180" x2="145" y2="180" stroke="#7c3aed" stroke-width="1.5"/>
+            <text x="73" y="195" font-size="12" fill="#7c3aed" font-weight="800" font-family="Nunito">a</text>
+            <text x="49" y="18" font-size="11" fill="#92400e" font-weight="800" font-family="Nunito">Seitenriss</text>
+          </svg>
+        </div>
+        <div class="ztb-view">
+          <div class="ztb-label">🔺 Grundriss (Draufsicht)</div>
+          <svg viewBox="0 0 160 160" style="width:100%;max-height:170px;">
+            <!-- Square + diagonals (top view of square pyramid) -->
+            <rect x="20" y="20" width="120" height="120" fill="#fef3c7" stroke="#d97706" stroke-width="2.2"/>
+            <!-- Diagonals (hidden lines = dashed) -->
+            <line x1="20" y1="20" x2="140" y2="140" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <line x1="140" y1="20" x2="20" y2="140" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <!-- Center point = apex projection -->
+            <circle cx="80" cy="80" r="4" fill="#dc2626"/>
+            <text x="85" y="76" font-size="10" fill="#dc2626" font-weight="800" font-family="Nunito">S</text>
+            <text x="48" y="14" font-size="11" fill="#92400e" font-weight="800" font-family="Nunito">Grundriss</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="info-box info-yellow" style="margin-top:16px;">
+        <span>📌</span>
+        <span><strong>Im Grundriss</strong> sieht man das Quadrat mit den Diagonalen (gestrichelt), die zur Spitze führen. Der <strong>Mittelpunkt</strong> ist die projizierte Spitze S. Im Aufriss und Seitenriss zeigt sich ein gleichschenkliges Dreieck.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECHNER PYRAMIDE -->
+  <div class="sub-panel" id="pyramid-rechner">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-pyramid">🔢</div>Rechner – Quadratische Pyramide</div>
+      <div class="calc-grid">
+        <div class="input-group pyramid">
+          <label>Grundkante a (cm)</label>
+          <input type="number" id="pyr_a" value="6" min="0.1" step="0.1">
+        </div>
+        <div class="input-group pyramid">
+          <label>Höhe h (cm)</label>
+          <input type="number" id="pyr_h" value="4" min="0.1" step="0.1">
+        </div>
+      </div>
+      <button class="calc-btn btn-pyramid" onclick="calcPyramid()">🏔️ Berechnen</button>
+      <div class="result-area" id="pyramidResult">
+        <em>Trage Maße ein und klicke auf „Berechnen".</em>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-pyramid">📐</div>Rechner – Beliebige Pyramide</div>
+      <div class="calc-grid">
+        <div class="input-group pyramid">
+          <label>Grundfläche A<sub>G</sub> (cm²)</label>
+          <input type="number" id="pyrG_A" value="24" min="0.1" step="0.1">
+        </div>
+        <div class="input-group pyramid">
+          <label>Höhe h (cm)</label>
+          <input type="number" id="pyrG_h" value="5" min="0.1" step="0.1">
+        </div>
+      </div>
+      <button class="calc-btn btn-pyramid" onclick="calcPyramidGen()">🏔️ Volumen berechnen</button>
+      <div class="result-area" id="pyramidGenResult">
+        <em>Trage Maße ein und klicke auf „Berechnen".</em>
+      </div>
+    </div>
+  </div>
+</div><!-- end pyramid panel -->
+
+
+<!-- ══════════ VERGLEICH PANEL ══════════ -->
+<div class="panel" id="panel-compare">
+  <div class="card">
+    <div class="card-title"><div class="icon icon-purple">⚖️</div>Prisma vs. Pyramide – Übersicht</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Merkmal</th>
+          <th>🔷 Prisma</th>
+          <th>🔶 Pyramide</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Form</td>
+          <td>2 kongruente Grundflächen (Vielecke) + rechteckige Seitenflächen</td>
+          <td>1 Grundfläche (Vieleck) + dreieckige Seitenflächen → Spitze</td>
+        </tr>
+        <tr>
+          <td>Grundflächen</td>
+          <td>2 (oben und unten, parallel)</td>
+          <td>1 (nur unten)</td>
+        </tr>
+        <tr>
+          <td>Seitenflächen</td>
+          <td>Rechtecke (beim geraden Prisma)</td>
+          <td>Dreiecke</td>
+        </tr>
+        <tr>
+          <td>Spitze</td>
+          <td>Keine Spitze</td>
+          <td>Eine Spitze (Apex)</td>
+        </tr>
+        <tr>
+          <td>Volumen</td>
+          <td><code>V = A_G · h</code></td>
+          <td><code>V = ⅓ · A_G · h</code></td>
+        </tr>
+        <tr>
+          <td>Oberfläche</td>
+          <td><code>O = 2·A_G + u_G·h</code></td>
+          <td><code>O = A_G + A_M</code></td>
+        </tr>
+        <tr>
+          <td>Mantel</td>
+          <td>Rechteckige Seitenflächen: <code>A_M = u_G · h</code></td>
+          <td>Dreieckige Seitenflächen: <code>A_M = n · ½ · a · h_s</code></td>
+        </tr>
+        <tr>
+          <td>Besonderheit</td>
+          <td>Würfel &amp; Quader sind Sonderfälle</td>
+          <td>Gleiches Volumen wie ⅓ Prisma gleicher Höhe</td>
+        </tr>
+        <tr>
+          <td>Netz</td>
+          <td>2 Grundflächen + n Rechtecke</td>
+          <td>1 Grundfläche + n Dreiecke</td>
+        </tr>
+        <tr>
+          <td>Eulerformel E-K+F</td>
+          <td>Dreiecksprisma: 6–9+5 = 2 ✓</td>
+          <td>Quadrat-Pyramide: 5–8+5 = 2 ✓</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <div class="card-title"><div class="icon icon-purple">🔢</div>Direktvergleich – Rechner</div>
+    <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;">
+      Vergleiche Prisma und Pyramide mit gleicher Grundfläche und Höhe:
+    </p>
+    <div class="calc-grid">
+      <div class="input-group">
+        <label>Grundfläche A<sub>G</sub> (cm²)</label>
+        <input type="number" id="cmp_A" value="36" min="0.1" step="0.1">
+      </div>
+      <div class="input-group">
+        <label>Höhe h (cm)</label>
+        <input type="number" id="cmp_h" value="6" min="0.1" step="0.1">
+      </div>
+    </div>
+    <button class="calc-btn btn-prism" style="max-width:300px;" onclick="calcCompare()">⚖️ Vergleichen</button>
+    <div class="result-area" id="compareResult" style="margin-top:14px;"><em>Klicke auf „Vergleichen".</em></div>
+  </div>
+</div>
+
+
+<!-- ══════════ QUIZ PANEL ══════════ -->
+<div class="panel" id="panel-quiz">
+  <div id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore">
+    <h3 id="scoreText">🎉 Ergebnis</h3>
+    <p id="scoreDetail"></p>
+    <button class="calc-btn btn-prism" style="margin-top:16px;max-width:220px;" onclick="restartQuiz()">🔄 Nochmal versuchen</button>
+  </div>
+</div>
+
+
+<script>
+// ─────────────────────────────────────────────
+// TAB SWITCHING
+// ─────────────────────────────────────────────
+function switchMain(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(t => {
+    t.classList.remove('active-prism','active-pyramid','active-compare','active-quiz');
+  });
+  document.getElementById('panel-'+id).classList.add('active');
+  const cls = {prism:'active-prism',pyramid:'active-pyramid',compare:'active-compare',quiz:'active-quiz'};
+  el.classList.add(cls[id]);
+  if (id==='quiz') renderQuiz();
+}
+
+function switchSub(ns, id, el) {
+  const panels = document.querySelectorAll('#panel-'+ns+' .sub-panel');
+  const tabs = document.querySelectorAll('#panel-'+ns+' .sub-tab');
+  panels.forEach(p => p.classList.remove('active'));
+  tabs.forEach(t => t.classList.remove('active-prism','active-pyramid'));
+  document.getElementById(ns+'-'+id).classList.add('active');
+  el.classList.add(ns==='prism' ? 'active-prism' : 'active-pyramid');
+  if (id==='netz') { setTimeout(() => { if(ns==='prism') drawPrismNet(); else drawPyramidNet(); }, 50); }
+}
+
+// ─────────────────────────────────────────────
+// PRISM NET DRAWING
+// ─────────────────────────────────────────────
+function drawPrismNet() {
+  const canvas = document.getElementById('prismNetCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, W, H);
+  const rawA = +document.getElementById('pNet_a').value;   // Grundseite
+  const rawH = +document.getElementById('pNet_h').value;   // Prisma-Höhe
+  const rawHg = +document.getElementById('pNet_hg').value; // Dreieckshöhe
+
+  // Net layout (flat):
+  //   The strip of 3 rectangles has total width = 3*a, height = rawH
+  //   Top triangle sits above the middle rectangle: height = rawHg
+  //   Bottom triangle sits below the middle rectangle: height = rawHg
+  //   Total net height = rawHg + rawH + rawHg
+  //   Total net width  = 3 * rawA
+
+  const MARGIN = 48; // px margin for labels & dimension arrows
+  const scaleX = (W - 2 * MARGIN) / (3 * rawA);
+  const scaleY = (H - 2 * MARGIN) / (2 * rawHg + rawH);
+  const scale  = Math.min(scaleX, scaleY);
+
+  const a  = rawA  * scale;
+  const h  = rawH  * scale;
+  const hg = rawHg * scale;
+
+  // Starting point: center the net
+  const netW = 3 * a;
+  const netH = 2 * hg + h;
+  const ox = (W - netW) / 2;   // left edge of rectangle strip
+  const oy = (H - netH) / 2;   // top edge of TOP triangle
+
+  // ── helpers ──────────────────────────────
+  function fillRect(x, y, w, hh, col) {
+    ctx.fillStyle = col;
+    ctx.fillRect(x, y, w, hh);
+  }
+  function strokeRect(x, y, w, hh) {
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, hh);
+  }
+  function fillTri(x1,y1,x2,y2,x3,y3,col) {
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3); ctx.closePath();
+    ctx.fillStyle = col; ctx.fill();
+    ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.stroke();
+  }
+  function label(txt, x, y, col='#1e40af', sz=12, align='center') {
+    ctx.fillStyle = col;
+    ctx.font = `bold ${sz}px Nunito, sans-serif`;
+    ctx.textAlign = align;
+    ctx.fillText(txt, x, y);
+  }
+  function dimLine(x1,y1,x2,y2,txt,offset,col='#dc2626') {
+    // draws a dimension line with ticks and label
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.sqrt(dx*dx+dy*dy);
+    const nx = -dy/len*offset, ny = dx/len*offset; // normal offset
+    ctx.save();
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.5;
+    // line
+    ctx.beginPath();
+    ctx.moveTo(x1+nx, y1+ny); ctx.lineTo(x2+nx, y2+ny);
+    ctx.stroke();
+    // tick marks
+    ctx.beginPath();
+    ctx.moveTo(x1+nx-ny*0.4, y1+ny+nx*0.4); ctx.lineTo(x1+nx+ny*0.4, y1+ny-nx*0.4); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2+nx-ny*0.4, y2+ny+nx*0.4); ctx.lineTo(x2+nx+ny*0.4, y2+ny-nx*0.4); ctx.stroke();
+    // label at midpoint
+    const mx = (x1+x2)/2+nx*1.6, my = (y1+y2)/2+ny*1.6;
+    ctx.font = 'bold 13px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(txt, mx, my+4);
+    ctx.restore();
+  }
+
+  // ── Row y positions ──
+  const triTopY  = oy;                // apex of top triangle
+  const rectTopY = oy + hg;           // top of rectangle strip
+  const rectBotY = oy + hg + h;       // bottom of rectangle strip
+  const triBotY  = oy + hg + h + hg;  // base of bottom triangle apex
+
+  // ── Rectangle strip (3 side faces) ──
+  const cols = ['#bfdbfe','#93c5fd','#bfdbfe'];
+  for (let i = 0; i < 3; i++) {
+    const rx = ox + i * a;
+    fillRect(rx, rectTopY, a, h, cols[i]);
+    strokeRect(rx, rectTopY, a, h);
+    label(`Seitenfläche ${i+1}`, rx + a/2, rectTopY + h/2 + 5, '#1e40af', 11);
+  }
+
+  // ── Top triangle (Grundfläche oben, hängt an mittlerem Rechteck) ──
+  const triTopApexX = ox + 1.5 * a;
+  const triTopBaseL = ox + a;           // left base corner
+  const triTopBaseR = ox + 2 * a;       // right base corner
+  fillTri(triTopBaseL, rectTopY, triTopBaseR, rectTopY, triTopApexX, triTopY, '#dbeafe');
+  label('Grundfläche', triTopApexX, triTopY + hg*0.5, '#1e40af', 11);
+
+  // Dreieckshöhe annotation inside top triangle
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 1.4; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  ctx.moveTo(triTopApexX, triTopY);
+  ctx.lineTo(triTopApexX, rectTopY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  label('hG', triTopApexX + 10, (triTopY + rectTopY)/2 + 4, '#7c3aed', 12);
+
+  // ── Bottom triangle (Grundfläche unten, hängt an mittlerem Rechteck) ──
+  const triBotBaseL = ox + a;
+  const triBotBaseR = ox + 2 * a;
+  fillTri(triBotBaseL, rectBotY, triBotBaseR, rectBotY, triTopApexX, triBotY, '#dbeafe');
+  label('Grundfläche', triTopApexX, rectBotY + hg*0.5, '#1e40af', 11);
+
+  // Dreieckshöhe annotation inside bottom triangle
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 1.4; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  ctx.moveTo(triTopApexX, rectBotY);
+  ctx.lineTo(triTopApexX, triBotY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  label('hG', triTopApexX + 10, (rectBotY + triBotY)/2 + 4, '#7c3aed', 12);
+
+  // ── Dimension lines ──
+  // a (Grundseite) – above the net, one rectangle wide
+  dimLine(ox, rectTopY, ox+a, rectTopY, 'a', -18, '#059669');
+
+  // h (Prisma-Höhe) – right of the net strip
+  dimLine(ox+3*a, rectTopY, ox+3*a, rectBotY, 'h', 20, '#dc2626');
+
+  // hG (Dreieckshöhe) – left of net, next to top triangle
+  dimLine(ox, rectTopY, ox, triTopY, 'hG', -20, '#7c3aed');
+
+  // ── Legend ──
+  const legX = MARGIN/2 - 4, legY = H - 14;
+  ctx.fillStyle = '#4a5a6e';
+  ctx.font = 'bold 11px Nunito, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#059669'; ctx.fillText('a = Grundseite des Dreiecks', legX, legY - 16);
+  ctx.fillStyle = '#dc2626'; ctx.fillText('h = Prisma-Höhe', legX + 200, legY - 16);
+  ctx.fillStyle = '#7c3aed'; ctx.fillText('hG = Höhe des Grunddreiecks', legX, legY);
+}
+
+// ─────────────────────────────────────────────
+// PYRAMID NET DRAWING
+// ─────────────────────────────────────────────
+function drawPyramidNet() {
+  const canvas = document.getElementById('pyramidNetCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, W, H);
+
+  const rawA  = +document.getElementById('pyrNet_a').value;
+  const rawHs = +document.getElementById('pyrNet_ha').value;
+
+  // Net total extent: width = a + 2*hs,  height = a + 2*hs
+  const MARGIN = 52;
+  const avail  = Math.min(W - 2*MARGIN, H - 2*MARGIN);
+  const scale  = avail / (rawA + 2*rawHs);
+  const a  = rawA  * scale;
+  const hs = rawHs * scale;
+
+  // Center the net
+  const cx = W / 2;
+  const cy = H / 2;
+  const half = a / 2;
+
+  // Square corners
+  const sqL = cx - half, sqR = cx + half;
+  const sqT = cy - half, sqB = cy + half;
+
+  // Triangle apexes (outside each edge of the square)
+  const apexTop    = [cx,     sqT - hs];   // top triangle
+  const apexBottom = [cx,     sqB + hs];   // bottom triangle
+  const apexLeft   = [sqL-hs, cy      ];   // left triangle
+  const apexRight  = [sqR+hs, cy      ];   // right triangle
+
+  // ── draw helper ──
+  function tri(x1,y1, x2,y2, ax,ay, col) {
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(ax,ay); ctx.closePath();
+    ctx.fillStyle = col; ctx.fill();
+    ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2; ctx.stroke();
+  }
+  function txt(t, x, y, col='#92400e', size=11, align='center') {
+    ctx.fillStyle = col; ctx.font = `bold ${size}px Nunito, sans-serif`;
+    ctx.textAlign = align; ctx.textBaseline = 'middle';
+    ctx.fillText(t, x, y);
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  // ── 4 side triangles ──
+  const triCols = ['#fcd34d','#f59e0b','#fbbf24','#fde68a'];
+  // Top
+  tri(sqL,sqT, sqR,sqT, apexTop[0],apexTop[1], triCols[0]);
+  // Bottom
+  tri(sqL,sqB, sqR,sqB, apexBottom[0],apexBottom[1], triCols[1]);
+  // Left
+  tri(sqL,sqT, sqL,sqB, apexLeft[0],apexLeft[1], triCols[2]);
+  // Right
+  tri(sqR,sqT, sqR,sqB, apexRight[0],apexRight[1], triCols[3]);
+
+  // ── Square (ground face, drawn on top so it overlaps triangle edges) ──
+  ctx.fillStyle = '#fef3c7';
+  ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.rect(sqL, sqT, a, a); ctx.fill(); ctx.stroke();
+  txt('Grundfläche', cx, cy, '#92400e', 12);
+
+  // ── Side-face labels (inside each triangle) ──
+  txt('Seitenfläche', cx,       sqT - hs*0.45, '#78350f', 10);
+  txt('Seitenfläche', cx,       sqB + hs*0.45, '#78350f', 10);
+  txt('Seitenfläche', sqL-hs*0.45, cy,         '#78350f', 10);
+  txt('Seitenfläche', sqR+hs*0.45, cy,         '#78350f', 10);
+
+  // ══ MASS-LINIEN ═════════════════════════════════════════════════════════
+  // Helper: draw a dimension line with end-ticks and centred label
+  function dimLine(x1,y1, x2,y2, label, offsetPx, col) {
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.sqrt(dx*dx+dy*dy);
+    if (len < 1) return;
+    const ux = dx/len, uy = dy/len;   // unit along line
+    const nx = -uy*offsetPx, ny = ux*offsetPx;  // normal offset
+
+    // main line
+    ctx.save();
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(x1+nx, y1+ny);
+    ctx.lineTo(x2+nx, y2+ny);
+    ctx.stroke();
+
+    // arrow heads (small filled triangles)
+    function arrowHead(px,py, dirX,dirY) {
+      const AL = 7, AW = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(px+nx + dirX*AL, py+ny + dirY*AL);
+      ctx.lineTo(px+nx - dirY*AW, py+ny + dirX*AW);
+      ctx.lineTo(px+nx + dirY*AW, py+ny - dirX*AW);
+      ctx.closePath(); ctx.fill();
+    }
+    arrowHead(x1, y1,  ux,  uy);  // arrow pointing away from x1
+    arrowHead(x2, y2, -ux, -uy);  // arrow pointing away from x2
+
+    // label at midpoint, shifted further along normal
+    const mx = (x1+x2)/2 + nx*1.8;
+    const my = (y1+y2)/2 + ny*1.8;
+    ctx.font = 'bold 13px JetBrains Mono, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, mx, my);
+    ctx.textBaseline = 'alphabetic';
+    ctx.restore();
+  }
+
+  // ── a: along the TOP edge of the square (outside, above) ──
+  dimLine(sqL, sqT, sqR, sqT, 'a', -16, '#059669');
+
+  // ── a: along the LEFT edge of the square (outside, left) ──
+  dimLine(sqL, sqT, sqL, sqB, 'a', -16, '#059669');
+
+  // ── hs: height of TOP triangle
+  //    from midpoint of base (on sqT edge) perpendicularly to the apex
+  //    Because triangles are isosceles and apex is directly above centre,
+  //    the height runs vertically from (cx, sqT) to apexTop.
+  const hsLineOffset = 14; // px to the right of the line, inside the triangle
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 1.5; ctx.setLineDash([5,3]);
+  ctx.beginPath(); ctx.moveTo(cx, sqT); ctx.lineTo(cx, apexTop[1]); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
+
+  // Foot mark (right-angle tick at sqT)
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 1.5;
+  const tm = 5;
+  ctx.beginPath(); ctx.moveTo(cx-tm, sqT); ctx.lineTo(cx-tm, sqT-tm); ctx.lineTo(cx+tm, sqT-tm); ctx.stroke();
+  ctx.restore();
+
+  // hs dimension line to the RIGHT of the height line, inside top triangle
+  dimLine(cx + hsLineOffset, sqT, cx + hsLineOffset, apexTop[1], 'hs', 12, '#7c3aed');
+
+  // ── hs: height of RIGHT triangle (horizontal, rightward) ──
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed'; ctx.lineWidth = 1.5; ctx.setLineDash([5,3]);
+  ctx.beginPath(); ctx.moveTo(sqR, cy); ctx.lineTo(apexRight[0], cy); ctx.stroke();
+  ctx.setLineDash([]);
+  // foot mark at sqR
+  ctx.beginPath(); ctx.moveTo(sqR, cy-tm); ctx.lineTo(sqR+tm, cy-tm); ctx.lineTo(sqR+tm, cy+tm); ctx.stroke();
+  ctx.restore();
+
+  // hs dimension line below the height line (offset downward), inside right triangle
+  dimLine(sqR, cy + hsLineOffset, apexRight[0], cy + hsLineOffset, 'hs', 12, '#7c3aed');
+
+  // ── Legend ──
+  ctx.save();
+  ctx.font = 'bold 11px Nunito, sans-serif'; ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#059669'; ctx.fillText('a = Grundkante des Quadrats', MARGIN, H - 28);
+  ctx.fillStyle = '#7c3aed'; ctx.fillText('hs = Höhe der Seitenfläche (≠ Körperhöhe h)', MARGIN, H - 14);
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────
+// CALCULATORS
+// ─────────────────────────────────────────────
+function round2(x) { return Math.round(x * 100) / 100; }
+
+function makeResultHTML(lines, cls) {
+  return lines.map(([l, v]) =>
+    `<div class="result-line"><span>${l}</span><span class="result-val ${cls}">${v}</span></div>`
+  ).join('');
+}
+
+function calcPrism() {
+  const a = +document.getElementById('pa').value;
+  const b = +document.getElementById('pb').value;
+  const c = +document.getElementById('pc').value;
+  const h = +document.getElementById('ph').value;
+  // Heron's formula
+  const s = (a + b + c) / 2;
+  const disc = s * (s - a) * (s - b) * (s - c);
+  if (disc < 0) { document.getElementById('prismResult').innerHTML = '<span style="color:red">Ungültiges Dreieck!</span>'; return; }
+  const AG = round2(Math.sqrt(disc));
+  const uG = round2(a + b + c);
+  const AM = round2(uG * h);
+  const O = round2(2 * AG + AM);
+  const V = round2(AG * h);
+  document.getElementById('prismResult').innerHTML = makeResultHTML([
+    ['Grundfläche A<sub>G</sub>', AG + ' cm²'],
+    ['Umfang u<sub>G</sub>', uG + ' cm'],
+    ['Mantel A<sub>M</sub>', AM + ' cm²'],
+    ['<strong>Oberfläche O</strong>', O + ' cm²'],
+    ['<strong>Volumen V</strong>', V + ' cm³']
+  ], 'prism-val');
+}
+
+function calcQuader() {
+  const a = +document.getElementById('qa').value;
+  const b = +document.getElementById('qb').value;
+  const h = +document.getElementById('qh').value;
+  const O = round2(2*(a*b + a*h + b*h));
+  const V = round2(a*b*h);
+  document.getElementById('quaderResult').innerHTML = makeResultHTML([
+    ['Grundfläche A<sub>G</sub>', round2(a*b) + ' cm²'],
+    ['<strong>Oberfläche O</strong>', O + ' cm²'],
+    ['<strong>Volumen V</strong>', V + ' cm³']
+  ], 'prism-val');
+}
+
+function calcPyramid() {
+  const a = +document.getElementById('pyr_a').value;
+  const h = +document.getElementById('pyr_h').value;
+  const AG = round2(a * a);
+  const ha = round2(Math.sqrt(h*h + (a/2)*(a/2)));
+  const AM = round2(2 * a * ha);
+  const O = round2(AG + AM);
+  const V = round2((1/3) * AG * h);
+  document.getElementById('pyramidResult').innerHTML = makeResultHTML([
+    ['Grundfläche A<sub>G</sub>', AG + ' cm²'],
+    ['Höhe der Seitenfläche h<sub>s</sub>', ha + ' cm'],
+    ['Mantel A<sub>M</sub>', AM + ' cm²'],
+    ['<strong>Oberfläche O</strong>', O + ' cm²'],
+    ['<strong>Volumen V</strong>', V + ' cm³']
+  ], 'pyramid-val');
+}
+
+function calcPyramidGen() {
+  const AG = +document.getElementById('pyrG_A').value;
+  const h = +document.getElementById('pyrG_h').value;
+  const V = round2((1/3) * AG * h);
+  document.getElementById('pyramidGenResult').innerHTML = makeResultHTML([
+    ['Grundfläche A<sub>G</sub>', AG + ' cm²'],
+    ['Höhe h', h + ' cm'],
+    ['<strong>Volumen V</strong>', V + ' cm³']
+  ], 'pyramid-val');
+}
+
+function calcCompare() {
+  const AG = +document.getElementById('cmp_A').value;
+  const h = +document.getElementById('cmp_h').value;
+  const Vp = round2(AG * h);
+  const Vpy = round2((1/3) * AG * h);
+  document.getElementById('compareResult').innerHTML = `
+    <div class="result-line"><span style="color:var(--prism)">🔷 Prisma-Volumen</span><span class="result-val prism-val">${Vp} cm³</span></div>
+    <div class="result-line"><span style="color:var(--pyramid)">🔶 Pyramiden-Volumen</span><span class="result-val pyramid-val">${Vpy} cm³</span></div>
+    <div class="result-line"><span><strong>Verhältnis Prisma : Pyramide</strong></span><span class="result-val" style="color:var(--purple)">3 : 1</span></div>
+    <div style="margin-top:8px;font-size:13px;font-weight:700;color:var(--text2);">💡 Das Prisma-Volumen ist immer genau 3× größer als das Pyramiden-Volumen bei gleicher Grundfläche und Höhe.</div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// QUIZ
+// ─────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    q: 'Wie lautet die Volumen-Formel für ein Prisma?',
+    opts: ['V = A_G · h', 'V = ⅓ · A_G · h', 'V = ½ · A_G · h', 'V = A_G · h²'],
+    ans: 0,
+    fb: 'Richtig! Das Volumen des Prismas ist V = A_G · h (Grundfläche × Höhe).'
+  },
+  {
+    q: 'Wie lautet die Volumen-Formel für eine Pyramide?',
+    opts: ['V = A_G · h', 'V = ½ · A_G · h', 'V = ⅓ · A_G · h', 'V = ¼ · A_G · h'],
+    ans: 2,
+    fb: 'Genau! Die Pyramide hat das Volumen V = ⅓ · A_G · h – ein Drittel des entsprechenden Prismas.'
+  },
+  {
+    q: 'Eine quadratische Pyramide hat Grundkante a = 4 cm und Höhe h = 3 cm. Wie groß ist ihr Volumen?',
+    opts: ['48 cm³', '16 cm³', '36 cm³', '12 cm³'],
+    ans: 1,
+    fb: 'Richtig! V = ⅓ · 4² · 3 = ⅓ · 48 = 16 cm³'
+  },
+  {
+    q: 'Wie viele Flächen hat ein Dreiecksprisma?',
+    opts: ['4', '5', '6', '7'],
+    ans: 1,
+    fb: '5 Flächen: 2 Dreiecke (Grundflächen) + 3 Rechtecke (Seitenflächen).'
+  },
+  {
+    q: 'Das Netz einer quadratischen Pyramide besteht aus …',
+    opts: [
+      '1 Quadrat + 4 Dreiecken',
+      '2 Quadraten + 4 Rechtecken',
+      '1 Quadrat + 4 Rechtecken',
+      '4 Dreiecken (kein Quadrat)'
+    ],
+    ans: 0,
+    fb: 'Richtig! Grundfläche = 1 Quadrat, dazu 4 gleichschenklige Dreiecke als Seitenflächen.'
+  },
+  {
+    q: 'Ein Dreiecksprisma hat eine Grundfläche von 12 cm² und eine Höhe von 5 cm. Wie groß ist sein Volumen?',
+    opts: ['20 cm³', '60 cm³', '30 cm³', '15 cm³'],
+    ans: 1,
+    fb: 'V = A_G · h = 12 · 5 = 60 cm³'
+  },
+  {
+    q: 'Was versteht man unter der Höhe der Seitenfläche h<sub>s</sub> bei einer Pyramide?',
+    opts: [
+      'Die Höhe der Pyramide vom Boden zur Spitze',
+      'Die Länge der Grundkante a',
+      'Die Höhe eines dreieckigen Seiten­teils im Netz',
+      'Der Abstand zweier Grundkanten'
+    ],
+    ans: 2,
+    fb: 'Richtig! h_s ist die Höhe eines Seiten­dreiecks im Netz der Pyramide – nicht die Körperhöhe h.'
+  },
+  {
+    q: 'Wie verhält sich das Volumen eines Prismas zum Volumen einer Pyramide bei gleicher Grundfläche und Höhe?',
+    opts: ['1 : 1', '2 : 1', '3 : 1', '4 : 1'],
+    ans: 2,
+    fb: 'Das Prisma-Volumen ist genau 3-mal so groß: V_Prisma = 3 · V_Pyramide.'
+  }
+];
+
+let answered = new Array(QUESTIONS.length).fill(false);
+let score = 0;
+let quizRendered = false;
+
+function renderQuiz() {
+  if (quizRendered) return;
+  quizRendered = true;
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = QUESTIONS.map((q, i) => `
+    <div class="quiz-card" id="qcard-${i}">
+      <div class="quiz-q">${i+1}. ${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o, j) => `
+          <button class="quiz-opt" id="qopt-${i}-${j}" onclick="answerQ(${i}, ${j})">
+            ${String.fromCharCode(65+j)}) ${o}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb-${i}"></div>
+    </div>
+  `).join('');
+}
+
+function answerQ(qi, chosen) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = QUESTIONS[qi];
+  const fb = document.getElementById('qfb-'+qi);
+  for (let j = 0; j < q.opts.length; j++) {
+    const btn = document.getElementById('qopt-'+qi+'-'+j);
+    btn.classList.add('disabled');
+    if (j === q.ans) btn.classList.add('correct');
+    else if (j === chosen) btn.classList.add('wrong');
+  }
+  if (chosen === q.ans) {
+    score++;
+    fb.textContent = '✅ ' + q.fb;
+    fb.classList.add('show', 'ok');
+  } else {
+    fb.textContent = '❌ ' + q.fb;
+    fb.classList.add('show', 'nok');
+  }
+  if (answered.every(Boolean)) showScore();
+}
+
+function showScore() {
+  const sc = document.getElementById('quizScore');
+  const pct = Math.round(score / QUESTIONS.length * 100);
+  let emoji = pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '📚';
+  document.getElementById('scoreText').textContent = `${emoji} ${score} / ${QUESTIONS.length} richtig`;
+  document.getElementById('scoreDetail').textContent =
+    `Du hast ${pct}% der Aufgaben gelöst. ${pct===100?'Perfekt!':pct>=80?'Sehr gut gemacht!':pct>=60?'Gut! Noch ein bisschen üben.':'Schau nochmal in die Erklärungen.'}`;
+  sc.classList.add('show');
+}
+
+function restartQuiz() {
+  answered = new Array(QUESTIONS.length).fill(false);
+  score = 0;
+  quizRendered = false;
+  document.getElementById('quizScore').classList.remove('show');
+  document.getElementById('quizContainer').innerHTML = '';
+  renderQuiz();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(drawPrismNet, 100);
+});
+</script>
+</body>
+</html>
