@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometrie – Prüfungstrainer · Dr. Koksch · TU Dresden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF6;
+  --paper-2:#F3F1E9;
+  --grid:#E5E1D4;
+  --grid-strong:#D8D2C0;
+  --ink:#1B2436;
+  --ink-soft:#4C566B;
+  --ink-faint:#828C9E;
+  --blue:#2C6079;      /* Konstruktionsblau */
+  --blue-deep:#1E4356;
+  --red:#B23B2E;       /* Konstruktionsrot: Gegebenes/Ergebnis */
+  --green:#3F7357;     /* sicher */
+  --amber:#B7822A;
+  --card:#FFFFFF;
+  --shadow:0 1px 2px rgba(27,36,54,.06),0 8px 24px rgba(27,36,54,.06);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink);
+  background:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:linear-gradient(180deg,#20344A,#1B2436);
+  color:#E8ECF3;padding:0;border-right:1px solid #16202f;
+}
+.brand{padding:22px 22px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .compass{display:flex;align-items:center;gap:12px}
+.brand svg{flex:none}
+.brand h1{font-family:'Space Grotesk';font-size:17px;font-weight:600;margin:0;line-height:1.2;letter-spacing:.2px}
+.brand .sub{font-family:'JetBrains Mono';font-size:11px;color:#8FA4BC;margin-top:4px;letter-spacing:.3px}
+.progwrap{margin-top:16px}
+.progbar{height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}
+.progfill{height:100%;width:0;background:linear-gradient(90deg,#5EA37F,#3F7357);transition:width .4s ease}
+.progtxt{font-family:'JetBrains Mono';font-size:11px;color:#8FA4BC;margin-top:7px;display:flex;justify-content:space-between}
+.searchbox{padding:14px 16px 8px}
+.searchbox input{
+  width:100%;padding:9px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);color:#E8ECF3;font-family:'Inter';font-size:13px;outline:none;
+}
+.searchbox input::placeholder{color:#7D90A8}
+.searchbox input:focus{border-color:#4E82A0;background:rgba(255,255,255,.10)}
+nav{padding:6px 10px 30px}
+.navgroup{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:1px;text-transform:uppercase;
+  color:#6F84A0;padding:16px 12px 6px}
+.navitem{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;cursor:pointer;
+  color:#C9D3E1;font-size:13.5px;line-height:1.3;transition:background .15s,color .15s;position:relative;
+}
+.navitem:hover{background:rgba(255,255,255,.06);color:#fff}
+.navitem.active{background:rgba(78,130,160,.22);color:#fff}
+.navitem.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:#5EA0C4}
+.navnum{font-family:'JetBrains Mono';font-size:12px;font-weight:500;color:#7E93AE;min-width:22px;text-align:right}
+.navitem.active .navnum{color:#9CC6DE}
+.navcheck{margin-left:auto;width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(255,255,255,.22);
+  display:flex;align-items:center;justify-content:center;flex:none;font-size:11px}
+.navitem.done .navcheck{background:var(--green);border-color:var(--green);color:#fff}
+.navitem.done .navtitle{color:#8FB8A2}
+.navtitle{flex:1}
+.navitem.hidden{display:none}
+
+/* ---------- Main ---------- */
+main{padding:0}
+.topic{max-width:900px;margin:0 auto;padding:38px 44px 90px;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.thead{display:flex;align-items:flex-start;gap:18px;margin-bottom:6px}
+.tnum{font-family:'JetBrains Mono';font-weight:600;font-size:15px;color:#fff;background:var(--blue);
+  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:var(--shadow)}
+.thead h2{font-family:'Space Grotesk';font-size:27px;font-weight:600;margin:0;line-height:1.15;letter-spacing:-.2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px 64px}
+.tag{font-family:'JetBrains Mono';font-size:11px;padding:4px 10px;border-radius:20px;letter-spacing:.2px;
+  background:var(--paper-2);color:var(--ink-soft);border:1px solid var(--grid-strong)}
+.tag.chap{background:#EAF1F4;color:var(--blue-deep);border-color:#CFE0E7}
+.tag.scope-breit{background:#F5ECDD;color:#8A6216;border-color:#E7D6B4}
+.tag.scope-eng{background:#EAF1EC;color:#3F7357;border-color:#CFE3D5}
+.tag.scope-mittel{background:#EFEEF6;color:#5B5387;border-color:#DBD8EC}
+.tag.school{background:#FBEAE7;color:#A5372B;border-color:#F0CEC8}
+.doneBtn{margin:16px 0 0 64px;font-family:'Inter';font-size:13px;font-weight:500;cursor:pointer;
+  padding:8px 16px;border-radius:9px;border:1.5px solid var(--grid-strong);background:var(--card);color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+.doneBtn:hover{border-color:var(--blue);color:var(--blue)}
+.doneBtn.on{background:var(--green);border-color:var(--green);color:#fff}
+
+.block{margin-top:26px}
+.block > h3{font-family:'Space Grotesk';font-size:13px;font-weight:600;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--blue);margin:0 0 12px;display:flex;align-items:center;gap:9px}
+.block > h3::before{content:"";width:16px;height:2px;background:var(--blue);border-radius:2px}
+.lead{font-size:15.5px;line-height:1.7;color:var(--ink-soft)}
+.lead strong{color:var(--ink);font-weight:600}
+
+.entry{background:var(--card);border:1px solid var(--grid-strong);border-radius:var(--radius);
+  padding:15px 18px;margin-bottom:11px;box-shadow:var(--shadow)}
+.entry .lbl{font-family:'JetBrains Mono';font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:6px;margin-right:9px;vertical-align:2px}
+.lbl.def{background:#EAF1F4;color:var(--blue-deep)}
+.lbl.ax{background:#FBEAE7;color:var(--red)}
+.lbl.satz{background:#F1ECF7;color:#5B4E86}
+.entry .name{font-weight:600;color:var(--ink);font-size:15px}
+.entry .body{font-size:14.5px;line-height:1.65;color:var(--ink-soft);margin-top:7px}
+.entry .body.inline{display:inline;margin-top:0}
+
+details.idea{margin-top:9px;border-top:1px dashed var(--grid-strong);padding-top:9px}
+details.idea summary{font-family:'JetBrains Mono';font-size:12px;color:var(--blue);cursor:pointer;
+  list-style:none;display:flex;align-items:center;gap:7px;user-select:none;font-weight:500}
+details.idea summary::-webkit-details-marker{display:none}
+details.idea summary::before{content:"▸";transition:transform .2s;font-size:11px}
+details.idea[open] summary::before{transform:rotate(90deg)}
+details.idea .ideabody{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin-top:9px;
+  padding:11px 13px;background:var(--paper-2);border-radius:9px;border-left:3px solid var(--blue)}
+
+.sketch{background:var(--card);border:1px solid var(--grid-strong);border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);text-align:center}
+.sketch svg{max-width:100%;height:auto}
+.sketch .cap{font-family:'JetBrains Mono';font-size:11.5px;color:var(--ink-faint);margin-top:10px;letter-spacing:.2px}
+
+/* SVG semantic classes */
+.s-grid{stroke:var(--grid);stroke-width:1}
+.s-line{stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.s-con{stroke:var(--blue);stroke-width:1.6;fill:none;stroke-dasharray:5 4;stroke-linecap:round}
+.s-res{stroke:var(--red);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.s-fill{fill:rgba(44,96,121,.10);stroke:var(--blue);stroke-width:1.6}
+.s-fill-r{fill:rgba(178,59,46,.10);stroke:var(--red);stroke-width:1.8}
+.s-pt{fill:var(--ink)}
+.s-pt-r{fill:var(--red)}
+.s-lbl{font-family:'JetBrains Mono';font-size:14px;fill:var(--ink)}
+.s-lbl-b{font-family:'JetBrains Mono';font-size:13px;fill:var(--blue)}
+.s-lbl-r{font-family:'JetBrains Mono';font-size:13px;fill:var(--red)}
+.s-arc{stroke:var(--blue);stroke-width:1.6;fill:none}
+
+.karte{background:
+    linear-gradient(#fff,#fff) padding-box,
+    repeating-linear-gradient(180deg,transparent,transparent 27px,#EDEAE0 27px,#EDEAE0 28px) padding-box;
+  border:1px solid #E4DFCF;border-left:5px solid var(--red);border-radius:12px;
+  padding:18px 20px 20px;box-shadow:var(--shadow);position:relative}
+.karte::after{content:"KARTEIKARTE";position:absolute;top:12px;right:16px;font-family:'JetBrains Mono';
+  font-size:9.5px;letter-spacing:2px;color:#C9C2AE}
+.karte h4{font-family:'Space Grotesk';font-size:14px;margin:0 0 12px;color:var(--red);letter-spacing:.3px}
+.karte ul{margin:0;padding-left:20px}
+.karte li{font-size:14px;line-height:1.75;color:var(--ink);margin-bottom:3px}
+.karte li strong{color:var(--blue-deep)}
+
+.nachfr{margin-top:14px}
+.nachfr .q{background:var(--paper-2);border:1px solid var(--grid-strong);border-radius:10px;
+  padding:11px 14px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--ink-soft);
+  display:flex;gap:11px;align-items:flex-start}
+.nachfr .q::before{content:"?";font-family:'Space Grotesk';font-weight:700;color:var(--amber);
+  background:#F7EFD9;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;font-size:13px}
+
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.linkchip{font-family:'JetBrains Mono';font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;
+  background:#EAF1F4;color:var(--blue-deep);border:1px solid #CFE0E7;transition:all .15s}
+.linkchip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.foot{margin:40px 0 0 64px;padding-top:18px;border-top:1px solid var(--grid-strong);
+  display:flex;justify-content:space-between;gap:14px}
+.navbtn{font-family:'Inter';font-size:13.5px;font-weight:500;cursor:pointer;padding:11px 18px;border-radius:10px;
+  border:1.5px solid var(--grid-strong);background:var(--card);color:var(--ink-soft);transition:all .15s;
+  display:inline-flex;align-items:center;gap:9px;box-shadow:var(--shadow)}
+.navbtn:hover{border-color:var(--blue);color:var(--blue)}
+.navbtn:disabled{opacity:.35;cursor:default}
+.navbtn .dir{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-faint);display:block;text-align:left}
+.navbtn.next .dir{text-align:right}
+
+kbd{font-family:'JetBrains Mono';font-size:11px;background:var(--paper-2);border:1px solid var(--grid-strong);
+  border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink-soft)}
+.hint{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-faint);text-align:center;margin:24px 0 0}
+m{font-family:'JetBrains Mono';font-size:.93em;font-style:normal;color:var(--ink)}
+
+@media(max-width:880px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;z-index:40;width:300px;transform:translateX(-100%);transition:transform .3s;box-shadow:0 0 40px rgba(0,0,0,.3)}
+  .sidebar.open{transform:none}
+  .topic{padding:76px 20px 80px}
+  .meta,.doneBtn,.foot{margin-left:0}
+  .thead h2{font-size:22px}
+  .menuBtn{display:flex}
+  .scrim{position:fixed;inset:0;background:rgba(15,22,34,.5);z-index:35;opacity:0;pointer-events:none;transition:opacity .3s}
+  .scrim.on{opacity:1;pointer-events:auto}
+}
+.menuBtn{display:none;position:fixed;top:14px;left:14px;z-index:45;width:44px;height:44px;border-radius:11px;
+  background:var(--blue);color:#fff;border:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow)}
+
+/* --- Erweiterung: einfache Erklärungen + Musterantworten --- */
+.plainbox{background:linear-gradient(180deg,#F3F7F2,#EDF3EC);border:1px solid #D3E2CF;border-radius:14px;padding:4px 6px;box-shadow:var(--shadow)}
+.plainrow{padding:12px 14px;border-bottom:1px dashed #D3E2CF}
+.plainrow:last-child{border-bottom:none}
+.plainrow .pt{font-family:'Space Grotesk';font-weight:600;font-size:14.5px;color:#2F5A44}
+.plainrow .pe{font-size:14px;line-height:1.6;color:#3A473F;margin-top:3px}
+.qa{margin-bottom:16px}
+details.answer{margin-top:0;border-top:none;padding-top:8px;margin-left:33px}
+details.answer summary{color:var(--green);font-weight:500}
+details.answer summary::before{color:var(--green)}
+details.answer .ideabody{border-left-color:var(--green);background:#F1F6F1;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<button class="menuBtn" id="menuBtn" aria-label="Menü">☰</button>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="compass">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+          <circle cx="17" cy="17" r="15.5" stroke="#5EA0C4" stroke-width="1.4"/>
+          <path d="M17 6 L11 26 M17 6 L23 26" stroke="#E8ECF3" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="17" cy="6" r="2" fill="#5EA0C4"/>
+          <path d="M11 26 A9 9 0 0 0 23 26" stroke="#B23B2E" stroke-width="1.6" fill="none"/>
+        </svg>
+        <div>
+          <h1>Geometrie-Trainer</h1>
+          <div class="sub">mündl. Prüfung · Dr. Koksch · TUD</div>
+        </div>
+      </div>
+      <div class="progwrap">
+        <div class="progbar"><div class="progfill" id="progfill"></div></div>
+        <div class="progtxt"><span id="progcount">0 / 24 sicher</span><span id="progreset" style="cursor:pointer;text-decoration:underline">zurücksetzen</span></div>
+      </div>
+    </div>
+    <div class="searchbox"><input id="search" type="text" placeholder="Thema oder Begriff suchen…" autocomplete="off"></div>
+    <nav id="nav"></nav>
+  </aside>
+  <main><div id="content"></div></main>
+</div>
+<script>
+/* =========================================================================
+   INHALTE — gegründet auf dem Skript „Elementargeometrie“ (N. Koksch, 2025)
+   und der Prüfungsthemenliste. m = Formel/Symbol (Monospace).
+   ========================================================================= */
+const TOPICS = [
+/* ============================== THEMA 1 ============================== */
+{
+ id:1, chapter:"Kap. 1–2", scope:"breit", school:true,
+ title:"Axiomensysteme, Modellbildung, Euklidische & Inzidenzaxiome",
+ subs:["Axiome & Modellbildung","Kritik der euklidischen Axiome","Inzidenzaxiome, Grundaussagen, Beispiele"],
+ overview:"Ein breites Grundlagenthema: Wie baut man Geometrie <strong>axiomatisch</strong> auf? Du solltest den Übergang von Euklids Elementen zu modernen Systemen (Hilbert, Kolmogorov) schildern und die Inzidenzaxiome sicher beherrschen — inklusive kleiner Modelle.",
+ defs:[
+  {t:"Axiom / Axiomensystem",b:"Axiome sind unbewiesen angenommene Grundaussagen. Aus ihnen werden per logischem Schließen alle Sätze der Theorie gewonnen. Ein gutes System ist <strong>widerspruchsfrei</strong> (keine Aussage und ihre Negation beweisbar), <strong>minimal/unabhängig</strong> (kein Axiom folgt aus den übrigen) und idealerweise <strong>vollständig</strong>."},
+  {t:"Modell",b:"Eine konkrete Interpretation der Grundbegriffe, in der alle Axiome wahr sind. Ein Modell beweist die <strong>Widerspruchsfreiheit</strong> (relativ); ein Modell, das ein Axiom verletzt, aber die übrigen erfüllt, beweist dessen <strong>Unabhängigkeit</strong>."},
+  {t:"Inzidenzgeometrie",b:"Ein Tripel <m>(P,G,|)</m> aus Punktmenge <m>P</m>, Geradenmenge <m>G</m> und einer symmetrischen Inzidenzrelation <m>|</m>, das die Axiome Inz‑1, Inz‑2, Inz‑3 erfüllt."}
+ ],
+ axioms:[
+  {n:"Inz‑1",b:"Zu je zwei verschiedenen Punkten gibt es <strong>genau eine</strong> Gerade, die mit beiden inzidiert. (Verbindungsgerade <m>AB</m>)"},
+  {n:"Inz‑2",b:"Zu jeder Geraden gibt es <strong>zwei verschiedene</strong> Punkte, die mit ihr inzidieren."},
+  {n:"Inz‑3",b:"Es existieren <strong>drei paarweise verschiedene, nicht‑kollineare</strong> Punkte. (sichert „Zweidimensionalität\u201c dem Grunde nach / Nichtleerheit)"},
+  {n:"Inz‑0",b:"Grundaxiom: Jede Gerade ist eine <strong>Menge von Punkten</strong>; Inzidenz = Elementbeziehung (<m>P|g ⇔ P∈g</m>). Erlaubt mengentheoretisches Arbeiten."}
+ ],
+ theorems:[
+  {n:"Euklid-Kritik",s:"Euklids „Definitionen“ (z. B. „Ein Punkt ist, was keine Teile hat“) sind keine echten Definitionen; das Parallelenpostulat stand ~2000 Jahre unter Ableitungsverdacht.",idea:"Moderne Systeme lösen das: Grundbegriffe bleiben <strong>undefiniert</strong> und werden nur durch die Axiome charakterisiert. Hilbert (1899) trennt Grundbegriffe, definierte Begriffe, Axiome, Sätze."},
+  {n:"Erste Sätze",s:"Zwei verschiedene Geraden schneiden sich in höchstens einem Punkt; durch jeden Punkt gehen mindestens zwei Geraden.",idea:"Schnittpunkt-Eindeutigkeit: zwei Schnittpunkte ⇒ zwei Geraden durch dieselben zwei Punkte ⇒ Widerspruch zu Inz‑1."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 300 210" width="330">
+   <g class="s-grid"><path d="M40 40 L40 175 M100 40 L100 175 M160 40 L160 175 M220 40 L220 175 M40 70 L260 70 M40 120 L260 120 M40 170 L260 170"/></g>
+   <text x="150" y="24" text-anchor="middle" class="s-lbl-b">Minimalmodell (3 Punkte, 3 Geraden)</text>
+   <polygon points="90,150 210,150 150,55" class="s-line"/>
+   <circle cx="90" cy="150" r="4" class="s-pt"/><circle cx="210" cy="150" r="4" class="s-pt"/><circle cx="150" cy="55" r="4" class="s-pt"/>
+   <text x="76" y="166" class="s-lbl">A</text><text x="216" y="166" class="s-lbl">B</text><text x="143" y="47" class="s-lbl">C</text>
+   <text x="150" y="200" text-anchor="middle" class="s-lbl-r">jede Gerade = {2 Punkte} · Inz‑1,2,3 ✓</text>
+ </svg>`,cap:"Kleinstes Modell einer Inzidenzgeometrie — ideal zum Prüfen der Axiome."},
+ focus:[
+  "Roter Faden: <strong>Was ist ein Axiom → wozu Modelle → moderne Systeme → konkret Inz‑1/2/3</strong>.",
+  "Die drei Modelle parat haben: <strong>Minimalmodell</strong> (3 Pkt.), <strong>9‑Punkte‑Modell</strong>, <strong>analytische Ebene</strong>.",
+  "Widerspruchsfreiheit ⟷ Modell; Unabhängigkeit ⟷ Modell, das genau ein Axiom bricht.",
+  "Warum Inz‑3? Sonst wäre auch eine einzige Gerade ein Modell — man will die „echte\u201c Ebene."
+ ],
+ nachfr:[{q:"Zeigen Sie an einem Modell, dass Inz‑2 unabhängig von Inz‑1 und Inz‑3 ist.",a:"Man gibt ein Modell an, das Inz‑1 und Inz‑3 erfüllt, aber Inz‑2 verletzt. Beispiel: <m>P={A,B,C}</m> nicht kollinear, und man erlaubt als „Gerade“ die einelementige Menge <m>{C}</m>. Inz‑1 (Verbindungsgerade je zweier Punkte) und Inz‑3 (drei nicht‑kollineare Punkte) gelten, aber <m>{C}</m> inzidiert nur mit einem Punkt – Inz‑2 ist verletzt. Da ein Modell existiert, das genau Inz‑2 bricht, kann Inz‑2 nicht aus Inz‑1 und Inz‑3 folgen; es ist unabhängig."},{q:"Ist das 9‑Punkte‑Modell eine Inzidenzgeometrie? Welche Axiome gelten?",a:"Ja. Das 9‑Punkte‑Modell (9 Punkte, 12 Geraden mit je 3 Punkten) erfüllt Inz‑1 (je zwei Punkte genau eine Gerade), Inz‑2 (jede Gerade hat mehrere Punkte) und Inz‑3 (es gibt nicht‑kollineare Punkte). Es ist also eine Inzidenzgeometrie. Mit der diskreten Metrik erfüllt es jedoch Ger‑1 nicht, liefert also keine sinnvolle Zwischenrelation."},{q:"Was unterscheidet ein Postulat von einem Axiom bei Euklid?",a:"Bei Euklid sind „Axiome“ (gemeinsame Begriffe) allgemeine, fachübergreifende Wahrheiten (z. B. „Gleiches zu Gleichem gibt Gleiches“), während „Postulate“ speziell geometrische Forderungen sind (z. B. „von jedem Punkt zu jedem Punkt lässt sich eine Strecke ziehen“). Heute fasst man beide als unbewiesene Grundannahmen auf; die Unterscheidung ist in modernen Systemen aufgehoben – man spricht einheitlich von Axiomen."}],
+ plain:[{t:"Axiom",e:"Eine Spielregel, die man ohne Beweis als gültig festlegt. Alles Weitere wird nur aus diesen Regeln logisch abgeleitet – wie bei einem Brettspiel, dessen Grundregeln man akzeptiert und dann korrekt spielt."},{t:"Modell",e:"Ein konkretes Beispiel, in dem alle Spielregeln (Axiome) tatsächlich aufgehen. Findet man so ein Beispiel, weiß man: Die Regeln widersprechen sich nicht."},{t:"Inzidenz",e:"Nur das Fachwort dafür, dass ein Punkt auf einer Geraden liegt (bzw. eine Gerade durch einen Punkt geht)."}],
+ links:[2,5,12,24]
+},
+/* ============================== THEMA 2 ============================== */
+{
+ id:2, chapter:"Kap. 3", scope:"mittel", school:false,
+ title:"Abstands- und Anordnungsaxiome",
+ subs:["Metrik, Abstand, Skalarprodukt, Geraden","Zwischenrelation, Strecken, Strahlen","Anordnungsaxiome"],
+ overview:"Hier bekommt die Ebene <strong>Länge und Ordnung</strong>. Aus Metrik + Ger‑1 folgt die Zwischenrelation, daraus Strecken, Strahlen und Halbgeraden. Ger‑2 (Koordinatenabbildung) macht Geraden schließlich zu Abbildern von <m>ℝ</m>.",
+ defs:[
+  {t:"Metrik",b:"Abbildung <m>d:X×X→ℝ</m> mit <strong>Symmetrie</strong>, <strong>positiver Definitheit</strong> (<m>d(x,y)≥0</m>, <m>=0 ⇔ x=y</m>) und <strong>Dreiecksungleichung</strong> <m>d(x,y)≤d(x,z)+d(z,y)</m>. Beispiele: diskrete Metrik, euklidische Metrik."},
+  {t:"Zwischenrelation",b:"<m>A−B−C :⇔</m> paarweise verschieden und <m>d(A,B)+d(B,C)=d(A,C)</m>. „B liegt zwischen A und C.\u201c Symmetrisch: <m>A−B−C ⇔ C−B−A</m>."},
+  {t:"Strecke / Strahl",b:"<m>AB = {P; A−P−B}∪{A,B}</m>, Länge <m>|AB|:=d(A,B)</m>. Strahl <m>OA⁺</m> = Punkte auf der O‑Seite; <m>OA⁻</m> Gegenstrahl."}
+ ],
+ axioms:[
+  {n:"Metrik",b:"Es gibt eine Metrik <m>d:P×P→ℝ</m> auf <m>P</m>."},
+  {n:"Ger‑1",b:"Drei Punkte sind <strong>kollinear ⇔</strong> eine der drei Zwischen‑Gleichungen gilt (<m>d(A,C)=d(A,B)+d(B,C)</m> usw.). Verbindet Abstand mit Kollinearität."},
+  {n:"Ger‑2",b:"Zu jeder Geraden existiert eine <strong>Koordinatenabbildung</strong> <m>λ:g→ℝ</m> (bijektiv & abstandstreu). Damit „ist\u201c jede Gerade eine Kopie von <m>ℝ</m>. (äquivalent: Axiom PuAb)"}
+ ],
+ theorems:[
+  {n:"Eindeutigkeit der Zwischenlage",s:"Von drei paarweise verschiedenen kollinearen Punkten liegt genau einer zwischen den beiden anderen.",idea:"Aus Ger‑1 folgt Existenz einer Zwischen‑Gleichung. Lägen zwei Punkte zwischen den anderen, folgt durch Einsetzen und Nichtnegativität <m>d(A,B)=0</m>, also <m>A=B</m> — Widerspruch."},
+  {n:"Cauchy‑Schwarz / Skalarprodukt",s:"Die euklidische Metrik entsteht aus <m>⟨·,·⟩</m>; es gilt <m>|⟨x,y⟩|≤‖x‖·‖y‖</m>, daraus die Dreiecksungleichung.",idea:"Betrachte <m>‖x−λy‖²≥0</m> als Parabel in <m>λ</m>; nichtnegative Diskriminante liefert Cauchy‑Schwarz."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 150" width="360">
+   <line x1="20" y1="80" x2="320" y2="80" class="s-line"/>
+   <circle cx="70" cy="80" r="4" class="s-pt"/><circle cx="170" cy="80" r="4" class="s-pt"/><circle cx="270" cy="80" r="4" class="s-pt"/>
+   <text x="66" y="104" class="s-lbl">A</text><text x="166" y="104" class="s-lbl">B</text><text x="266" y="104" class="s-lbl">C</text>
+   <path d="M70 62 L170 62" class="s-res"/><text x="120" y="52" text-anchor="middle" class="s-lbl-r">d(A,B)</text>
+   <path d="M170 62 L270 62" class="s-res"/><text x="220" y="52" text-anchor="middle" class="s-lbl-r">d(B,C)</text>
+   <path d="M70 118 L270 118" class="s-con"/><text x="170" y="136" text-anchor="middle" class="s-lbl-b">d(A,C) = d(A,B)+d(B,C)  ⇔  A−B−C</text>
+ </svg>`,cap:"Zwischenrelation über die Additivität der Abstände (Ger‑1)."},
+ focus:[
+  "Die drei Metrik‑Eigenschaften <strong>sofort</strong> nennen und je ein Beispiel/Gegenbeispiel geben.",
+  "Kette merken: <strong>Metrik → Ger‑1 → Zwischenrelation → Strecke/Strahl → Ger‑2 (Koordinaten)</strong>.",
+  "Warum reicht die diskrete Metrik nicht? Sie erzeugt keine Zwischenpunkte (Minimalmodell).",
+  "Ger‑2 ist das „Lineal‑Axiom\u201c: Punkte einer Geraden ↔ reelle Zahlen."
+ ],
+ nachfr:[{q:"Beweisen Sie die Symmetrie A−B−C ⇔ C−B−A.",a:"<m>A−B−C</m> bedeutet: die Punkte sind paarweise verschieden und <m>d(A,B)+d(B,C)=d(A,C)</m>. Weil die Metrik symmetrisch ist (<m>d(X,Y)=d(Y,X)</m>), ist das gleichwertig zu <m>d(C,B)+d(B,A)=d(C,A)</m>, also genau <m>C−B−A</m>. Die Bedingung ist in beiden Richtungen dieselbe."},{q:"Welche Metrik erfüllt Ger‑1 nicht – geben Sie ein Gegenbeispiel.",a:"Die diskrete Metrik (<m>d=0</m> bei gleichen, <m>d=1</m> bei verschiedenen Punkten). Bei drei verschiedenen Punkten ist stets <m>d=1</m> zwischen je zweien, also <m>d(A,C)=1</m>, aber <m>d(A,B)+d(B,C)=2</m> – keine der drei Zwischen‑Gleichungen von Ger‑1 gilt. Es gibt keine echten Zwischenpunkte; Ger‑1 ist verletzt."},{q:"Wie folgt die Streckenmittelpunkt‑Existenz aus Ger‑2?",a:"Nach Ger‑2 gibt es eine abstandstreue, bijektive Koordinatenabbildung <m>λ:g→ℝ</m>. Der Mittelpunkt <m>M</m> von <m>AB</m> ist der Punkt mit <m>λ(M)=(λ(A)+λ(B))/2</m>. Da <m>λ</m> bijektiv ist, existiert dieser Punkt und ist eindeutig; die Abstandstreue liefert <m>|AM|=|MB|=½|AB|</m>. Die Zahlengerade „vererbt“ den Mittelpunkt an die Gerade."}],
+ plain:[{t:"Metrik / Abstand",e:"Eine Vorschrift, die je zwei Punkten eine Länge (den Abstand) zuordnet – mit den selbstverständlichen Eigenschaften: nie negativ, null nur beim selben Punkt, symmetrisch, und der Umweg ist nie kürzer als der direkte Weg."},{t:"Zwischenrelation",e:"„B liegt zwischen A und C“ heißt: Geht man von A nach C, kommt man unterwegs genau bei B vorbei – die Teilstücke A→B und B→C ergeben zusammen die ganze Strecke."},{t:"Koordinatenabbildung (Ger‑2)",e:"Man legt an jede Gerade ein Lineal mit Zahlenskala an: Jeder Punkt bekommt eine Zahl, und Abstände der Punkte stimmen mit Abständen der Zahlen überein."}],
+ links:[1,3,24]
+},
+/* ============================== THEMA 3 ============================== */
+{
+ id:3, chapter:"Kap. 3.4–3.5", scope:"eng", school:false,
+ title:"Halbebenen",
+ subs:["Halbebenenaxiom","Konvexe Mengen","Winkel"],
+ overview:"Ein <strong>enges</strong> Thema — hier musst du fast alles wissen. Das Halbebenenaxiom (HE) macht <m>P</m> „zweidimensional\u201c: eine Gerade zerlegt die Ebene in zwei konvexe Seiten. Darauf bauen Winkel und Winkelfelder auf.",
+ defs:[
+  {t:"Konvexe Menge",b:"<m>M</m> heißt konvex, wenn mit je zwei Punkten <m>A,B∈M</m> stets die ganze Strecke <m>AB⊆M</m> liegt. Durchschnitte konvexer Mengen sind konvex."},
+  {t:"(offene) Halbebene",b:"Die durch HE zu <m>g</m> gelieferten Mengen <m>H₁,H₂</m>. Notation: <m>g.C⁺</m> = die <m>C</m> enthaltende Seite, <m>g.C⁻</m> die andere. <m>g</m> ist die <strong>Randgerade</strong>."},
+  {t:"Winkel",b:"Vereinigung zweier Halbgeraden (Schenkel) mit gemeinsamem Anfangspunkt (Scheitel). Das <strong>Innere</strong> ist der Durchschnitt zweier Halbebenen; ein <strong>Winkelfeld</strong> ist Winkel ∪ Inneres."}
+ ],
+ axioms:[
+  {n:"HE",b:"Zu jeder Geraden <m>g</m> gibt es ein Paar <m>(H₁,H₂)</m> mit: (HE.1) <m>H₁,H₂,g</m> zerlegen <m>P</m>; (HE.2) <m>H₁,H₂</m> sind <strong>konvex</strong>; (HE.3) für <m>P₁∈H₁, P₂∈H₂</m> schneidet <m>P₁P₂</m> die Gerade <m>g</m>."}
+ ],
+ theorems:[
+  {n:"Eindeutigkeit der Halbebenen",s:"Zu jeder Geraden ist das Paar der offenen Halbebenen bis auf Reihenfolge eindeutig bestimmt.",idea:"Sei <m>(K₁,K₂)</m> ein zweites Paar. Nimm <m>A∈K₁∩H₁</m>. Für <m>B∈K₁</m> ist <m>AB</m> ganz in <m>K₁</m> (konvex), trifft also <m>g</m> nicht ⇒ nach (HE.3) liegt <m>B</m> nicht in <m>H₂</m> ⇒ <m>K₁⊆H₁</m>. Symmetrisch <m>K₂⊆H₂</m>; mit Zerlegung Gleichheit."},
+  {n:"Halbebenen sind konvex",s:"Alle offenen und abgeschlossenen Halbebenen sind konvex.",idea:"Offen: direkt aus (HE.2). Abgeschlossen (<m>g∪H_i</m>): Strecke zwischen Randpunkten bleibt auf der Seite, da sie <m>g</m> höchstens im Randpunkt trifft."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <rect x="20" y="20" width="300" height="150" fill="rgba(44,96,121,.05)"/>
+   <line x1="20" y1="95" x2="320" y2="95" class="s-line"/>
+   <text x="300" y="112" class="s-lbl-b">g</text>
+   <text x="40" y="50" class="s-lbl-b">H₁ (konvex)</text>
+   <text x="40" y="160" class="s-lbl-b">H₂ (konvex)</text>
+   <circle cx="120" cy="55" r="4" class="s-pt"/><text x="106" y="50" class="s-lbl">P₁</text>
+   <circle cx="220" cy="140" r="4" class="s-pt"/><text x="228" y="145" class="s-lbl">P₂</text>
+   <path d="M120 55 L220 140" class="s-res"/>
+   <circle cx="172" cy="95" r="4" class="s-pt-r"/>
+   <text x="150" y="88" class="s-lbl-r">Schnitt mit g (HE.3)</text>
+ </svg>`,cap:"Strecke zwischen verschiedenen Halbebenen trifft die Randgerade (HE.3)."},
+ focus:[
+  "HE.1–HE.3 auswendig — das ist der Kern des ganzen Themas.",
+  "Kernbotschaft: HE macht die Ebene <strong>zweidimensional</strong> („man kann nicht unter der Geraden durchtauchen\u201c).",
+  "Winkel = zwei Schenkel; Inneres = Durchschnitt zweier Halbebenen (⇒ konvex).",
+  "Konvexität: Durchschnitte konvexer Mengen sind konvex — deshalb ist das Dreiecksinnere konvex."
+ ],
+ nachfr:[{q:"Beweisen Sie die Eindeutigkeit des Halbebenenpaars.",a:"Sei <m>(K₁,K₂)</m> ein zweites Paar mit denselben Eigenschaften. Wähle <m>A∈K₁</m>, o. B. d. A. <m>A∈H₁</m>. Für beliebiges <m>B∈K₁</m> liegt die Strecke <m>AB</m> ganz in <m>K₁</m> (konvex), trifft also <m>g</m> nicht. Läge <m>B∈H₂</m>, müsste <m>AB</m> nach (HE.3) die Gerade <m>g</m> schneiden – Widerspruch. Also <m>B∈H₁</m>, d. h. <m>K₁⊆H₁</m>; symmetrisch <m>K₂⊆H₂</m>. Mit der Zerlegungseigenschaft folgt Gleichheit."},{q:"Ist die Vereinigung zweier Halbebenen konvex? Begründung.",a:"Im Allgemeinen nein. Nimmt man beide offenen Halbebenen zu <m>g</m> zusammen (also <m>P</m> ohne <m>g</m>), so liegt ein Punkt oben, einer unten; ihre Verbindungsstrecke schneidet <m>g</m> (HE.3) und verlässt damit die Vereinigung. Die Konvexität ist verletzt. Eine einzelne Halbebene dagegen ist konvex."},{q:"Warum ist das Innere eines Winkels konvex?",a:"Das Winkelinnere ist der Durchschnitt zweier Halbebenen (zu jedem Schenkel die Seite, die den anderen Schenkel enthält). Jede Halbebene ist konvex, und der Durchschnitt konvexer Mengen ist wieder konvex – also ist das Winkelinnere konvex."}],
+ plain:[{t:"Konvex",e:"Eine Fläche ist konvex, wenn man zwischen je zwei ihrer Punkte die direkte Linie ziehen kann, ohne die Fläche zu verlassen – wie Kreis oder Rechteck, aber anders als ein Stern oder ein L."},{t:"Halbebene",e:"Zieht man eine gerade Linie quer über ein Blatt, zerfällt das Blatt in zwei Seiten. Jede Seite ist eine Halbebene."},{t:"Winkel",e:"Zwei Strahlen, die vom selben Punkt ausgehen – wie zwei Uhrzeiger von der Mitte aus. Der Öffnungsbereich dazwischen ist das Innere."}],
+ links:[2,4,6,8]
+},
+/* ============================== THEMA 4 ============================== */
+{
+ id:4, chapter:"Kap. 4", scope:"mittel", school:true,
+ title:"Polygone und Kreise",
+ subs:["Polygon (Polygonlinie, echt, konvex, überschlagen …)","Vierecke","Kreise"],
+ overview:"Überblicksthema mit starkem Schulbezug. Systematik der Polygone (echt/konvex/überschlagen), die Vierecks‑Hierarchie und der Kreis samt Schnittlagen. Definitionen präzise, Beispiele parat.",
+ defs:[
+  {t:"Polygon",b:"Geschlossene Polygonlinie <m>A₁A₂…Aₙ</m>. <strong>Echt</strong>: keine drei aufeinanderfolgenden Ecken kollinear und Seiten nur in gemeinsamen Ecken benachbart. <strong>Überschlagen</strong>: nichtbenachbarte Seiten schneiden sich. <strong>Konvex</strong>: liegt ganz auf einer Seite jeder Seitengeraden."},
+  {t:"Viereck-Hierarchie",b:"Trapez (1 Paar paralleler Seiten) ⊃ Parallelogramm ⊃ Rechteck/Raute ⊃ Quadrat. Zusätzlich: Drachen (2 Paar gleich langer Nachbarseiten)."},
+  {t:"Kreis",b:"<m>k=k(M,r)={P; |MP|=r}</m> (Kreislinie). <m>M</m> Mittelpunkt, <m>r>0</m> Radius. Kreisfläche = Punkte mit <m>|MP|≤r</m>."}
+ ],
+ theorems:[
+  {n:"Schnitt Kreis–Gerade",s:"Eine Gerade trifft einen Kreis in 0, 1 oder 2 Punkten — je nach Abstand <m>d(M,g)</m> zu <m>r</m>: Passante (<m>>r</m>), Tangente (<m>=r</m>), Sekante (<m><r</m>).",idea:"Lot von <m>M</m> auf <m>g</m> mit Fußpunkt <m>F</m>; nach Pythagoras <m>|MP|²=|MF|²+|FP|²</m>. Lösbarkeit von <m>|FP|²=r²−d²</m> entscheidet die Anzahl."},
+  {n:"Schnitt Kreis–Kreis",s:"Zwei Kreise schneiden sich in 0, 1 oder 2 Punkten; bei 2 Schnittpunkten liegen diese symmetrisch zur Zentralen <m>M₁M₂</m>.",idea:"Bedingung über die Radien: <m>|r₁−r₂| ≤ |M₁M₂| ≤ r₁+r₂</m>."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 360 180" width="370">
+   <circle cx="90" cy="95" r="55" class="s-line"/><circle cx="90" cy="95" r="3" class="s-pt"/><text x="82" y="90" class="s-lbl">M</text>
+   <line x1="30" y1="30" x2="150" y2="30" class="s-con"/><text x="155" y="34" class="s-lbl-b">Passante</text>
+   <line x1="30" y1="40" x2="150" y2="40" class="s-line" transform="translate(0,0)"/>
+   <line x1="20" y1="150" x2="160" y2="150" class="s-line"/><text x="163" y="154" class="s-lbl">Tangente</text>
+   <line x1="25" y1="95" x2="155" y2="95" class="s-res"/><text x="163" y="99" class="s-lbl-r">Sekante</text>
+   <circle cx="285" cy="95" r="45" class="s-line"/><circle cx="325" cy="95" r="45" class="s-line"/>
+   <circle cx="305" cy="60" r="3.5" class="s-pt-r"/><circle cx="305" cy="130" r="3.5" class="s-pt-r"/>
+   <line x1="240" y1="95" x2="370" y2="95" class="s-con"/>
+   <text x="255" y="172" text-anchor="middle" class="s-lbl-b">2 Schnittpunkte, symm. zur Zentralen</text>
+ </svg>`,cap:"Lagebeziehungen Gerade–Kreis und Kreis–Kreis."},
+ focus:[
+  "Systematik der Polygone sauber gliedern: Polygonlinie → echt → (konvex | konkav | überschlagen).",
+  "Vierecks‑Hierarchie als Inklusionskette erklären, mit definierenden Eigenschaften.",
+  "Beim Kreis die drei Geraden‑Lagen über <strong>Abstand vs. Radius</strong> begründen (Vorgriff auf Thema 21).",
+  "Innenwinkelsumme im konvexen n‑Eck: <m>(n−2)·180°</m> (Vorgriff Parallelenaxiom)."
+ ],
+ nachfr:[{q:"Wann ist ein Viereck konvex? Kriterium über die Diagonalen.",a:"Ein Viereck ist genau dann konvex, wenn sich seine beiden Diagonalen im Inneren schneiden (gleichbedeutend: jeder Innenwinkel ist kleiner als 180°). Bei einem konkaven, „eingedellten“ Viereck liegt eine Diagonale außerhalb; bei einem überschlagenen kreuzen sich zwei Seiten."},{q:"Begründen Sie die Anzahl der Schnittpunkte Gerade–Kreis.",a:"Man fällt das Lot von <m>M</m> auf <m>g</m> mit Fußpunkt <m>F</m>, setze <m>d=|MF|</m>. Für <m>P</m> auf <m>g</m> gilt nach Pythagoras <m>|MP|²=d²+|FP|²</m>. <m>P</m> liegt auf dem Kreis (<m>|MP|=r</m>) genau dann, wenn <m>|FP|²=r²−d²</m>. Für <m>d>r</m> keine Lösung (Passante), <m>d=r</m> genau eine (Tangente, Berührpunkt <m>F</m>), <m>d<r</m> zwei symmetrische (Sekante)."},{q:"Geben Sie ein überschlagenes Viereck an und erklären Sie den Begriff.",a:"Beispiel: ein „gekreuztes Trapez“/„Schmetterling“ <m>ABCD</m>, bei dem sich die Seiten <m>AB</m> und <m>CD</m> kreuzen. Überschlagen heißt: zwei nichtbenachbarte Seiten schneiden einander, die Umrisslinie ist also nicht mehr überschneidungsfrei (nicht einfach)."}],
+ plain:[{t:"Polygon",e:"Ein Vieleck – eine geschlossene Figur aus geraden Strecken, wie Dreieck, Viereck, Fünfeck."},{t:"konvex / überschlagen",e:"Konvex = keine Delle (jede Ecke zeigt nach außen). Überschlagen = die Umrisslinie kreuzt sich selbst."},{t:"Kreis",e:"Alle Punkte, die vom Mittelpunkt genau denselben Abstand (den Radius) haben – die Bahn der Zirkelspitze."}],
+ links:[3,6,21,23]
+},
+/* ============================== THEMA 5 ============================== */
+{
+ id:5, chapter:"Kap. 4.5", scope:"mittel", school:true,
+ title:"Konstruktion mit Zirkel und Lineal",
+ subs:["Konstruktionsaxiome","Konstruktionsbeschreibung","zu beweisende Aussagen","Grundkonstruktionen"],
+ overview:"Schulnahes, gern gefragtes Thema. Was darf ein „idealer\u201c Zirkel/Lineal (Konstruktionsaxiome K1–K…)? Was ist eine vollständige Konstruktionsbeschreibung mit <strong>Konstruktionsbeweis</strong>? Die Grundkonstruktionen im Detail.",
+ defs:[
+  {t:"Konstruktionswerkzeuge",b:"<strong>Lineal</strong>: zeichnet die Gerade durch zwei bereits konstruierte Punkte (ohne Skala). <strong>Zirkel</strong>: zeichnet den Kreis um einen konstruierten Punkt durch einen zweiten. Neue Punkte entstehen nur als Schnittpunkte."},
+  {t:"Konstruktionsbeschreibung",b:"Endliche, eindeutige Schrittfolge (K1: Punkt/Gerade/Kreis wählen; Schnitte bilden). Dazu gehört ein <strong>Beweis</strong>, dass das Konstruierte die geforderte Eigenschaft hat, sowie eine <strong>Determinationsanalyse</strong> (Existenz/Eindeutigkeit/Fälle)."}
+ ],
+ theorems:[
+  {n:"Mittelsenkrechte konstruieren",s:"Zwei Kreise gleichen Radius um <m>A</m> und <m>B</m> liefern zwei Schnittpunkte; ihre Verbindung ist die Mittelsenkrechte von <m>AB</m>.",idea:"Beide Schnittpunkte haben gleichen Abstand zu <m>A</m> und <m>B</m>, liegen also auf der Mittelsenkrechten (Ortslinien‑Charakterisierung). Zwei solche Punkte legen die Gerade fest."},
+  {n:"Winkelhalbierende / Lot / Winkelantragen",s:"Grundkonstruktionen: Streckenhalbierung, Lot in/von einem Punkt, Winkelhalbierung, Antragen eines Winkels, Parallele.",idea:"Alle beruhen auf Kongruenzsätzen (meist sss/sws): gleiche Radien erzeugen kongruente Dreiecke, aus denen die Behauptung folgt."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 320 200" width="340">
+   <line x1="40" y1="150" x2="280" y2="150" class="s-line"/>
+   <circle cx="100" cy="150" r="4" class="s-pt"/><circle cx="220" cy="150" r="4" class="s-pt"/>
+   <text x="94" y="170" class="s-lbl">A</text><text x="214" y="170" class="s-lbl">B</text>
+   <path d="M100 150 m-80,0 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0" class="s-con" transform="translate(0,0)"/>
+   <circle cx="100" cy="150" r="80" class="s-con"/><circle cx="220" cy="150" r="80" class="s-con"/>
+   <circle cx="160" cy="97" r="3.5" class="s-pt-r"/><circle cx="160" cy="203" r="3.5" class="s-pt-r"/>
+   <line x1="160" y1="80" x2="160" y2="200" class="s-res"/>
+   <text x="168" y="80" class="s-lbl-r">Mittelsenkrechte</text>
+ </svg>`,cap:"Grundkonstruktion der Mittelsenkrechten aus zwei gleich großen Kreisen."},
+ focus:[
+  "Genau sagen, was Zirkel und Lineal <strong>dürfen</strong> — neue Punkte nur als Schnitte.",
+  "Immer betonen: zu jeder Konstruktion gehört ein <strong>Beweis</strong> und eine <strong>Fallanalyse</strong> (Determination).",
+  "Eine Grundkonstruktion (z. B. Winkelhalbierende) vollständig durchführen und mit sss begründen.",
+  "Grenzen erwähnen: nicht konstruierbar sind z. B. Winkeldreiteilung, Würfelverdopplung (klassisch)."
+ ],
+ nachfr:[{q:"Führen Sie die Konstruktion des Lotes von einem Punkt auf eine Gerade aus und beweisen Sie sie.",a:"Gegeben Punkt <m>P</m>, Gerade <m>g</m>. Schlage um <m>P</m> einen Kreis, der <m>g</m> in <m>A,B</m> schneidet. Schlage um <m>A</m> und um <m>B</m> je einen gleich großen Kreis; sie schneiden sich in <m>Q</m>. Dann ist <m>PQ</m> das Lot. Beweis: <m>P</m> und <m>Q</m> haben beide gleichen Abstand zu <m>A</m> und <m>B</m>, liegen also auf der Mittelsenkrechten von <m>AB</m>; diese steht senkrecht auf <m>g=AB</m>. Also <m>PQ⊥g</m>."},{q:"Warum liefert Ihre Konstruktion wirklich die Winkelhalbierende? Welcher Kongruenzsatz?",a:"Um den Scheitel <m>S</m> schlägt man einen Kreis, der die Schenkel in <m>A,B</m> schneidet (<m>|SA|=|SB|</m>), dann gleich große Kreise um <m>A,B</m> mit Schnitt <m>W</m>. Die Dreiecke <m>SAW</m> und <m>SBW</m> haben <m>SA=SB</m>, <m>AW=BW</m> und <m>SW</m> gemeinsam – nach <strong>sss</strong> kongruent. Also <m>∠ASW=∠BSW</m>, d. h. <m>SW</m> halbiert den Winkel."},{q:"Was heißt „Determinationsanalyse“?",a:"Sie klärt, ob eine Konstruktion überhaupt und wie oft ausführbar ist: Existieren die benötigten Schnittpunkte? Ist das Ergebnis eindeutig, oder gibt es mehrere bzw. keine Lösungen (Fallunterscheidung nach Lage und Größen)? Sie gehört neben Konstruktionsbeschreibung und Beweis zu einer vollständigen Konstruktionsaufgabe."}],
+ plain:[{t:"Zirkel & Lineal",e:"Idealisiert: Das Lineal zieht nur Geraden durch schon vorhandene Punkte (ohne zu messen), der Zirkel schlägt nur Kreise um vorhandene Punkte. Neue Punkte entstehen ausschließlich dort, wo sich solche Linien und Kreise kreuzen."},{t:"Konstruktionsbeschreibung",e:"Eine Schritt‑für‑Schritt‑Anleitung wie ein Kochrezept – ergänzt um den Nachweis, dass am Ende wirklich das Gewünschte herauskommt."}],
+ links:[1,9,14]
+},
+/* ============================== THEMA 6 ============================== */
+{
+ id:6, chapter:"Kap. 4.2", scope:"eng", school:false,
+ title:"Dreiecke und Winkel",
+ subs:["Eckpunkte, Seiten, Inneres","Satz von Pasch, Ecktransversalensatz","Dreieckseinzigkeitssatz"],
+ overview:"Enges Thema rund ums Dreieck als Grundobjekt. Der <strong>Satz von Pasch</strong> ist das Anordnungs‑Herzstück; der <strong>Dreieckseinzigkeitssatz</strong> ist Werkzeug für viele spätere Beweise (u. a. Kongruenzsätze).",
+ defs:[
+  {t:"Dreieck",b:"Drei nicht‑kollineare Punkte <m>A,B,C</m>; Seiten <m>AB,BC,CA</m>; Inneres <m>int(ABC)</m> = Durchschnitt dreier Halbebenen (jeweils die Seite, die die dritte Ecke enthält) ⇒ konvex."}
+ ],
+ theorems:[
+  {n:"Satz von Pasch",s:"Eine Gerade <m>g</m>, die keine Ecke des Dreiecks enthält und eine Seite im Inneren schneidet, schneidet <strong>genau eine</strong> weitere Seite.",idea:"<m>g</m> zerlegt die Ebene in zwei Halbebenen. Trifft <m>g</m> die Seite <m>AB</m>, liegen <m>A,B</m> auf verschiedenen Seiten. <m>C</m> liegt auf einer der beiden Seiten — also mit genau einem von <m>A,B</m> zusammen; die Verbindung zur anderen Ecke wird geschnitten (HE.3), die dritte nicht."},
+  {n:"Ecktransversalensatz",s:"Eine von einer Ecke ausgehende Halbgerade ins Innere des Dreiecks schneidet die gegenüberliegende Seite in genau einem Punkt.",idea:"Anwendung von Pasch/HE auf die Trägergerade der Transversalen; Innenlage sichert genau einen Schnittpunkt."},
+  {n:"Dreieckseinzigkeitssatz",s:"Stimmen zwei Punkte <m>C,C'</m> in ihren Abständen zu <m>A</m> und <m>B</m> überein und liegen auf derselben Seite von <m>AB</m>, so ist <m>C=C'</m>.",idea:"Zwei Kreise (um <m>A</m>, um <m>B</m>) schneiden sich pro Halbebene in höchstens einem Punkt. Zentrales Werkzeug im Beweis von sss und sws."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 320 200" width="340">
+   <polygon points="60,170 260,170 150,40" class="s-line"/>
+   <circle cx="60" cy="170" r="4" class="s-pt"/><circle cx="260" cy="170" r="4" class="s-pt"/><circle cx="150" cy="40" r="4" class="s-pt"/>
+   <text x="46" y="186" class="s-lbl">A</text><text x="264" y="186" class="s-lbl">B</text><text x="143" y="32" class="s-lbl">C</text>
+   <line x1="30" y1="120" x2="300" y2="95" class="s-res"/>
+   <circle cx="102" cy="116" r="3.5" class="s-pt-r"/><circle cx="205" cy="107" r="3.5" class="s-pt-r"/>
+   <text x="300" y="92" class="s-lbl-r">g</text>
+   <text x="150" y="196" text-anchor="middle" class="s-lbl-b">g trifft AC und BC — genau zwei Seiten</text>
+ </svg>`,cap:"Satz von Pasch: eine „eintretende\u201c Gerade verlässt das Dreieck über genau eine weitere Seite."},
+ focus:[
+  "Pasch als <strong>Anordnungssatz</strong> präsentieren und über Halbebenen beweisen.",
+  "Betonen: Dreieckseinzigkeitssatz ist der <strong>Motor</strong> hinter sss und sws.",
+  "Inneres des Dreiecks = Durchschnitt dreier Halbebenen ⇒ konvex.",
+  "Verbindung zu Thema 3 (Halbebenen) und Thema 8 (Kongruenz) herstellen."
+ ],
+ nachfr:[{q:"Beweisen Sie den Satz von Pasch mit dem Halbebenenaxiom.",a:"Sei <m>g</m> ohne Ecke von <m>ABC</m> und schneide die Seite <m>AB</m> innen. Dann liegen <m>A,B</m> in verschiedenen Halbebenen zu <m>g</m>. Die Ecke <m>C</m> liegt in einer davon, o. B. d. A. auf der Seite von <m>A</m>. Dann liegen <m>C,B</m> verschieden zu <m>g</m> ⇒ <m>g</m> schneidet <m>CB</m> (HE.3); <m>C,A</m> liegen gleich ⇒ <m>g</m> schneidet <m>CA</m> nicht. Also trifft <m>g</m> genau eine weitere Seite."},{q:"Wozu braucht man den Dreieckseinzigkeitssatz später?",a:"Er sichert, dass ein Punkt durch seine Abstände zu zwei festen Punkten und die Wahl der Halbebene eindeutig bestimmt ist. Genau das wird in den Beweisen von sss und sws gebraucht: Nachdem eine Bewegung zwei Ecken passend abbildet, erzwingt der Satz, dass auch die dritte Ecke auf ihren Bildpunkt fällt."},{q:"Warum ist das Dreiecksinnere konvex?",a:"Das Innere ist der Durchschnitt dreier Halbebenen (zu jeder Seite die Halbebene mit der gegenüberliegenden Ecke). Jede ist konvex, und der Durchschnitt konvexer Mengen ist konvex – also ist das Dreiecksinnere konvex."}],
+ plain:[{t:"Satz von Pasch",e:"Anschaulich: Wer als gerade Linie in ein Dreieck hineinläuft (durch eine Seite, nicht durch eine Ecke), muss es auch wieder verlassen – und zwar durch genau eine der anderen zwei Seiten."},{t:"Dreieckseinzigkeitssatz",e:"Kennt man die Abstände eines Punktes zu zwei festen Punkten und weiß, auf welcher Seite er liegt, ist der Punkt eindeutig festgelegt – zwei Kreise schneiden sich pro Seite nur einmal."}],
+ links:[3,8,5]
+},
+/* ============================== THEMA 7 ============================== */
+{
+ id:7, chapter:"Kap. 5.1, 5.3", scope:"mittel", school:false,
+ title:"Bewegungen",
+ subs:["Gruppe der Bewegungen","Invarianzeigenschaften","Existenz & Eindeutigkeit (Fahnensatz)"],
+ overview:"Zentrales Thema: <strong>Bewegungen</strong> = abstandserhaltende Bijektionen von <m>P</m>. Sie bilden eine Gruppe, erhalten alle geometrischen Grundstrukturen, und sind durch das Bild einer <strong>Fahne</strong> eindeutig bestimmt.",
+ defs:[
+  {t:"Bewegung",b:"Bijektion <m>φ:P→P</m> mit <m>|φ(A)φ(B)|=|AB|</m> für alle <m>A,B</m> (isometrisch). Menge <m>B(P)</m>."},
+  {t:"Gruppe (B(P),∘,id)",b:"Bewegungen sind unter Verkettung abgeschlossen, assoziativ, mit neutralem Element <m>id</m> und Inversen ⇒ Untergruppe der symmetrischen Gruppe <m>S(P)</m>."},
+  {t:"Fahne",b:"<m>p∪H</m> aus einer Halbgeraden <m>p</m> und einer Halbebene <m>H</m> mit Randgerade <m>TG(p)</m>. „Ausgezeichneter Startpunkt + Richtung + Seite.\u201c"}
+ ],
+ axioms:[
+  {n:"Bew",b:"Zu je zwei Punktepaaren <m>(A,B),(A',B')</m> gleichen positiven Abstands existieren <strong>mindestens zwei</strong> Bewegungen mit <m>A↦A', B↦B'</m>. (Existenzaxiom)"}
+ ],
+ theorems:[
+  {n:"Invarianzeigenschaften",s:"Bewegungen bilden Geraden auf Geraden, Strecken auf Strecken, Strahlen/Halbebenen/Winkel auf ebensolche ab und erhalten Zwischenrelation, Länge und (später) Winkelmaß.",idea:"Abstandstreue + Ger‑1 ⇒ Kollinearität und Zwischenlage bleiben erhalten; daraus folgen die übrigen Strukturtreuen."},
+  {n:"Fahnensatz (Existenz & Einzigkeit)",s:"Zu je zwei Fahnen gibt es <strong>genau eine</strong> Bewegung, die die eine auf die andere abbildet. Zu <m>(A,B),(A',B')</m> gibt es genau zwei Bewegungen (je Halbebene eine).",idea:"Einzigkeit: Eine Bewegung, die eine Fahne fest lässt, ist die Identität (Fixpunktargument über Dreieckseinzigkeitssatz). Existenz aus Axiom Bew. Die Wahl der Halbebene fixiert die zweite Bewegung."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <line x1="40" y1="140" x2="180" y2="140" class="s-line"/><circle cx="60" cy="140" r="4" class="s-pt"/>
+   <path d="M60 140 L165 140" class="s-line"/><path d="M158 134 L165 140 L158 146" class="s-line"/>
+   <rect x="40" y="80" width="140" height="60" fill="rgba(44,96,121,.08)"/>
+   <text x="46" y="98" class="s-lbl-b">Fahne 1</text><text x="64" y="158" class="s-lbl">A</text>
+   <line x1="210" y1="70" x2="315" y2="150" class="s-res"/><circle cx="215" cy="74" r="4" class="s-pt-r"/>
+   <path d="M215 74 L310 146" class="s-res"/><path d="M300 141 L310 146 L305 135" class="s-res"/>
+   <text x="220" y="70" class="s-lbl-r">A'</text><text x="250" y="176" text-anchor="middle" class="s-lbl-r">Fahne 2</text>
+   <path d="M185 110 q20 -10 22 -20" class="s-con"/><text x="180" y="106" class="s-lbl-b">φ</text>
+ </svg>`,cap:"Fahnensatz: genau eine Bewegung bildet Fahne 1 auf Fahne 2 ab."},
+ focus:[
+  "Gruppenaxiome an <m>B(P)</m> kurz nachweisen (Abgeschlossenheit, Inverse!).",
+  "Fahne erklären: Punkt + Richtung + Seite ⇒ eindeutig bestimmt eine Bewegung.",
+  "Einzigkeit über <strong>Fixpunktargument</strong> (Dreieckseinzigkeitssatz), Existenz über Axiom Bew.",
+  "„Genau zwei\u201c Bewegungen zu <m>(A,B)↦(A',B')</m> — die zwei Halbebenenwahlen."
+ ],
+ nachfr:[{q:"Zeigen Sie, dass Bewegungen die Zwischenrelation erhalten.",a:"Sei <m>φ</m> abstandstreu und <m>A−B−C</m>, also <m>d(A,B)+d(B,C)=d(A,C)</m>. Wegen <m>d(φX,φY)=d(X,Y)</m> folgt <m>d(φA,φB)+d(φB,φC)=d(φA,φC)</m>, das ist <m>φA−φB−φC</m>. Bewegungen erhalten also die Zwischenrelation – und damit Geraden, Strecken und Strahlen."},{q:"Beweisen Sie die Einzigkeit im Fahnensatz.",a:"Bilden <m>φ,ψ</m> beide Fahne 1 auf Fahne 2 ab, so lässt <m>ψ⁻¹∘φ</m> Fahne 1 fest. Eine Bewegung mit fixer Fahne fixiert Anfangspunkt, Richtung und Seite; über Abstandstreue und den Dreieckseinzigkeitssatz ist dann jeder Punkt fix, also <m>ψ⁻¹∘φ=id</m> und <m>φ=ψ</m>."},{q:"Warum genau zwei Bewegungen zu einem Punktepaar?",a:"Zu <m>(A,B)↦(A',B')</m> ist die Fahne bis auf die Wahl der Halbebene bestimmt: Anfangspunkt <m>A'</m> und Richtung <m>A'B'⁺</m> liegen fest, nur die Seite ist frei. Jede der zwei Halbebenenwahlen liefert nach dem Fahnensatz genau eine Bewegung – zusammen genau zwei (eine gleichsinnige, eine gegensinnige)."}],
+ plain:[{t:"Bewegung",e:"Ein starres Verschieben, Drehen oder Spiegeln der ganzen Ebene, bei dem sich keine Abstände ändern – als würde man eine Folie bewegen, ohne sie zu dehnen."},{t:"Gruppe",e:"Eine Sammlung von Operationen, die man beliebig hintereinander ausführen und wieder rückgängig machen kann, ohne die Sammlung zu verlassen – hier: die Bewegungen."},{t:"Fahne",e:"Startpunkt + Blickrichtung + Seite (links/rechts). Das legt eine Bewegung eindeutig fest, so wie Ort und Kompassrichtung eine Karte eindeutig ausrichten."}],
+ links:[6,8,11,15,16]
+},
+/* ============================== THEMA 8 ============================== */
+{
+ id:8, chapter:"Kap. 5.2, 5.4, 5.5", scope:"breit", school:true,
+ title:"Kongruenz",
+ subs:["Kongruenz als Äquivalenzrelation","Streckenkongruenz","Klassen kongruenter Winkel","Kongruenzsätze am Dreieck"],
+ overview:"Breites, prüfungsträchtiges Thema. Kongruenz wird <strong>durch die Bewegungsgruppe</strong> definiert und ist damit automatisch eine Äquivalenzrelation. Höhepunkt sind die Kongruenzsätze sss, sws, wsw, SsW.",
+ defs:[
+  {t:"Kongruenz",b:"Figuren <m>F,F'</m> heißen kongruent (<m>F≅F'</m>), wenn es eine Bewegung <m>φ∈B(P)</m> mit <m>φ(F)=F'</m> gibt."},
+  {t:"Äquivalenzrelation",b:"Von der Gruppe erzeugt: <strong>reflexiv</strong> (<m>id</m>), <strong>symmetrisch</strong> (<m>φ⁻¹</m>), <strong>transitiv</strong> (<m>ψ∘φ</m>). Winkel zerfallen in Klassen; ausgezeichnet: spitze, rechte, stumpfe Winkel."}
+ ],
+ theorems:[
+  {n:"sss",s:"Stimmen zwei Dreiecke in allen drei Seitenlängen überein, sind sie kongruent.",idea:"Fahnensatz liefert die Bewegung, die <m>A↦A', AB⁺↦A'B'⁺</m> und die Halbebene richtig abbildet; Abstandstreue erzwingt <m>φ(B)=B'</m>, der <strong>Dreieckseinzigkeitssatz</strong> dann <m>φ(C)=C'</m>."},
+  {n:"sws",s:"Zwei Seiten und der eingeschlossene Winkel bestimmen das Dreieck bis auf Kongruenz.",idea:"Analog: die Fahne aus einer Seite und Winkel wird abgebildet; Längentreue + Winkelantragen liefern die dritte Ecke eindeutig."},
+  {n:"wsw / SsW",s:"Ein Seite mit beiden anliegenden Winkeln (wsw) bzw. zwei Seiten und der der größeren gegenüberliegende Winkel (SsW) bestimmen das Dreieck.",idea:"wsw über Schnitt zweier angetragener Winkelschenkel; SsW mit Zusatzargument (Eindeutigkeit über die größere Seite), da „ssw\u201c allein nicht gilt."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 360 180" width="370">
+   <polygon points="40,150 150,150 70,60" class="s-line"/>
+   <text x="30" y="166" class="s-lbl">A</text><text x="150" y="166" class="s-lbl">B</text><text x="60" y="54" class="s-lbl">C</text>
+   <polygon points="220,150 330,150 250,60" class="s-res"/>
+   <text x="210" y="166" class="s-lbl-r">A'</text><text x="330" y="166" class="s-lbl-r">B'</text><text x="240" y="54" class="s-lbl-r">C'</text>
+   <path d="M160 105 q25 -8 50 0" class="s-con"/><path d="M204 100 L212 105 L204 110" class="s-con"/>
+   <text x="185" y="96" class="s-lbl-b">φ (sss)</text>
+ </svg>`,cap:"Kongruenz = es gibt eine Bewegung, die ein Dreieck aufs andere abbildet."},
+ focus:[
+  "Pointe: Kongruenz ist Äquivalenzrelation, <strong>weil</strong> <m>B(P)</m> eine Gruppe ist.",
+  "Kongruenzsätze <strong>beweisen</strong>, nicht nur nennen — Werkzeug: Fahnensatz + Dreieckseinzigkeitssatz.",
+  "Warum gilt „ssw\u201c nicht allgemein? Gegenbeispiel skizzieren (zwei mögliche Dreiecke).",
+  "Winkelklassen: Definition spitz/recht/stumpf über Vergleich mit rechtem Winkel."
+ ],
+ nachfr:[{q:"Beweisen Sie sss unter Verwendung des Fahnensatzes.",a:"Seien <m>AB≅A'B'</m>, <m>BC≅B'C'</m>, <m>CA≅C'A'</m>. Der Fahnensatz liefert genau eine Bewegung <m>φ</m>, die die Fahne aus <m>A</m>, Richtung <m>AB⁺</m> und der <m>C</m>‑Seite auf die entsprechende bei <m>A',B',C'</m> abbildet. Dann <m>φ(A)=A'</m> und, wegen <m>|AB|=|A'B'|</m>, <m>φ(B)=B'</m>. <m>φ(C)</m> hat zu <m>A',B'</m> dieselben Abstände wie <m>C'</m> und liegt auf derselben Seite – nach dem Dreieckseinzigkeitssatz <m>φ(C)=C'</m>. Also <m>ABC≅A'B'C'</m>."},{q:"Zeigen Sie, dass Kongruenz transitiv ist.",a:"Aus <m>F≅G</m> und <m>G≅H</m> gibt es Bewegungen <m>φ,ψ</m> mit <m>φ(F)=G</m>, <m>ψ(G)=H</m>. Dann ist <m>ψ∘φ</m> wieder eine Bewegung (Gruppe!) mit <m>(ψ∘φ)(F)=H</m>, also <m>F≅H</m>. Mit Reflexivität (<m>id</m>) und Symmetrie (<m>φ⁻¹</m>) ist Kongruenz eine Äquivalenzrelation."},{q:"Warum ist SsW gültig, ssw aber nicht?",a:"Bei <strong>SsW</strong> liegt der gegebene Winkel der <em>größeren</em> Seite gegenüber; diese erzwingt die Lage der dritten Ecke eindeutig. Bei <strong>ssw</strong> (Winkel an der kleineren Seite) kann der Kreis um eine Ecke die Gegengerade in zwei Punkten treffen – es entstehen zwei nicht‑kongruente Dreiecke (der „ambige Fall“). Deshalb ist ssw kein Kongruenzsatz."}],
+ plain:[{t:"Kongruenz",e:"Zwei Figuren sind kongruent, wenn man die eine deckungsgleich auf die andere legen kann (evtl. nach Drehen oder Spiegeln) – sie sind gleich groß und gleich geformt."},{t:"Äquivalenzrelation",e:"Eine „Gleichwertigkeits“‑Beziehung mit drei selbstverständlichen Eigenschaften: jedes ist sich selbst gleichwertig, es gilt in beide Richtungen, und es überträgt sich über Zwischenschritte."},{t:"Kongruenzsätze",e:"Faustregeln, welche wenigen Angaben (Seiten/Winkel) schon ausreichen, um ein Dreieck eindeutig festzulegen."}],
+ links:[7,6,9,3]
+},
+/* ============================== THEMA 9 ============================== */
+{
+ id:9, chapter:"Kap. 5.4–5.5", scope:"mittel", school:true,
+ title:"Anwendungen von Kongruenzsätzen",
+ subs:["Basiswinkelsatz","Scheitelwinkelsatz","Nebenwinkelsatz","Lot, Mittelsenkrechte"],
+ overview:"Schulnahes Anwendungsthema: klassische Sätze, die <strong>direkt aus den Kongruenzsätzen</strong> folgen — jeweils mit kurzer, sauberer Beweisidee. Ideal, um Beweisführung zu zeigen.",
+ defs:[
+  {t:"Mittelsenkrechte",b:"<m>MiSenk(AB)</m> = Menge aller Punkte mit <m>|PA|=|PB|</m>. Sie ist die Gerade durch den Mittelpunkt senkrecht zu <m>AB</m> (Ortslinie)."},
+  {t:"Lot",b:"Die eindeutige Senkrechte von einem Punkt auf eine Gerade; der Fußpunkt ist der nächstgelegene Punkt der Geraden."}
+ ],
+ theorems:[
+  {n:"Basiswinkelsatz",s:"Im gleichschenkligen Dreieck (<m>|CA|=|CB|</m>) sind die Basiswinkel gleich: <m>∠CAB≅∠CBA</m>. Umkehrung gilt ebenfalls.",idea:"Betrachte die Spiegelung an der Winkelhalbierenden durch <m>C</m> (bzw. sws mit <m>CA,CB</m> und Winkel bei <m>C</m>): das Dreieck geht in sich über, tauscht <m>A↔B</m> ⇒ Winkelgleichheit."},
+  {n:"Scheitel- & Nebenwinkelsatz",s:"Scheitelwinkel sind gleich; Nebenwinkel ergänzen sich zum gestreckten Winkel (Maß <m>π</m>).",idea:"Nebenwinkel: zwei Winkel an einer Geraden addieren sich zum gestreckten Winkel. Scheitelwinkel: beide sind Nebenwinkel desselben Winkels ⇒ gleich."},
+  {n:"Mittelsenkrechte als Ortslinie",s:"<m>|PA|=|PB| ⇔ P∈MiSenk(AB)</m>.",idea:"„⇐\u201c über sws/Spiegelung an <m>MiSenk</m>. „⇒\u201c: <m>P</m> und der Mittelpunkt bestimmen eine Gerade, die wegen zweier gleicher Abstände senkrecht steht (zwei Punkte gleichen Abstands liegen eindeutig auf <m>MiSenk</m>)."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <polygon points="70,160 250,160 160,50" class="s-line"/>
+   <circle cx="70" cy="160" r="4" class="s-pt"/><circle cx="250" cy="160" r="4" class="s-pt"/><circle cx="160" cy="50" r="4" class="s-pt"/>
+   <text x="56" y="176" class="s-lbl">A</text><text x="254" y="176" class="s-lbl">B</text><text x="153" y="44" class="s-lbl">C</text>
+   <path d="M92 155 a24 24 0 0 1 20 0" class="s-res"/><path d="M208 155 a24 24 0 0 0 20 0" class="s-res"/>
+   <text x="96" y="140" class="s-lbl-r">α</text><text x="228" y="140" class="s-lbl-r">α</text>
+   <line x1="160" y1="50" x2="160" y2="160" class="s-con"/>
+   <text x="150" y="185" text-anchor="middle" class="s-lbl-b">|CA|=|CB| ⇒ Basiswinkel gleich</text>
+ </svg>`,cap:"Basiswinkelsatz — Beweis über die Spiegelung an der Symmetrieachse durch C."},
+ focus:[
+  "Jede Aussage mit <strong>einer prägnanten Beweisidee</strong> koppeln — genau das will die Prüfung sehen.",
+  "Basiswinkelsatz elegant über Spiegelung/sws; auch die <strong>Umkehrung</strong> erwähnen.",
+  "Mittelsenkrechte als <strong>Ortslinie</strong> (⇔‑Aussage) — Basis für Umkreis (Thema 14).",
+  "Neben-/Scheitelwinkel gelten schon in der <strong>absoluten</strong> Geometrie (ohne Parallelenaxiom)."
+ ],
+ nachfr:[{q:"Beweisen Sie den Basiswinkelsatz und seine Umkehrung.",a:"Im Dreieck mit <m>|CA|=|CB|</m> spiegle an der Winkelhalbierenden durch <m>C</m> (oder wende sws mit <m>CA,CB</m> und dem Winkel bei <m>C</m> an): Die Bewegung tauscht <m>A</m> und <m>B</m>, bildet also <m>∠CAB</m> auf <m>∠CBA</m> ab ⇒ Basiswinkel gleich. Umkehrung: Sind die Basiswinkel gleich, folgt aus wsw (Seite <m>AB</m>, anliegende Winkel) die Kongruenz mit dem an <m>AB</m> gespiegelten Dreieck, also <m>|CA|=|CB|</m>."},{q:"Zeigen Sie den Scheitelwinkelsatz über Nebenwinkel.",a:"Zwei sich schneidende Geraden bilden vier Winkel. Ein Winkel <m>α</m> und sein Nebenwinkel <m>β</m> ergänzen sich zum gestreckten Winkel: <m>α+β=π</m>. Der Scheitelwinkel <m>α'</m> hat denselben Nebenwinkel <m>β</m>, also <m>α'+β=π</m>. Aus beidem folgt <m>α=α'</m> – Scheitelwinkel sind gleich."},{q:"Charakterisieren Sie die Mittelsenkrechte als Ortslinie.",a:"Die Mittelsenkrechte von <m>AB</m> ist genau die Menge aller <m>P</m> mit <m>|PA|=|PB|</m>. „⇐“: Liegt <m>P</m> auf ihr, sind die Dreiecke aus <m>P</m>, Mittelpunkt und <m>A</m> bzw. <m>B</m> nach sws kongruent, also <m>|PA|=|PB|</m>. „⇒“: Gilt <m>|PA|=|PB|</m>, legen <m>P</m> und der Mittelpunkt (beide gleich weit von <m>A,B</m>) die Mittelsenkrechte eindeutig fest."}],
+ plain:[{t:"Basiswinkel",e:"Im gleichschenkligen Dreieck (zwei gleich lange Seiten) sind die beiden unteren Winkel gleich groß – die Figur ist symmetrisch."},{t:"Mittelsenkrechte",e:"Die Linie, die eine Strecke im rechten Winkel genau in der Mitte kreuzt. Jeder Punkt auf ihr ist von beiden Endpunkten gleich weit entfernt."},{t:"Ortslinie",e:"Die Menge aller Punkte, die eine bestimmte Bedingung erfüllen – z. B. „gleich weit von A und B“. Oft ergibt das eine Linie."}],
+ links:[8,10,14,11]
+},
+/* ============================== THEMA 10 ============================== */
+{
+ id:10, chapter:"Kap. 5.6–5.7, 6.1", scope:"mittel", school:false,
+ title:"Winkelgrößen im Dreieck (ohne Parallelenaxiom)",
+ subs:["Winkelgröße & Winkelmaß","Schwacher Außenwinkelsatz","Stufenwinkel, Umkehrung"],
+ overview:"Feines Thema: Was gilt im Dreieck <strong>schon ohne</strong> das Parallelenaxiom (absolute Geometrie)? Der <strong>schwache Außenwinkelsatz</strong> und die Umkehrung des Stufenwinkelsatzes sind hier die Stars — bewusst <em>ohne</em> Innenwinkelsumme 180°.",
+ defs:[
+  {t:"Winkelmaß",b:"Eine Abbildung, die jedem Winkel eine Zahl in <m>[0,π]</m> (bzw. <m>[0,180°]</m>) zuordnet, additiv bei benachbarten Winkeln und mit dem rechten Winkel als <m>π/2</m>. Kongruente Winkel haben gleiches Maß."},
+  {t:"Außenwinkel",b:"Nebenwinkel eines Innenwinkels des Dreiecks."}
+ ],
+ theorems:[
+  {n:"Schwacher Außenwinkelsatz",s:"Jeder Außenwinkel eines Dreiecks ist <strong>größer</strong> als jeder der beiden nicht anliegenden Innenwinkel.",idea:"Seitenmittelpunkt <m>M</m> von <m>BC</m>, verlängere <m>AM</m> um sich selbst zu <m>D</m>. sws liefert kongruente Dreiecke <m>AMB≅DMC</m> ⇒ der Innenwinkel bei <m>B</m> taucht als Teil des Außenwinkels bei <m>C</m> auf ⇒ echt kleiner."},
+  {n:"Umkehrung des Stufenwinkelsatzes",s:"Sind bei einer Schnittgeraden zweier Geraden die Stufenwinkel gleich, so sind die beiden Geraden <strong>parallel</strong>. (gilt absolut!)",idea:"Gäbe es einen Schnittpunkt, entstünde ein Dreieck, dessen Außenwinkel gleich einem nicht anliegenden Innenwinkel wäre — Widerspruch zum schwachen Außenwinkelsatz."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <polygon points="60,150 230,150 120,60" class="s-line"/>
+   <line x1="230" y1="150" x2="300" y2="150" class="s-line"/>
+   <text x="50" y="166" class="s-lbl">A</text><text x="120" y="54" class="s-lbl">C</text><text x="225" y="167" class="s-lbl">B</text>
+   <path d="M230 150 m-22,-8 a24 24 0 0 1 22,8" class="s-line"/>
+   <path d="M230 150 a26 26 0 0 1 26 0" class="s-res"/>
+   <text x="256" y="140" class="s-lbl-r">Außenw. δ</text>
+   <text x="70" y="140" class="s-lbl-b">α</text><text x="118" y="86" class="s-lbl-b">γ</text>
+   <text x="150" y="185" text-anchor="middle" class="s-lbl-r">δ > α  und  δ > γ  (ohne Parallelenaxiom!)</text>
+ </svg>`,cap:"Schwacher Außenwinkelsatz: Außenwinkel echt größer als die fernen Innenwinkel."},
+ focus:[
+  "Ganz wichtig: hier <strong>kein</strong> Parallelenaxiom — nur <em>schwacher</em> (Ungleichung), nicht starker (Gleichung) Außenwinkelsatz.",
+  "Beweis des schwachen Außenwinkelsatzes über <strong>Seitenmittelpunkt + sws</strong> parat haben.",
+  "Die Umkehrung des Stufenwinkelsatzes liefert <strong>Existenz</strong> von Parallelen (absolute Geometrie).",
+  "Abgrenzung zu Thema 13: <em>starker</em> Außenwinkelsatz & Innenwinkelsumme 180° brauchen Axiom P."
+ ],
+ nachfr:[{q:"Beweisen Sie den schwachen Außenwinkelsatz.",a:"Sei <m>M</m> der Mittelpunkt von <m>BC</m>. Verlängere <m>AM</m> über <m>M</m> um sich selbst zu <m>D</m>. Nach sws (<m>MB=MC</m>, <m>MA=MD</m>, Scheitelwinkel bei <m>M</m>) sind <m>AMB</m> und <m>DMC</m> kongruent, also <m>∠MBA=∠MCD</m>. Der Außenwinkel bei <m>C</m> enthält <m>∠MCD</m> als echten Teil, ist also größer als der Innenwinkel bei <m>B</m>; analog für <m>A</m>. Der Außenwinkel ist größer als jeder ferne Innenwinkel – ohne Parallelenaxiom."},{q:"Warum liefert die Umkehrung des Stufenwinkelsatzes Parallelen ohne Parallelenaxiom?",a:"Sind bei einer Schnittgeraden die Stufenwinkel gleich, können sich die beiden Geraden nicht schneiden: ein Schnittpunkt erzeugte ein Dreieck, in dem ein Außenwinkel gleich einem fernen Innenwinkel wäre – Widerspruch zum schwachen Außenwinkelsatz. Also sind sie parallel. Das zeigt die Existenz von Parallelen allein in der absoluten Geometrie."},{q:"Was ist der Unterschied zwischen schwachem und starkem Außenwinkelsatz?",a:"Der <strong>schwache</strong> ist eine Ungleichung (Außenwinkel größer als jeder ferne Innenwinkel) und gilt schon absolut. Der <strong>starke</strong> ist eine Gleichung (Außenwinkel gleich der Summe der beiden fernen Innenwinkel), ist gleichwertig zum Innenwinkelsatz (180°) und braucht das Parallelenaxiom."}],
+ plain:[{t:"absolute Geometrie",e:"Geometrie mit allen Grundregeln außer der Parallelenregel – der „gemeinsame Kern“, den euklidische und nicht‑euklidische Geometrie teilen."},{t:"Außenwinkel",e:"Verlängert man eine Dreiecksseite über eine Ecke hinaus, entsteht neben dem Innenwinkel der Außenwinkel – zusammen bilden sie eine gerade Linie (180°)."},{t:"Winkelmaß",e:"Die Zahl, die angibt, wie weit ein Winkel geöffnet ist (in Grad oder im Bogenmaß)."}],
+ links:[9,12,13,8]
+},
+/* ============================== THEMA 11 ============================== */
+{
+ id:11, chapter:"Kap. 5.3.5, 5.8, 5.9", scope:"mittel", school:false,
+ title:"Spiegelungen und Drehungen",
+ subs:["Definitionen","Eigenschaften von Spiegelungen","Eigenschaften von Drehungen"],
+ overview:"Die konkreten Bausteine der Bewegungsgruppe. <strong>Geradenspiegelungen</strong> erzeugen alle Bewegungen; <strong>Drehungen</strong> sind Verkettungen zweier Spiegelungen an schneidenden Achsen.",
+ defs:[
+  {t:"Geradenspiegelung σ_g",b:"Bewegung, die die Achse <m>g</m> punktweise fest lässt und die beiden Halbebenen vertauscht. <strong>Involution</strong>: <m>σ_g∘σ_g=id</m>. Ändert die Orientierung (gegensinnig)."},
+  {t:"Drehung ρ_{Z,α}",b:"Verkettung zweier Geradenspiegelungen an Achsen durch den Zentrum <m>Z</m>; Drehwinkel = doppelter Achsenwinkel. Fixpunkt nur <m>Z</m> (außer <m>id</m>); orientierungserhaltend (gleichsinnig)."}
+ ],
+ theorems:[
+  {n:"Spiegelung erzeugt Bewegungen",s:"Zu jeder Bewegung gibt es eine Darstellung als Verkettung von höchstens drei Geradenspiegelungen.",idea:"Über den Fahnensatz: bilde die Fahne schrittweise (Punkt, Richtung, Seite) durch je eine Spiegelung passend ab."},
+  {n:"Zwei Spiegelungen",s:"Verkettung zweier Spiegelungen: an <strong>schneidenden</strong> Achsen = Drehung (um Schnittpunkt, doppelter Winkel); an <strong>parallelen</strong> Achsen = Verschiebung (doppelter Abstand).",idea:"Winkel-/Abstandsargument mit dem Bild eines Punktes; Achsen bestimmen Zentrum bzw. Richtung und Betrag."},
+  {n:"Drehung als gleichsinnig",s:"Drehungen sind gleichsinnige Bewegungen mit genau einem Fixpunkt (Zentrum), sofern <m>α≠0</m>.",idea:"Produkt zweier gegensinniger Spiegelungen ist gleichsinnig; gemeinsamer Achsenpunkt bleibt fest."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <line x1="70" y1="30" x2="70" y2="185" class="s-con"/><text x="56" y="30" class="s-lbl-b">g</text>
+   <polygon points="90,150 140,150 110,90" class="s-line"/>
+   <polygon points="50,150 0,150 30,90" class="s-res" transform="translate(20,0)"/>
+   <text x="150" y="196" text-anchor="middle" class="s-lbl-r">Spiegelung an g: Halbebenen vertauscht</text>
+   <circle cx="270" cy="110" r="3.5" class="s-pt"/><text x="276" y="108" class="s-lbl">Z</text>
+   <line x1="270" y1="110" x2="330" y2="80" class="s-line"/><line x1="270" y1="110" x2="325" y2="140" class="s-res"/>
+   <path d="M320 92 A50 50 0 0 1 322 130" class="s-con"/><text x="316" y="116" class="s-lbl-b">α</text>
+ </svg>`,cap:"Spiegelung (links) und Drehung um Z (rechts) als deren Verkettung."},
+ focus:[
+  "Spiegelung = <strong>Involution</strong>, achsenfest, orientierungsumkehrend — das immer betonen.",
+  "Kernsatz: <strong>zwei Spiegelungen → Drehung (schneidend) oder Verschiebung (parallel)</strong>.",
+  "Drehwinkel = <strong>doppelter</strong> Achsenwinkel; Verschiebungsvektor = doppelter Achsenabstand.",
+  "Spiegelungen sind die <strong>Erzeuger</strong> der ganzen Bewegungsgruppe (Vorbereitung Reduktionssätze)."
+ ],
+ nachfr:[{q:"Was ergibt die Verkettung zweier Spiegelungen an sich schneidenden Achsen?",a:"Eine Drehung um den Schnittpunkt der Achsen. Der Drehwinkel ist <strong>doppelt</strong> so groß wie der Winkel zwischen den Achsen (in Richtung von der ersten zur zweiten Achse). Bei parallelen Achsen ergäbe sich stattdessen eine Verschiebung um den doppelten Achsenabstand."},{q:"Warum ist eine Geradenspiegelung eine Involution?",a:"Spiegelt man einen Punkt an einer Geraden und spiegelt das Bild erneut an derselben Geraden, landet man beim Ausgangspunkt. Also <m>σ_g∘σ_g=id</m>: die Spiegelung ist ihre eigene Umkehrung (Involution)."},{q:"Zeigen Sie: eine Drehung hat genau einen Fixpunkt.",a:"Die Drehung <m>ρ</m> um <m>Z</m> (Winkel <m>≠0</m>) lässt <m>Z</m> fest, da <m>Z</m> auf beiden erzeugenden Achsen liegt. Ein zweiter Fixpunkt <m>P≠Z</m> ist unmöglich: eine Bewegung, die <m>Z</m> und <m>P</m> (also eine ganze Fahne) fest lässt, wäre die Identität – Widerspruch zu Winkel <m>≠0</m>. Also ist <m>Z</m> der einzige Fixpunkt."}],
+ plain:[{t:"Geradenspiegelung",e:"Umklappen der Ebene an einer Achse – wie ein Spiegelbild an einer senkrechten Linie. Zweimal spiegeln ergibt wieder das Original."},{t:"Drehung",e:"Die ganze Ebene um einen festen Punkt drehen, wie ein Zeiger um die Uhrmitte."}],
+ links:[7,15,16,9]
+},
+/* ============================== THEMA 12 ============================== */
+{
+ id:12, chapter:"Kap. 6", scope:"breit", school:false,
+ title:"Absolute, euklidische, nicht-euklidische Geometrie",
+ subs:["absolute Geometrie","Parallelenaxiom (euklidisch)","Axiome nicht-euklidischer Geometrien","Konsequenzen"],
+ overview:"Großes Überblicksthema mit Wissenschaftsgeschichte. <strong>Absolute Geometrie</strong> = alle bisherigen Axiome <em>ohne</em> Parallelenaxiom. Ergänzt man Axiom P, wird sie euklidisch; ergänzt man dessen Negation, hyperbolisch (bzw. elliptisch).",
+ defs:[
+  {t:"Absolute Geometrie",b:"Inzidenz-, Abstands-/Geraden-, Halbebenen- und Bewegungsaxiome <strong>ohne</strong> Parallelenaxiom. Alles bisher Bewiesene (Kongruenzsätze, schwacher Außenwinkelsatz, Existenz von Parallelen) gilt hier."},
+  {t:"Parallel",b:"Zwei Geraden heißen parallel, wenn sie gleich sind oder sich nicht schneiden."}
+ ],
+ axioms:[
+  {n:"P (euklidisch)",b:"Zu jeder Geraden <m>g</m> und jedem Punkt <m>P</m> gibt es <strong>genau eine</strong> Parallele zu <m>g</m> durch <m>P</m>."},
+  {n:"H (hyperbolisch)",b:"Es gibt <m>g</m> und <m>P</m> mit <strong>mindestens zwei</strong> Parallelen zu <m>g</m> durch <m>P</m>."},
+  {n:"E (elliptisch)",b:"Es gibt <m>g,P</m> ohne Parallele durch <m>P</m> (verschärft: je zwei Geraden schneiden sich)."}
+ ],
+ theorems:[
+  {n:"Gleichwertigkeit",s:"Die hyperbolische Geometrie ist genau dann widerspruchsfrei, wenn die euklidische es ist.",idea:"Modell (z. B. Poincaré‑Kreisscheibe) übersetzt die eine Theorie in die andere ⇒ relative Konsistenz. Damit ist das Parallelenaxiom <strong>unabhängig</strong>."},
+  {n:"Innenwinkelsumme",s:"Euklidisch: <m>IWS=π</m>. Hyperbolisch: <m>IWS<π</m> (Defekt). Elliptisch: <m>IWS>π</m>.",idea:"Ohne P kann man nur <m>IWS≤π</m> zeigen (Saccheri‑Legendre). Erst P erzwingt Gleichheit."},
+  {n:"www-Kongruenz (hyperbolisch)",s:"In der hyperbolischen Ebene bestimmen die drei Winkel das Dreieck bis auf Kongruenz — es gibt keine Ähnlichkeit ohne Kongruenz.",idea:"Der Winkeldefekt ist proportional zur Fläche; gleiche Winkel ⇒ gleiche Fläche ⇒ kongruent."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 360 170" width="370">
+   <text x="60" y="24" text-anchor="middle" class="s-lbl-b">euklidisch</text>
+   <line x1="20" y1="130" x2="110" y2="130" class="s-line"/><circle cx="65" cy="80" r="3.5" class="s-pt"/>
+   <line x1="20" y1="80" x2="110" y2="80" class="s-res"/>
+   <text x="180" y="24" text-anchor="middle" class="s-lbl-b">hyperbolisch</text>
+   <circle cx="180" cy="95" r="52" class="s-line"/>
+   <path d="M132 78 Q180 130 228 78" class="s-line"/>
+   <circle cx="180" cy="70" r="3.5" class="s-pt"/>
+   <path d="M150 118 Q180 60 205 120" class="s-res"/><path d="M158 122 Q182 70 220 112" class="s-res"/>
+   <text x="300" y="24" text-anchor="middle" class="s-lbl-b">elliptisch</text>
+   <circle cx="300" cy="95" r="48" class="s-line"/>
+   <path d="M256 82 Q300 60 344 82" class="s-res"/><path d="M256 108 Q300 130 344 108" class="s-res"/>
+ </svg>`,cap:"Eine Parallele (euklidisch), mehrere (hyperbolisch), keine (elliptisch)."},
+ focus:[
+  "Struktur: <strong>absolut = ohne P</strong>; +P → euklidisch, +H → hyperbolisch.",
+  "Historie kurz: Parallelenpostulat, ~2000 Jahre Ableitungsversuche, Bolyai/Lobatschewski/Gauß.",
+  "<strong>Unabhängigkeit</strong> von P über ein Modell (Poincaré) — relative Widerspruchsfreiheit.",
+  "Konsequenz‑Trias: Innenwinkelsumme <, =, > π; Ähnlichkeit nur euklidisch."
+ ],
+ nachfr:[{q:"Was gehört zur absoluten Geometrie, was nicht?",a:"Zur absoluten Geometrie gehören alle Axiome außer dem Parallelenaxiom: Inzidenz‑, Abstands‑/Geraden‑, Halbebenen‑ und Bewegungsaxiome. Daraus folgen z. B. die Kongruenzsätze, der Basiswinkelsatz und der schwache Außenwinkelsatz. <strong>Nicht</strong> dazu gehören Aussagen, die das Parallelenaxiom brauchen: Innenwinkelsumme 180°, starker Außenwinkelsatz, Strahlensätze, Ähnlichkeit ohne Kongruenz."},{q:"Wie zeigt man die Unabhängigkeit des Parallelenaxioms?",a:"Durch ein Modell, das alle Axiome der absoluten Geometrie erfüllt, das Parallelenaxiom aber verletzt – etwa das Poincaré‑Kreisscheibenmodell der hyperbolischen Ebene. Dort existieren mehrere Parallelen, während alle übrigen Axiome gelten. Also lässt sich das Parallelenaxiom nicht aus ihnen ableiten (Unabhängigkeit); zugleich folgt die relative Widerspruchsfreiheit."},{q:"Warum gibt es in der hyperbolischen Ebene keine ähnlichen, nicht kongruenten Dreiecke?",a:"Dort bestimmen bereits die drei Winkel das Dreieck bis auf Kongruenz (Kongruenzsatz www). Grund: Der Winkeldefekt (<m>π</m> minus Innenwinkelsumme) ist proportional zur Fläche; gleiche Winkel bedeuten gleichen Defekt, also gleiche Fläche und damit Kongruenz. Eine bloße Vergrößerung bei gleichen Winkeln ist unmöglich."}],
+ plain:[{t:"Parallelenaxiom",e:"Die Regel: Zu einer Geraden gibt es durch einen Punkt daneben genau eine Parallele. Was selbstverständlich klingt, ist eine zusätzliche Annahme – ohne sie sieht Geometrie ganz anders aus."},{t:"nicht‑euklidische Geometrie",e:"Geometrie auf „gekrümmten“ Welten: Auf einer Sattelfläche gibt es viele Parallelen (hyperbolisch), auf einer Kugel gar keine (elliptisch). Dann ist die Winkelsumme im Dreieck nicht mehr 180°."}],
+ links:[1,10,13,18]
+},
+/* ============================== THEMA 13 ============================== */
+{
+ id:13, chapter:"Kap. 7.1–7.2", scope:"mittel", school:true,
+ title:"Konsequenzen des Parallelenaxioms",
+ subs:["Stufen-/Wechselwinkelsatz mit Umkehrung","Innenwinkelsatz, starker Außenwinkelsatz","Parallelogramme","Mittenlinien im Dreieck"],
+ overview:"Jetzt greift Axiom P. Ergebnisse, die Schüler kennen: <strong>Innenwinkelsumme 180°</strong>, starker Außenwinkelsatz, Parallelogrammsätze, Mittenlinie. Wichtig: sauber trennen, was <em>neu</em> das Parallelenaxiom braucht.",
+ defs:[
+  {t:"Stufen-/Wechselwinkel",b:"An zwei von einer Geraden geschnittenen Geraden entstehende Winkelpaare (Stufenwinkel: gleiche Lage; Wechselwinkel: über Kreuz)."},
+  {t:"Parallelogramm",b:"Viereck mit zwei Paaren paralleler Seiten. Äquivalent: gegenüberliegende Seiten (bzw. Winkel) gleich; Diagonalen halbieren sich."}
+ ],
+ theorems:[
+  {n:"Stufenwinkelsatz",s:"Bei parallelen Geraden sind Stufenwinkel gleich (und damit Wechselwinkel). Mit Umkehrung (Thema 10) eine <strong>Äquivalenz</strong> zur Parallelität.",idea:"Existenz einer Parallelen ist absolut (Umkehrung); die <em>Eindeutigkeit</em> aus Axiom P liefert die Rückrichtung ⇒ Gleichheit der Stufenwinkel."},
+  {n:"Innenwinkelsatz",s:"Die Innenwinkelsumme jedes Dreiecks ist <m>π</m> (180°).",idea:"Parallele zu <m>AB</m> durch <m>C</m>; Wechselwinkel übertragen <m>α</m> und <m>β</m> an den Scheitel <m>C</m>, wo sie mit <m>γ</m> den gestreckten Winkel <m>π</m> bilden."},
+  {n:"Mittenliniensatz",s:"Die Verbindung der Mittelpunkte zweier Dreiecksseiten ist parallel zur dritten Seite und halb so lang.",idea:"Punktspiegelung am Seitenmittelpunkt bzw. sws erzeugt ein Parallelogramm; daraus Parallelität und Halbierung."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 180" width="360">
+   <polygon points="50,150 250,150 130,50" class="s-line"/>
+   <line x1="70" y1="50" x2="210" y2="50" class="s-con"/>
+   <text x="40" y="166" class="s-lbl">A</text><text x="252" y="166" class="s-lbl">B</text><text x="125" y="44" class="s-lbl">C</text>
+   <text x="215" y="48" class="s-lbl-b">‖ AB</text>
+   <path d="M70 145 a22 22 0 0 1 16 -14" class="s-res"/><text x="72" y="135" class="s-lbl-r">α</text>
+   <path d="M230 145 a22 22 0 0 0 -16 -14" class="s-res"/><text x="222" y="135" class="s-lbl-r">β</text>
+   <path d="M112 62 a18 18 0 0 1 36 0" class="s-res"/><text x="126" y="80" class="s-lbl-r">α β γ</text>
+   <text x="150" y="176" text-anchor="middle" class="s-lbl-b">α+β+γ = π  (über Parallele durch C)</text>
+ </svg>`,cap:"Innenwinkelsatz: Parallele durch C überträgt α und β per Wechselwinkel."},
+ focus:[
+  "Klar herausstellen: erst <strong>Axiom P</strong> macht aus „Parallele existiert\u201c ⇒ „genau eine\u201c, damit Stufenwinkel <em>gleich</em>.",
+  "Innenwinkelsatz elegant über Parallele durch <m>C</m> + Wechselwinkel beweisen.",
+  "Parallelogramm‑Charakterisierungen (Seiten/Winkel/Diagonalen) als Äquivalenzen kennen.",
+  "Starker Außenwinkelsatz: Außenwinkel = <strong>Summe</strong> der beiden fernen Innenwinkel."
+ ],
+ nachfr:[{q:"Beweisen Sie den Innenwinkelsatz.",a:"Zeichne durch <m>C</m> die (nach dem Parallelenaxiom eindeutige) Parallele zu <m>AB</m>. Die Schenkel <m>CA</m> und <m>CB</m> erzeugen dort Wechselwinkel zu <m>α</m> (bei <m>A</m>) und <m>β</m> (bei <m>B</m>); bei Parallelen sind Wechselwinkel gleich, also treten <m>α</m> und <m>β</m> am Scheitel <m>C</m> auf. Mit <m>γ</m> füllen sie den gestreckten Winkel: <m>α+β+γ=π</m>. Die Innenwinkelsumme ist 180°."},{q:"Welche Rolle spielt genau die Eindeutigkeit im Parallelenaxiom?",a:"Die <em>Existenz</em> einer Parallelen gilt schon absolut. Erst die <em>Eindeutigkeit</em> (genau eine) erzwingt die Rückrichtung des Stufenwinkelsatzes: Sind zwei Geraden parallel, müssen die Stufenwinkel gleich sein – sonst gäbe es eine zweite Parallele. Daraus folgen Innenwinkelsatz und starker Außenwinkelsatz."},{q:"Beweisen Sie den Mittenliniensatz.",a:"Seien <m>M,N</m> die Mittelpunkte von <m>CA</m> und <m>CB</m>. Über eine Punktspiegelung am Seitenmittelpunkt ergänzt man die Figur zu einem Parallelogramm; dessen gegenüberliegende Seiten liefern <m>MN∥AB</m>, und die gleich langen Parallelogrammseiten liefern <m>|MN|=½|AB|</m>. (Gleichwertig über sws bzw. den Strahlensatz mit Faktor ½.)"}],
+ plain:[{t:"Stufen-/Wechselwinkel",e:"Kreuzt eine Gerade zwei Parallelen, entstehen gleich große Winkelpaare: Stufenwinkel liegen „gleich“ an beiden Kreuzungen, Wechselwinkel über Eck."},{t:"Innenwinkelsumme 180°",e:"In jedem ebenen Dreieck ergeben die drei Winkel zusammen immer eine halbe Umdrehung, also 180°."},{t:"Parallelogramm",e:"Ein Viereck, bei dem beide Paare gegenüberliegender Seiten parallel sind – z. B. ein „schiefes Rechteck“."}],
+ links:[10,12,14,17]
+},
+/* ============================== THEMA 14 ============================== */
+{
+ id:14, chapter:"Kap. 7.4, 7.2.3", scope:"mittel", school:true,
+ title:"Transversalen im Dreieck",
+ subs:["Schnittpunkte von Winkelhalbierenden, Mittelsenkrechten, Höhen","Mittenlinien","Schnittpunkt der Seitenhalbierenden"],
+ overview:"Die vier „merkwürdigen Punkte\u201c: Inkreismittelpunkt (Winkelhalbierende), Umkreismittelpunkt (Mittelsenkrechte), Höhenschnittpunkt, Schwerpunkt (Seitenhalbierende). Beweise laufen elegant über <strong>Ortslinien</strong> und den Mittenliniensatz.",
+ defs:[
+  {t:"Merkwürdige Punkte",b:"Inzenter <m>I</m> (Winkelhalbierende), Umzenter <m>U</m> (Mittelsenkrechte), Höhenschnittpunkt <m>H</m>, Schwerpunkt <m>S</m> (Seitenhalbierende). <m>U,S,H</m> liegen auf der <strong>Euler‑Geraden</strong>."}
+ ],
+ theorems:[
+  {n:"Umkreismittelpunkt",s:"Die drei Mittelsenkrechten schneiden sich in einem Punkt <m>U</m> mit <m>|UA|=|UB|=|UC|</m> (Umkreismittelpunkt).",idea:"Ortslinien‑Argument: <m>U:=MiSenk(AB)∩MiSenk(BC)</m> erfüllt <m>|UA|=|UB|</m> und <m>|UB|=|UC|</m>, also <m>|UA|=|UC|</m> ⇒ <m>U∈MiSenk(AC)</m>."},
+  {n:"Inkreismittelpunkt",s:"Die drei Winkelhalbierenden schneiden sich in <m>I</m> mit gleichem Abstand zu allen drei Seiten (Inkreis).",idea:"Winkelhalbierende = Ortslinie gleichen Abstands zu den beiden Schenkeln; analoges Schnitt‑Argument wie beim Umzenter."},
+  {n:"Schwerpunkt teilt 2:1",s:"Die Seitenhalbierenden schneiden sich in <m>S</m>, der sie im Verhältnis <m>2:1</m> teilt.",idea:"Mittenliniensatz: die Mittenlinie ist halb so lang und parallel; ähnliche Dreiecke liefern das Teilverhältnis. (Höhen: über das Mittendreieck als Mittelsenkrechte auf einen Höhenschnittpunkt zurückführen.)"}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 320 200" width="340">
+   <polygon points="50,170 270,170 170,40" class="s-line"/>
+   <line x1="50" y1="170" x2="220" y2="105" class="s-con"/>
+   <line x1="270" y1="170" x2="110" y2="105" class="s-con"/>
+   <line x1="170" y1="40" x2="160" y2="170" class="s-con"/>
+   <circle cx="163" cy="127" r="4" class="s-pt-r"/><text x="170" y="124" class="s-lbl-r">S</text>
+   <circle cx="50" cy="170" r="3.5" class="s-pt"/><circle cx="270" cy="170" r="3.5" class="s-pt"/><circle cx="170" cy="40" r="3.5" class="s-pt"/>
+   <text x="150" y="194" text-anchor="middle" class="s-lbl-b">Seitenhalbierende → Schwerpunkt (2:1)</text>
+ </svg>`,cap:"Die drei Seitenhalbierenden schneiden sich im Schwerpunkt S."},
+ focus:[
+  "Beweisschema für alle drei Schnittpunkte: <strong>Ortslinie ∩ Ortslinie erfüllt auch die dritte Bedingung</strong>.",
+  "Umkreis ↔ Mittelsenkrechte (gleicher Abstand zu <em>Ecken</em>); Inkreis ↔ Winkelhalbierende (gleicher Abstand zu <em>Seiten</em>).",
+  "Schwerpunkt teilt <m>2:1</m> — über Mittenliniensatz/Ähnlichkeit begründen.",
+  "Höhenschnittpunkt über das <strong>Mittendreieck</strong> auf Mittelsenkrechten zurückführen."
+ ],
+ nachfr:[{q:"Beweisen Sie, dass sich die Mittelsenkrechten in einem Punkt schneiden.",a:"Sei <m>U</m> der Schnittpunkt der Mittelsenkrechten von <m>AB</m> und <m>BC</m>. Aus <m>U∈MiSenk(AB)</m> folgt <m>|UA|=|UB|</m>, aus <m>U∈MiSenk(BC)</m> folgt <m>|UB|=|UC|</m>. Also <m>|UA|=|UC|</m>, d. h. <m>U∈MiSenk(AC)</m>. Alle drei gehen durch <m>U</m>; <m>U</m> ist gleich weit von allen Ecken entfernt – der Umkreismittelpunkt."},{q:"Warum teilt der Schwerpunkt die Seitenhalbierenden im Verhältnis 2:1?",a:"Die Mittenlinie (Verbindung zweier Seitenmittelpunkte) ist parallel zur dritten Seite und halb so lang. Die dadurch entstehenden ähnlichen Dreiecke zeigen, dass der Schnittpunkt <m>S</m> zweier Seitenhalbierender jede im Verhältnis <m>2:1</m> (von der Ecke aus) teilt. Da das für jedes Paar gilt, treffen sich alle drei in <m>S</m>."},{q:"Welcher Zusammenhang besteht zwischen Höhen und Mittelsenkrechten?",a:"Ergänzt man <m>ABC</m> durch Parallelen zu einem doppelt so großen Dreieck, werden die Höhen von <m>ABC</m> zu Mittelsenkrechten dieses großen Dreiecks. Da sich Mittelsenkrechten in einem Punkt schneiden, tun das auch die Höhen – im Höhenschnittpunkt."}],
+ plain:[{t:"Umkreis / Umkreismittelpunkt",e:"Der Kreis, der durch alle drei Ecken geht. Sein Mittelpunkt ist von allen Ecken gleich weit entfernt."},{t:"Inkreis",e:"Der größte Kreis, der ins Dreieck passt und alle drei Seiten von innen berührt."},{t:"Schwerpunkt",e:"Der Balancepunkt des Dreiecks – dort könnte man es auf einer Nadelspitze ausbalancieren."}],
+ links:[9,13,17,5]
+},
+/* ============================== THEMA 15 ============================== */
+{
+ id:15, chapter:"Kap. 8.1–8.2", scope:"mittel", school:false,
+ title:"Verschiebungen und Schubspiegelungen",
+ subs:["Definitionen","Eigenschaften"],
+ overview:"Zwei weitere Bewegungstypen. <strong>Verschiebung</strong> = Produkt zweier Spiegelungen an parallelen Achsen (fixpunktfrei, gleichsinnig). <strong>Schubspiegelung</strong> = Verschiebung ∘ Spiegelung entlang der Achse (fixpunktfrei, gegensinnig).",
+ defs:[
+  {t:"Verschiebung τ",b:"Bewegung ohne Fixpunkt, die jede Gerade in Richtung des Verschiebungsvektors auf eine Parallele abbildet; gleichsinnig. <m>τ=σ_b∘σ_a</m> mit <m>a∥b</m>, Betrag = doppelter Achsenabstand."},
+  {t:"Schubspiegelung",b:"Verkettung einer Spiegelung an einer Geraden <m>g</m> mit einer Verschiebung <em>längs</em> <m>g</m>. Gegensinnig, fixpunktfrei; das Quadrat ist eine Verschiebung."}
+ ],
+ theorems:[
+  {n:"Darstellung der Verschiebung",s:"Jede Verschiebung ist Produkt zweier Spiegelungen an parallelen Achsen; umgekehrt ist jedes solche Produkt eine Verschiebung.",idea:"Bild eines Punktes unter <m>σ_b∘σ_a</m> berechnen: senkrecht zu den Achsen, Betrag doppelter Abstand, Richtung fest ⇒ fixpunktfrei & richtungstreu."},
+  {n:"Verschiebungen bilden Gruppe",s:"Die Verschiebungen bilden eine <strong>kommutative</strong> Untergruppe von <m>B(P)</m>; Verkettung entspricht Vektoraddition.",idea:"Über die Vektor-/Parallelogramm‑Darstellung; Reihenfolge egal ⇒ abelsch."},
+  {n:"Schubspiegelung",s:"Eine gegensinnige Bewegung ohne Fixpunkt ist eine Schubspiegelung (mit eindeutiger Achse).",idea:"Reduktion von drei Spiegelungen (Dreispiegelungssatz): bei nicht kopunktalen/parallelen Achsen entsteht eine Schubspiegelung."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <line x1="70" y1="20" x2="70" y2="175" class="s-con"/><line x1="150" y1="20" x2="150" y2="175" class="s-con"/>
+   <text x="60" y="16" class="s-lbl-b">a</text><text x="142" y="16" class="s-lbl-b">b</text>
+   <polygon points="30,130 55,130 42,95" class="s-line"/>
+   <polygon points="178,130 203,130 190,95" class="s-res"/>
+   <path d="M60 150 L180 150" class="s-line"/><path d="M172 145 L180 150 L172 155" class="s-line"/>
+   <text x="105" y="168" class="s-lbl-b">2·Abstand(a,b)</text>
+   <text x="250" y="100" class="s-lbl-r">σ_b∘σ_a</text><text x="250" y="120" class="s-lbl-r">= Verschiebung</text>
+ </svg>`,cap:"Verschiebung als Produkt zweier Spiegelungen an parallelen Achsen."},
+ focus:[
+  "Merksatz‑Tabelle: <strong>2 Spiegel. || → Verschiebung; ∦ → Drehung; 3 Spiegel. → Spiegelung od. Schubspiegelung</strong>.",
+  "Verschiebung: fixpunktfrei, gleichsinnig, richtungstreu; Betrag = doppelter Achsenabstand.",
+  "Schubspiegelung: gegensinnig, fixpunktfrei — der „vierte\u201c Bewegungstyp.",
+  "Verschiebungen bilden abelsche Gruppe ≅ Vektoren (Brücke zur analytischen Geometrie)."
+ ],
+ nachfr:[{q:"Was ergibt das Produkt zweier Spiegelungen an parallelen Achsen?",a:"Eine Verschiebung – senkrecht zu den Achsen, in Richtung von der ersten zur zweiten, um den <strong>doppelten</strong> Achsenabstand. Sie hat keinen Fixpunkt und ist gleichsinnig (orientierungserhaltend)."},{q:"Warum ist eine Schubspiegelung fixpunktfrei?",a:"Sie ist eine Spiegelung an einer Achse <m>g</m>, gefolgt von einer Verschiebung <em>längs</em> <m>g</m> (Vektor <m>≠0</m>). Der Spiegelanteil fixiert höchstens Punkte auf <m>g</m>, aber der Verschiebeanteil bewegt jeden Punkt von <m>g</m> echt weiter. Kein Punkt bleibt fest – fixpunktfrei (und gegensinnig)."},{q:"Zeigen Sie, dass Verschiebungen kommutieren.",a:"Jede Verschiebung entspricht einem Vektor; Hintereinanderausführen entspricht der Vektoraddition. Da <m>v+w=w+v</m>, ist die Reihenfolge egal. Die Verschiebungen bilden daher eine abelsche (kommutative) Untergruppe der Bewegungen."}],
+ plain:[{t:"Verschiebung",e:"Die ganze Ebene ohne Drehen in eine feste Richtung schieben – jeder Punkt wandert um denselben Pfeil (Vektor)."},{t:"Schubspiegelung",e:"Erst spiegeln, dann entlang der Spiegelachse weiterschieben – wie eine Reihe Fußspuren im Sand: links, rechts, links versetzt."}],
+ links:[11,7,16]
+},
+/* ============================== THEMA 16 ============================== */
+{
+ id:16, chapter:"Kap. 8.3–8.4", scope:"mittel", school:false,
+ title:"Reduktionssätze",
+ subs:["Grundaussagen","Gleichsinnige Bewegungen","Gleichsinnige Kongruenz"],
+ overview:"Das <strong>Klassifikationsthema</strong>: Jede Bewegung ist Produkt von höchstens drei Spiegelungen. Daraus folgt die vollständige Einteilung der Bewegungen und der Begriff der Gleichsinnigkeit.",
+ defs:[
+  {t:"Gleich-/gegensinnig",b:"Eine Bewegung ist <strong>gleichsinnig</strong> (orientierungserhaltend), wenn sie Produkt einer <em>geraden</em> Anzahl von Spiegelungen ist, sonst <strong>gegensinnig</strong>. Wohldefiniert, da die Parität eindeutig ist."},
+  {t:"Gleichsinnige Kongruenz",b:"Figuren, die durch eine gleichsinnige Bewegung ineinander übergehen (ohne „Umklappen\u201c)."}
+ ],
+ theorems:[
+  {n:"Dreispiegelungssatz",s:"Jede Bewegung lässt sich als Produkt von <strong>höchstens drei</strong> Geradenspiegelungen darstellen.",idea:"Fahnensatz: bilde Anfangspunkt (1 Spiegelung), dann Richtung (2.), dann Halbebene (3.) der Fahne schrittweise ab. Danach identisch."},
+  {n:"Reduktion von vier Spiegelungen",s:"Ein Produkt von vier Spiegelungen ist stets auf zwei reduzierbar.",idea:"Achsen paarweise geeignet drehen/verschieben (Spiegelungen an schneidenden/parallelen Achsen frei „umhängen\u201c), bis zwei sich wegheben."},
+  {n:"Vollständige Einteilung",s:"Jede Bewegung ist Identität, Spiegelung, Drehung, Verschiebung oder Schubspiegelung.",idea:"Fallunterscheidung nach Spiegelungszahl (1/2/3) und Achsenlage (schneidend/parallel/allgemein) + Fixpunktverhalten."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 360 190" width="370">
+   <rect x="20" y="30" width="150" height="130" rx="10" fill="rgba(44,96,121,.06)" stroke="#2C6079" stroke-width="1.4"/>
+   <text x="95" y="52" text-anchor="middle" class="s-lbl-b">gleichsinnig</text>
+   <text x="95" y="76" text-anchor="middle" class="s-lbl">id</text>
+   <text x="95" y="100" text-anchor="middle" class="s-lbl">Verschiebung</text>
+   <text x="95" y="124" text-anchor="middle" class="s-lbl">Drehung</text>
+   <rect x="190" y="30" width="150" height="130" rx="10" fill="rgba(178,59,46,.06)" stroke="#B23B2E" stroke-width="1.4"/>
+   <text x="265" y="52" text-anchor="middle" class="s-lbl-r">gegensinnig</text>
+   <text x="265" y="82" text-anchor="middle" class="s-lbl">Spiegelung</text>
+   <text x="265" y="112" text-anchor="middle" class="s-lbl">Schubspiegelung</text>
+   <text x="180" y="182" text-anchor="middle" class="s-lbl-b">Parität der Spiegelungszahl entscheidet</text>
+ </svg>`,cap:"Vollständige Klassifikation der ebenen Bewegungen."},
+ focus:[
+  "Zentraler Satz: <strong>≤ 3 Spiegelungen</strong> genügen — Beweis über den Fahnensatz erklären.",
+  "Gleichsinnigkeit = <strong>Parität</strong> der Spiegelungszahl; Wohldefiniertheit betonen.",
+  "Reduktion 4→2 als Schlüssellemma für die Klassifikation.",
+  "Endergebnis: nur <strong>fünf</strong> Bewegungstypen — Tabelle nach gleich/gegensinnig × Fixpunkte."
+ ],
+ nachfr:[{q:"Beweisen Sie den Dreispiegelungssatz.",a:"Eine Bewegung ist durch das Bild einer Fahne (Punkt, Richtung, Seite) eindeutig bestimmt. Man bildet die Fahne schrittweise mit je einer Geradenspiegelung ab: die erste bringt den Anfangspunkt aufs Ziel, die zweite die Richtung, die dritte die Seite. Die Verkettung dieser höchstens drei Spiegelungen bildet die Fahne exakt wie die gegebene Bewegung ab, stimmt also mit ihr überein."},{q:"Warum ist Gleichsinnigkeit wohldefiniert?",a:"Zu zeigen ist, dass die Anzahl der Spiegelungen in jeder Darstellung derselben Bewegung stets gerade oder stets ungerade ist. Das folgt aus der Reduktion: vier Spiegelungen lassen sich immer auf zwei reduzieren (drei auf eine). Die Parität kann sich nie ändern; „gleichsinnig = gerade Anzahl“ ist eindeutig."},{q:"Klassifizieren Sie alle ebenen Bewegungen.",a:"Nach Spiegelungszahl und Achsenlage: 0 = Identität; 1 = Geradenspiegelung; 2 = Drehung (schneidende Achsen) oder Verschiebung (parallele Achsen); 3 = Geradenspiegelung (reduzierbar) oder Schubspiegelung. Insgesamt genau fünf Typen: Identität, Verschiebung, Drehung (gleichsinnig) sowie Geradenspiegelung und Schubspiegelung (gegensinnig)."}],
+ plain:[{t:"Reduktionssatz",e:"Die Erkenntnis, dass jede noch so komplizierte Bewegung schon aus höchstens drei Spiegelungen zusammengesetzt werden kann – Spiegelungen sind die „Grundbausteine“."},{t:"gleichsinnig / gegensinnig",e:"Gleichsinnig = ohne Umklappen (Drehungen, Verschiebungen); gegensinnig = mit Umklappen, wobei aus links rechts wird (Spiegelungen)."}],
+ links:[11,15,7]
+},
+/* ============================== THEMA 17 ============================== */
+{
+ id:17, chapter:"Kap. 7.2.3, 9.2", scope:"mittel", school:true,
+ title:"Strahlensätze",
+ subs:["Mittenlinien im Dreieck","Herleitung der Strahlensätze","Umkehrungen & Verallgemeinerung","Anwendungen"],
+ overview:"Schulnahes Kernthema. Aus dem <strong>Mittenliniensatz</strong> wird über Induktion und zentrische Streckung der <strong>1. und 2. Strahlensatz</strong> gewonnen. Wichtig: exakte Voraussetzungen, Umkehrungen und typische Anwendungen.",
+ defs:[
+  {t:"Strahlensatz-Konfiguration",b:"Zwei Strahlen mit gemeinsamem Anfangspunkt <m>O</m>, geschnitten von zwei zueinander <strong>parallelen</strong> Geraden. Es entstehen Abschnitte auf den Strahlen und auf den Parallelen."}
+ ],
+ theorems:[
+  {n:"1. Strahlensatz",s:"Werden zwei Strahlen aus <m>O</m> von zwei Parallelen geschnitten, so verhalten sich die Abschnitte auf dem einen Strahl wie die entsprechenden auf dem anderen: <m>|OA₁|:|OA₂| = |OB₁|:|OB₂|</m>.",idea:"Rationaler Fall über den Mittenliniensatz + Induktion (Verkleinern in kongruente Teildreiecke). Allgemeiner Fall per Stetigkeit/Approximation; sauberer über <strong>zentrische Streckung</strong>."},
+  {n:"2. Strahlensatz",s:"Zusätzlich verhalten sich die Abschnitte <em>auf den Parallelen</em> wie die auf den Strahlen: <m>|A₁B₁|:|A₂B₂| = |OA₁|:|OA₂|</m>.",idea:"Folgt aus dem 1. Strahlensatz durch Verschieben einer Parallelen und erneutes Anwenden bzw. direkt aus der zentrischen Streckung."},
+  {n:"Umkehrung",s:"Gilt die Abschnittsproportion auf beiden Strahlen, so sind die Schnittgeraden parallel (Umkehrung des 1. Strahlensatzes). Für den 2. gilt das nicht uneingeschränkt.",idea:"Über die Eindeutigkeit der Parallelen (Axiom P): eine dritte Gerade mit gleichem Verhältnis müsste mit der Parallelen zusammenfallen."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <circle cx="40" cy="100" r="4" class="s-pt"/><text x="26" y="104" class="s-lbl">O</text>
+   <line x1="40" y1="100" x2="320" y2="40" class="s-line"/>
+   <line x1="40" y1="100" x2="320" y2="170" class="s-line"/>
+   <line x1="130" y1="81" x2="130" y2="118" class="s-res"/>
+   <line x1="250" y1="55" x2="250" y2="152" class="s-res"/>
+   <text x="120" y="74" class="s-lbl">A₁</text><text x="120" y="132" class="s-lbl">B₁</text>
+   <text x="255" y="50" class="s-lbl">A₂</text><text x="255" y="166" class="s-lbl">B₂</text>
+   <text x="180" y="193" text-anchor="middle" class="s-lbl-b">|OA₁|:|OA₂| = |OB₁|:|OB₂| = |A₁B₁|:|A₂B₂|</text>
+ </svg>`,cap:"Strahlensatz-Konfiguration: gemeinsamer Punkt O, zwei parallele Schnittgeraden."},
+ focus:[
+  "Herleitungslinie parat: <strong>Mittenliniensatz → Induktion (rational) → zentrische Streckung (allgemein)</strong>.",
+  "Voraussetzungen exakt: <em>parallele</em> Schnittgeraden, gemeinsamer Scheitel.",
+  "Umkehrung des 1. Strahlensatzes gilt; beim 2. auf Ausnahmen hinweisen.",
+  "Anwendungen: Streckenteilung, Höhenmessung, Ähnlichkeitsbeweise."
+ ],
+ nachfr:[{q:"Leiten Sie den 1. Strahlensatz aus dem Mittenliniensatz her.",a:"Zunächst für ganzzahlige Teilungen: Trägt man <m>OA₁</m> auf dem Strahl <m>k</m>‑mal ab und zieht Parallele zur ersten Schnittgeraden, zerlegen die Parallelen das große Dreieck per Mittenliniensatz in lauter kongruente Teildreiecke. Daraus <m>|OA_k|:|OA₁|=|OB_k|:|OB₁|</m> für ganze <m>k</m>, per Teilung für rationale, über Stetigkeit bzw. zentrische Streckung für beliebige Verhältnisse. Die Abschnitte verhalten sich auf beiden Strahlen gleich."},{q:"Formulieren und prüfen Sie die Umkehrung.",a:"Umkehrung (1. Strahlensatz): Gilt <m>|OA₁|:|OA₂|=|OB₁|:|OB₂|</m>, so sind die Schnittgeraden parallel. Sie ist wahr: Eine zweite, nicht‑parallele Gerade durch <m>B₁</m> mit demselben Verhältnis widerspräche der Eindeutigkeit der Parallelen (Parallelenaxiom). Die Umkehrung des 2. Strahlensatzes gilt dagegen nicht uneingeschränkt."},{q:"Wie hängen Strahlensätze und zentrische Streckung zusammen?",a:"Die Strahlensatz‑Figur ist das Bild einer zentrischen Streckung mit Zentrum <m>O</m>: <m>A₂=Z_{O,k}(A₁)</m>, <m>B₂=Z_{O,k}(B₁)</m>. Da die Streckung Geraden auf parallele abbildet und Längen mit <m>k</m> multipliziert, sind die Strahlensätze genau deren Längen‑ und Parallelitätsaussagen – auch für irrationale Faktoren sauber begründet."}],
+ plain:[{t:"Strahlensatz",e:"Schneiden zwei parallele Linien zwei aus einem Punkt auslaufende Strahlen, so teilen sie beide Strahlen im gleichen Verhältnis – die Grundlage fürs indirekte Messen (z. B. Baumhöhe über den Schatten)."}],
+ links:[13,18,19,14]
+},
+/* ============================== THEMA 18 ============================== */
+{
+ id:18, chapter:"Kap. 9.1–9.3", scope:"breit", school:true,
+ title:"Zentrische Streckung und Ähnlichkeit",
+ subs:["Gruppeneigenschaften","Invarianzeigenschaften","Existenz & Eindeutigkeit","Ähnlichkeit als Äquivalenzrelation"],
+ overview:"Breites Thema: <strong>zentrische Streckung</strong> und allgemeine <strong>Ähnlichkeitsabbildungen</strong>. Ähnlichkeit ist — wie Kongruenz — eine über eine Abbildungsgruppe erzeugte Äquivalenzrelation, jetzt mit Streckfaktor.",
+ defs:[
+  {t:"Zentrische Streckung",b:"<m>Z_{S,k}</m> mit Zentrum <m>S</m>, Faktor <m>k≠0</m>: <m>P↦P'</m> mit <m>P'</m> auf <m>SP</m> und <m>|SP'|=|k|·|SP|</m> (Seite je nach Vorzeichen). Bildet Geraden auf parallele Geraden ab, multipliziert Längen mit <m>|k|</m>, erhält Winkel."},
+  {t:"Ähnlichkeitsabbildung",b:"Bijektion, die alle Abstände mit einem festen Faktor <m>k>0</m> multipliziert. = Verkettung einer zentrischen Streckung mit einer Bewegung."},
+  {t:"Ähnlichkeit ~",b:"<m>F~F' :⇔</m> es gibt eine Ähnlichkeitsabbildung mit <m>φ(F)=F'</m>. Äquivalenzrelation (von der Gruppe der Ähnlichkeitsabbildungen erzeugt)."}
+ ],
+ theorems:[
+  {n:"Gruppen-/Invarianzeigenschaften",s:"Ähnlichkeitsabbildungen bilden eine Gruppe; sie erhalten Winkel, Teilverhältnisse und Parallelität, multiplizieren Längen und Flächen mit <m>k</m> bzw. <m>k²</m>.",idea:"Verkettung/Inverse von Streckungen und Bewegungen sind wieder solche; Winkel- und Verhältnistreue aus den Strahlensätzen."},
+  {n:"Hauptähnlichkeitssatz (WW)",s:"Stimmen zwei Dreiecke in zwei Winkeln überein, so sind sie ähnlich.",idea:"Streckung, die eine Seite auf die entsprechende abbildet, gefolgt von einer Bewegung (Winkelantragen) ⇒ Deckung; Eindeutigkeit über wsw."},
+  {n:"Ähnlichkeitssätze",s:"WW, SS:S (Seitenverhältnisse), SWS (zwei Seitenverhältnisse + eingeschl. Winkel) — analog zu den Kongruenzsätzen mit Faktor.",idea:"Auf Kongruenzsätze zurückführen, nachdem eine zentrische Streckung die Größen angepasst hat."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 190" width="360">
+   <circle cx="40" cy="150" r="4" class="s-pt"/><text x="28" y="166" class="s-lbl">S</text>
+   <polygon points="90,140 150,140 120,105" class="s-line"/>
+   <polygon points="140,120 260,120 200,50" class="s-res"/>
+   <line x1="40" y1="150" x2="260" y2="120" class="s-con"/>
+   <line x1="40" y1="150" x2="200" y2="50" class="s-con"/>
+   <line x1="40" y1="150" x2="140" y2="120" class="s-con"/>
+   <text x="150" y="184" text-anchor="middle" class="s-lbl-b">Z_{S,k}: bildlich vergrößertes, ähnliches Dreieck</text>
+ </svg>`,cap:"Zentrische Streckung mit Zentrum S und Faktor k > 1."},
+ focus:[
+  "Parallele zu Thema 8: Ähnlichkeit ist Äquivalenzrelation, <strong>weil</strong> die Ähnlichkeitsabbildungen eine Gruppe bilden.",
+  "Zentrische Streckung: <strong>geradentreu (→ parallel), winkeltreu, |k|-längentreu</strong>.",
+  "Zerlegung: jede Ähnlichkeitsabbildung = Streckung ∘ Bewegung.",
+  "Flächen skalieren mit <m>k²</m> — wichtig für Anwendungen."
+ ],
+ nachfr:[{q:"Zeigen Sie, dass die zentrische Streckung Geraden auf Parallelen abbildet.",a:"Sei <m>g</m> eine Gerade ohne das Zentrum <m>S</m>, <m>A,B∈g</m>. Ihre Bilder liegen auf <m>SA,SB</m> mit <m>|SA'|=k|SA|</m>, <m>|SB'|=k|SB|</m>. Nach dem Strahlensatz ist <m>A'B'∥AB</m>. Also wird <m>g</m> auf eine parallele Gerade abgebildet (Geraden durch <m>S</m> bleiben fix)."},{q:"Beweisen Sie den Hauptähnlichkeitssatz.",a:"Stimmen zwei Dreiecke in zwei (also allen) Winkeln überein, wende zuerst eine zentrische Streckung an, die eine Seite auf die Länge der entsprechenden Seite des zweiten Dreiecks bringt. Das gestreckte Dreieck ist winkelgleich und hat nun eine gleich lange Seite; nach wsw ist es kongruent zum zweiten. Streckung ∘ Bewegung ist eine Ähnlichkeitsabbildung – die Dreiecke sind ähnlich."},{q:"Warum ist Ähnlichkeit eine Äquivalenzrelation?",a:"Weil die Ähnlichkeitsabbildungen eine Gruppe bilden: die Identität ist eine (reflexiv), zu jeder mit Faktor <m>k</m> gibt es die Inverse mit <m>1/k</m> (symmetrisch), und die Verkettung ist wieder eine mit Produktfaktor (transitiv). Damit ist <m>~</m> reflexiv, symmetrisch und transitiv – wie Kongruenz, nur mit Größenänderung."}],
+ plain:[{t:"zentrische Streckung",e:"Ein Vergrößern oder Verkleinern von einem festen Zentrum aus – wie ein Beamer, der ein Bild von einem Punkt aus maßstabsgetreu aufbläst."},{t:"Ähnlichkeit",e:"Zwei Figuren sind ähnlich, wenn sie dieselbe Form, aber evtl. verschiedene Größe haben – wie ein Foto und sein Abzug in anderer Größe."}],
+ links:[17,8,19,12]
+},
+/* ============================== THEMA 19 ============================== */
+{
+ id:19, chapter:"Kap. 9.4", scope:"eng", school:true,
+ title:"Satzgruppe des Pythagoras",
+ subs:["Höhensatz, Kathetensatz","Satz des Pythagoras mit Umkehrungen"],
+ overview:"Enges, sehr schulnahes Thema — hier musst du alles können. Höhensatz, Kathetensatz und Satz des Pythagoras folgen alle aus der <strong>Ähnlichkeit der Teildreiecke</strong> an der Hypotenusenhöhe. Umkehrungen und Äquivalenz kennen.",
+ defs:[
+  {t:"Katheten / Hypotenuse",b:"Im rechtwinkligen Dreieck: die dem rechten Winkel <strong>anliegenden</strong> Seiten sind Katheten, die <strong>gegenüberliegende</strong> ist die Hypotenuse. Die Höhe auf die Hypotenuse teilt diese in zwei <strong>Hypotenusenabschnitte</strong> <m>p,q</m>."}
+ ],
+ theorems:[
+  {n:"Grundlemma (Ähnlichkeit)",s:"Fällt man im bei <m>C</m> rechtwinkligen Dreieck die Höhe auf <m>AB</m> mit Fußpunkt <m>D</m>, so sind <m>ABC</m>, <m>ADC</m>, <m>CDB</m> paarweise ähnlich.",idea:"Alle drei haben einen rechten Winkel und teilen je einen spitzen Winkel ⇒ WW-Ähnlichkeit. Daraus folgen die drei Produktformeln."},
+  {n:"Höhen- & Kathetensatz",s:"Höhensatz: <m>h² = p·q</m>. Kathetensatz: <m>a² = c·p</m> und <m>b² = c·q</m>.",idea:"Direkt aus den Verhältnissen der ähnlichen Teildreiecke: <m>h/p=q/h</m> bzw. <m>a/c=p/a</m>."},
+  {n:"Satz des Pythagoras & Umkehrung",s:"<m>a²+b²=c²</m>. Umkehrung: gilt <m>a²+b²=c²</m>, so ist das Dreieck bei <m>C</m> rechtwinklig.",idea:"Pythagoras: Kathetensatz addieren, <m>a²+b²=c·p+c·q=c(p+q)=c²</m>. Umkehrung über Kongruenz mit einem konstruierten rechtwinkligen Vergleichsdreieck (sss)."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <polygon points="40,160 300,160 120,50" class="s-line"/>
+   <line x1="120" y1="50" x2="120" y2="160" class="s-res"/>
+   <rect x="120" y="148" width="12" height="12" fill="none" stroke="#B23B2E" stroke-width="1.4"/>
+   <circle cx="120" cy="50" r="3.5" class="s-pt"/>
+   <rect x="107" y="61" width="13" height="13" fill="none" stroke="#1B2436" stroke-width="1.3" transform="rotate(-31 120 50)"/>
+   <text x="30" y="176" class="s-lbl">A</text><text x="300" y="176" class="s-lbl">B</text><text x="116" y="44" class="s-lbl">C</text><text x="118" y="176" class="s-lbl-r">D</text>
+   <text x="78" y="176" class="s-lbl-b">p</text><text x="205" y="176" class="s-lbl-b">q</text><text x="126" y="110" class="s-lbl-r">h</text>
+   <text x="170" y="196" text-anchor="middle" class="s-lbl-b">h²=p·q · a²=c·p · b²=c·q · a²+b²=c²</text>
+ </svg>`,cap:"Hypotenusenhöhe erzeugt drei ähnliche Dreiecke — Quelle der ganzen Satzgruppe."},
+ focus:[
+  "Alle drei Sätze aus <strong>einem</strong> Ähnlichkeitslemma herleiten — das ist die elegante Prüfungsantwort.",
+  "Pythagoras = Summe der beiden Kathetensätze.",
+  "<strong>Umkehrung</strong> sauber formulieren und über sss/Kongruenz beweisen.",
+  "Äquivalenz erwähnen: Höhensatz, Kathetensatz, Pythagoras sind (mit Zusatz) logisch gleichwertig."
+ ],
+ nachfr:[{q:"Beweisen Sie den Kathetensatz über Ähnlichkeit.",a:"Fälle im bei <m>C</m> rechtwinkligen Dreieck die Höhe auf <m>AB</m> mit Fußpunkt <m>D</m>. Die Teildreiecke <m>ADC</m> und <m>ABC</m> haben je einen rechten Winkel und den Winkel bei <m>A</m> gemeinsam, sind also ähnlich. Aus <m>|AB|:|AC|=|AC|:|AD|</m> folgt <m>|AC|²=|AB|·|AD|</m> – Kathetenquadrat gleich Hypotenuse mal anliegendem Hypotenusenabschnitt."},{q:"Leiten Sie Pythagoras aus dem Kathetensatz her.",a:"Der Kathetensatz liefert <m>|AC|²=|AB|·|AD|</m> und <m>|BC|²=|AB|·|BD|</m>. Addiert und mit <m>|AD|+|BD|=|AB|</m> (<m>D</m> liegt zwischen <m>A,B</m>): <m>|AC|²+|BC|²=|AB|·(|AD|+|BD|)=|AB|²</m>. Das ist <m>a²+b²=c²</m>."},{q:"Beweisen Sie die Umkehrung des Satzes des Pythagoras.",a:"Gelte <m>a²+b²=c²</m>. Konstruiere ein Vergleichsdreieck mit denselben Kathetenlängen <m>a,b</m>, aber rechtem Winkel dazwischen; seine Hypotenuse hat nach Pythagoras die Länge <m>√(a²+b²)=c</m>. Beide Dreiecke stimmen in allen drei Seiten überein, sind nach sss kongruent – also ist auch das Ausgangsdreieck rechtwinklig."}],
+ plain:[{t:"Kathete / Hypotenuse",e:"Im rechtwinkligen Dreieck sind die beiden Seiten am rechten Winkel die Katheten, die längste Seite ihm gegenüber ist die Hypotenuse."},{t:"Satz des Pythagoras",e:"Im rechtwinkligen Dreieck ist die Summe der Quadrate über den beiden kurzen Seiten gleich dem Quadrat über der langen: a²+b²=c²."}],
+ links:[18,20,17,14]
+},
+/* ============================== THEMA 20 ============================== */
+{
+ id:20, chapter:"Kap. 9.5–9.6", scope:"breit", school:true,
+ title:"Trigonometrische Funktionen",
+ subs:["Geometrische Definition","Grundlegende Eigenschaften","Kosinus- & Sinussatz","Monotonie & Surjektivität","Additionstheoreme"],
+ overview:"Breites Thema: von der geometrischen Definition am rechtwinkligen Dreieck (bzw. Einheitskreis) zu Sinus-/Kosinussatz und Additionstheoremen. Verbindung von Geometrie und Analysis.",
+ defs:[
+  {t:"sin, cos, tan",b:"Am rechtwinkligen Dreieck: <m>sinα = Gegenkathete/Hypotenuse</m>, <m>cosα = Ankathete/Hypotenuse</m>, <m>tanα = sin/cos</m>. Wohldefiniert, weil ähnliche Dreiecke gleiche Verhältnisse haben. Erweiterung auf <m>[0,π]</m> bzw. den Einheitskreis."},
+  {t:"Grundbeziehung",b:"<m>sin²α + cos²α = 1</m> (Pythagoras am Einheitskreis)."}
+ ],
+ theorems:[
+  {n:"Sinussatz",s:"In jedem Dreieck gilt <m>a/sinα = b/sinβ = c/sinγ = 2R</m> (<m>R</m> Umkreisradius).",idea:"Höhe <m>h_c=b·sinα=a·sinβ</m> gleichsetzen ⇒ <m>a/sinα=b/sinβ</m>. Der <m>2R</m>-Zusammenhang über den Peripheriewinkelsatz."},
+  {n:"Kosinussatz",s:"<m>c² = a² + b² − 2ab·cosγ</m>. Für <m>γ=π/2</m> wird daraus Pythagoras.",idea:"Höhe fällen, Hypotenusenabschnitte über <m>cosγ</m> ausdrücken, Pythagoras in den Teildreiecken anwenden und zusammensetzen."},
+  {n:"Additionstheoreme",s:"<m>sin(α±β)=sinα cosβ ± cosα sinβ</m>, <m>cos(α±β)=cosα cosβ ∓ sinα sinβ</m>.",idea:"Geometrisch über Projektionen am Einheitskreis / Drehmatrizen; Monotonie & Surjektivität liefern die Umkehrfunktionen arcsin/arccos."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <circle cx="110" cy="120" r="70" class="s-con"/>
+   <line x1="40" y1="120" x2="180" y2="120" class="s-line"/><line x1="110" y1="50" x2="110" y2="190" class="s-line"/>
+   <line x1="110" y1="120" x2="163" y2="74" class="s-res"/>
+   <line x1="163" y1="74" x2="163" y2="120" class="s-line"/>
+   <path d="M135 120 A25 25 0 0 0 148 98" class="s-res"/><text x="140" y="114" class="s-lbl-r">α</text>
+   <text x="167" y="100" class="s-lbl">sinα</text><text x="128" y="136" class="s-lbl">cosα</text>
+   <text x="110" y="196" text-anchor="middle" class="s-lbl-b">Einheitskreis: (cosα, sinα)</text>
+   <text x="255" y="90" class="s-lbl-r">sin²α+cos²α=1</text>
+   <text x="250" y="120" class="s-lbl-b">a/sinα = 2R</text>
+   <text x="250" y="150" class="s-lbl-b">c²=a²+b²−2ab·cosγ</text>
+ </svg>`,cap:"Geometrische Definition am Einheitskreis, Basis für Sinus- und Kosinussatz."},
+ focus:[
+  "Wohldefiniertheit über <strong>Ähnlichkeit</strong> begründen (Verhältnisse unabhängig von der Dreiecksgröße).",
+  "Sinussatz (Höhe gleichsetzen) und Kosinussatz (verallgemeinerter Pythagoras) je mit Beweisidee.",
+  "Kosinussatz für <m>γ=90°</m> → Pythagoras: schöne Einordnung.",
+  "Monotonie/Surjektivität ⇒ Umkehrfunktionen; Additionstheoreme geometrisch motivieren."
+ ],
+ nachfr:[{q:"Beweisen Sie den Sinussatz.",a:"Fälle die Höhe <m>h_c</m> von <m>C</m> auf <m>AB</m>. Dann <m>h_c=b·sinα</m> (Teildreieck bei <m>A</m>) und <m>h_c=a·sinβ</m> (bei <m>B</m>). Gleichsetzen: <m>a·sinβ=b·sinα</m>, also <m>a/sinα=b/sinβ</m>; analog die dritte Seite. Der gemeinsame Wert ist <m>2R</m> (Umkreisdurchmesser, über den Peripheriewinkelsatz)."},{q:"Leiten Sie den Kosinussatz her und zeigen Sie den Grenzfall Pythagoras.",a:"Fälle die Höhe von <m>C</m>; der Fußpunkt teilt <m>c</m> in <m>p,q</m> mit <m>p=b·cosα</m>. Setzt man Pythagoras in den Teildreiecken zusammen, folgt <m>c²=a²+b²−2ab·cosγ</m>. Für <m>γ=90°</m> ist <m>cosγ=0</m>, es bleibt <m>c²=a²+b²</m> – Pythagoras als Spezialfall."},{q:"Warum sind sin und cos auf geeigneten Intervallen umkehrbar?",a:"Auf <m>[−π/2,π/2]</m> ist <m>sin</m> streng monoton wachsend mit Bild <m>[−1,1]</m>; auf <m>[0,π]</m> ist <m>cos</m> streng monoton fallend mit Bild <m>[−1,1]</m>. Streng monotone, surjektive Funktionen sind bijektiv, also umkehrbar – daraus entstehen <m>arcsin</m> und <m>arccos</m>."}],
+ plain:[{t:"Sinus / Kosinus",e:"Verhältniszahlen im rechtwinkligen Dreieck: Sinus = Gegenkathete/Hypotenuse, Kosinus = Ankathete/Hypotenuse. Am Einheitskreis sind es einfach die Höhe und die Breite des Punktes."},{t:"Sinussatz / Kosinussatz",e:"Formeln, mit denen man in beliebigen (auch nicht rechtwinkligen) Dreiecken fehlende Seiten und Winkel ausrechnet."}],
+ links:[19,23,18]
+},
+/* ============================== THEMA 21 ============================== */
+{
+ id:21, chapter:"Kap. 10.1", scope:"eng", school:true,
+ title:"Lagebeziehungen von Kreis und Gerade",
+ subs:["Passanten, Sekanten, Tangenten","Satz zu den Berührradien","Tangentenabschnittssatz"],
+ overview:"Enges Kreisthema. Klassifikation Gerade–Kreis über den Abstand, der <strong>Berührradius</strong> (Tangente ⊥ Radius) und der Tangentenabschnittssatz. Kompakt und beweisbar.",
+ defs:[
+  {t:"Passante / Tangente / Sekante",b:"Gerade mit Abstand <m>d(M,g)</m> zum Mittelpunkt: <m>d>r</m> Passante (0 Punkte), <m>d=r</m> Tangente (1 Punkt, Berührpunkt), <m>d<r</m> Sekante (2 Punkte)."}
+ ],
+ theorems:[
+  {n:"Berührradiussatz",s:"Eine Tangente steht im Berührpunkt <strong>senkrecht</strong> auf dem Radius (und umgekehrt).",idea:"Der Berührpunkt ist der nächstgelegene Kreispunkt zu <m>M</m>; der kürzeste Abstand Punkt–Gerade wird auf dem Lot erreicht ⇒ Radius = Lot ⇒ ⊥."},
+  {n:"Tangentenabschnittssatz",s:"Die beiden Tangentenabschnitte von einem äußeren Punkt <m>P</m> an einen Kreis sind gleich lang: <m>|PT₁|=|PT₂|</m>.",idea:"Die Dreiecke <m>MPT₁</m> und <m>MPT₂</m> sind rechtwinklig (Berührradius), haben <m>MP</m> gemeinsam und <m>|MT₁|=|MT₂|=r</m> ⇒ kongruent (SsW/Pythagoras) ⇒ gleiche Tangentenlängen."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <circle cx="120" cy="110" r="60" class="s-line"/><circle cx="120" cy="110" r="3.5" class="s-pt"/><text x="108" y="106" class="s-lbl">M</text>
+   <circle cx="290" cy="110" r="4" class="s-pt-r"/><text x="296" y="114" class="s-lbl-r">P</text>
+   <line x1="290" y1="110" x2="158" y2="62" class="s-res"/><line x1="290" y1="110" x2="158" y2="158" class="s-res"/>
+   <line x1="120" y1="110" x2="158" y2="62" class="s-con"/><line x1="120" y1="110" x2="158" y2="158" class="s-con"/>
+   <circle cx="158" cy="62" r="3.5" class="s-pt"/><circle cx="158" cy="158" r="3.5" class="s-pt"/>
+   <text x="162" y="56" class="s-lbl">T₁</text><text x="162" y="172" class="s-lbl">T₂</text>
+   <text x="170" y="194" text-anchor="middle" class="s-lbl-b">|PT₁|=|PT₂| · Radius ⊥ Tangente</text>
+ </svg>`,cap:"Berührradius und gleich lange Tangentenabschnitte von einem äußeren Punkt."},
+ focus:[
+  "Klassifikation Gerade–Kreis strikt über <strong>Abstand vs. Radius</strong> begründen (Lot + Pythagoras).",
+  "Berührradiussatz als <strong>Minimalabstands</strong>-Argument — sehr elegant.",
+  "Tangentenabschnittssatz über zwei kongruente rechtwinklige Dreiecke.",
+  "Anwendung: Inkreis eines Dreiecks (Tangentenlängen)."
+ ],
+ nachfr:[{q:"Beweisen Sie, dass die Tangente senkrecht auf dem Berührradius steht.",a:"Der Berührpunkt <m>T</m> ist der einzige gemeinsame Punkt und damit der Punkt der Geraden mit kleinstem Abstand zu <m>M</m> (jeder andere läge weiter als <m>r</m>). Der kürzeste Abstand Punkt–Gerade wird auf dem Lot erreicht. Also ist <m>MT</m> das Lot auf die Tangente, d. h. der Radius <m>MT</m> steht senkrecht auf ihr."},{q:"Beweisen Sie den Tangentenabschnittssatz.",a:"Von einem äußeren Punkt <m>P</m> gehen zwei Tangenten mit Berührpunkten <m>T₁,T₂</m>. Die Dreiecke <m>MPT₁</m> und <m>MPT₂</m> sind bei <m>T₁,T₂</m> rechtwinklig (Berührradius), haben die gemeinsame Hypotenuse <m>MP</m> und gleiche Katheten <m>|MT₁|=|MT₂|=r</m>. Nach Pythagoras (bzw. SsW) sind sie kongruent, also <m>|PT₁|=|PT₂|</m>."},{q:"Wie viele Tangenten gibt es von einem inneren/äußeren Punkt?",a:"Von einem Punkt außerhalb des Kreises genau zwei, von einem Punkt auf dem Kreis genau eine (im Berührpunkt), von einem inneren Punkt keine – jede Gerade durch einen inneren Punkt ist Sekante."}],
+ plain:[{t:"Tangente / Sekante / Passante",e:"Eine Gerade kann einen Kreis streifen (Tangente, ein Berührpunkt), durchschneiden (Sekante, zwei Punkte) oder verfehlen (Passante, kein Punkt)."},{t:"Berührradius",e:"Der Radius zum Berührpunkt trifft die Tangente im rechten Winkel – die Tangente „lehnt“ rechtwinklig am Radius an."}],
+ links:[4,22,23,19]
+},
+/* ============================== THEMA 22 ============================== */
+{
+ id:22, chapter:"Kap. 10.3, 10.4.3", scope:"mittel", school:false,
+ title:"Sehnen",
+ subs:["Sehnen","Sehnenvierecke","Sehnenabschnittssatz","Tangentenvierecke"],
+ overview:"Kreisthema um Sehnen: Sehnenvierecke (Umkreis) und Tangentenvierecke (Inkreis) mit ihren charakteristischen Winkel- bzw. Seitenbedingungen, plus der Sehnen-/Sekantenabschnittssatz (Potenz des Punktes).",
+ defs:[
+  {t:"Sehne",b:"Strecke zwischen zwei Kreispunkten. Die Mittelsenkrechte jeder Sehne geht durch den Mittelpunkt."},
+  {t:"Sehnen- / Tangentenviereck",b:"<strong>Sehnenviereck</strong>: alle Ecken auf einem Kreis (Umkreis). <strong>Tangentenviereck</strong>: alle Seiten berühren einen Kreis (Inkreis)."}
+ ],
+ theorems:[
+  {n:"Sehnenviereckssatz",s:"Ein (konvexes) Viereck besitzt genau dann einen Umkreis, wenn die Summe gegenüberliegender Innenwinkel <m>π</m> beträgt.",idea:"„⇒\u201c über den Peripheriewinkelsatz (gegenüberliegende Winkel sehen komplementäre Bögen). „⇐\u201c über die Umkehrung (Widerspruch, falls die vierte Ecke nicht auf dem Kreis liegt)."},
+  {n:"Tangentenviereckssatz",s:"Ein (konvexes) Viereck besitzt genau dann einen Inkreis, wenn die Summen gegenüberliegender Seitenlängen gleich sind: <m>a+c=b+d</m>.",idea:"Tangentenabschnittssatz: jede Ecke liefert zwei gleiche Tangentenlängen; Summieren der Seiten ergibt die Gleichheit."},
+  {n:"Sehnen-/Sekantenabschnittssatz",s:"Für Sehnen durch einen inneren Punkt <m>P</m>: <m>|PA|·|PB|=|PC|·|PD|</m>. Für Sekanten von außen analog; die Größe heißt <strong>Potenz</strong> von <m>P</m>.",idea:"Peripheriewinkel liefern ähnliche Dreiecke <m>PAC∼PDB</m> ⇒ Verhältnisgleichung ⇒ Produktgleichheit."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 200" width="360">
+   <circle cx="120" cy="105" r="72" class="s-line"/>
+   <line x1="55" y1="72" x2="180" y2="150" class="s-res"/>
+   <line x1="70" y1="160" x2="175" y2="55" class="s-res"/>
+   <circle cx="120" cy="112" r="3.5" class="s-pt-r"/><text x="126" y="108" class="s-lbl-r">P</text>
+   <text x="46" y="70" class="s-lbl">A</text><text x="184" y="154" class="s-lbl">B</text>
+   <text x="62" y="172" class="s-lbl">C</text><text x="180" y="52" class="s-lbl">D</text>
+   <text x="170" y="192" text-anchor="middle" class="s-lbl-b">|PA|·|PB| = |PC|·|PD|  (Potenz)</text>
+ </svg>`,cap:"Sehnenabschnittssatz: Produkte der Teilstrecken sind gleich (Potenz des Punktes)."},
+ focus:[
+  "Zwei Charakterisierungen sauber gegenüberstellen: <strong>Sehnenviereck ⇔ Gegenwinkel = π</strong>, <strong>Tangentenviereck ⇔ a+c=b+d</strong>.",
+  "Sehnenabschnittssatz über <strong>ähnliche Dreiecke</strong> (Peripheriewinkel) beweisen.",
+  "Begriff <strong>Potenz eines Punktes</strong> nennen (innerer/äußerer Fall, Tangentenfall).",
+  "Verbindung zu Thema 23 (Peripheriewinkel) und 21 (Tangentenabschnitt)."
+ ],
+ nachfr:[{q:"Beweisen Sie den Sehnenviereckssatz.",a:"Sei <m>ABCD</m> ein Viereck mit Umkreis. Die Winkel bei <m>A</m> und <m>C</m> sind Peripheriewinkel über den beiden komplementären Bögen <m>BD</m>. Nach dem Peripherie‑Zentriwinkelsatz ist jeder halb so groß wie sein Zentriwinkel; die beiden Zentriwinkel ergänzen sich zu <m>2π</m>, also die Peripheriewinkel zu <m>π</m>: <m>α+γ=π</m>. Umkehrung: Gilt <m>α+γ=π</m>, muss <m>D</m> auf dem Umkreis von <m>ABC</m> liegen (sonst Widerspruch)."},{q:"Beweisen Sie den Sehnenabschnittssatz über Ähnlichkeit.",a:"Zwei Sehnen <m>AB,CD</m> schneiden sich in <m>P</m>. Die Peripheriewinkel <m>∠A=∠D</m> (über Bogen <m>BC</m>) und die Scheitelwinkel bei <m>P</m> stimmen überein ⇒ <m>PAC∼PDB</m>. Aus <m>|PA|:|PD|=|PC|:|PB|</m> folgt <m>|PA|·|PB|=|PC|·|PD|</m> – für jede Sehne durch <m>P</m> gleich (die Potenz von <m>P</m>)."},{q:"Charakterisieren Sie Tangentenvierecke.",a:"Ein konvexes Viereck besitzt genau dann einen Inkreis, wenn die Summen gegenüberliegender Seiten gleich sind: <m>a+c=b+d</m>. Grund ist der Tangentenabschnittssatz: von jeder Ecke sind die beiden Tangentenstücke gleich lang; summiert man die Seiten geschickt, ergeben beide Summen dieselbe Gesamtlänge der Tangentenstücke."}],
+ plain:[{t:"Sehne",e:"Eine gerade Verbindung zwischen zwei Punkten auf dem Kreisrand – wie die Saite („Sehne“) eines Bogens."},{t:"Sehnen-/Tangentenviereck",e:"Sehnenviereck: alle vier Ecken liegen auf einem Kreis. Tangentenviereck: alle vier Seiten berühren einen inneren Kreis."},{t:"Potenz eines Punktes",e:"Eine Kennzahl dafür, wie ein Punkt zum Kreis liegt – das Produkt der beiden Abschnitte jeder Geraden durch ihn ist immer gleich."}],
+ links:[21,23,4,18]
+},
+/* ============================== THEMA 23 ============================== */
+{
+ id:23, chapter:"Kap. 10.2, 10.4", scope:"mittel", school:true,
+ title:"Winkelsätze am Kreis",
+ subs:["Kreisbögen","Peripheriewinkelsatz","Satz des Thales mit Umkehrungen","Peripherie-Zentriwinkelsatz","Sehnen-Tangentenwinkelsatz"],
+ overview:"Die Kreiswinkel-Familie. Herzstück ist der <strong>Peripheriewinkelsatz</strong> (alle Peripheriewinkel über einem Bogen gleich), mit Thales als Spezialfall und dem Zentriwinkel als Verdopplung.",
+ defs:[
+  {t:"Peripherie- / Zentriwinkel",b:"<strong>Peripheriewinkel</strong> über Sehne <m>AB</m>: Winkel <m>∠APB</m> mit <m>P</m> auf dem Kreis (auf dem komplementären Bogen). <strong>Zentriwinkel</strong>: <m>∠AMB</m> am Mittelpunkt über derselben Sehne."}
+ ],
+ theorems:[
+  {n:"Peripheriewinkelsatz",s:"Alle Peripheriewinkel über demselben Bogen sind gleich groß.",idea:"Über den Peripherie-Zentriwinkelsatz: jeder solche Peripheriewinkel ist halb so groß wie der (feste) Zentriwinkel ⇒ untereinander gleich."},
+  {n:"Peripherie-Zentriwinkelsatz",s:"Der Zentriwinkel ist <strong>doppelt</strong> so groß wie ein Peripheriewinkel über demselben Bogen: <m>|∠AMB| = 2·|∠APB|</m>.",idea:"Radius <m>MP</m> einzeichnen: die Teildreiecke <m>MPA</m>, <m>MPB</m> sind gleichschenklig; Basiswinkelsatz + Außenwinkelsatz liefern die Verdopplung (Fallunterscheidung nach Lage von <m>M</m>)."},
+  {n:"Satz des Thales (+ Umkehrung)",s:"Jeder Peripheriewinkel über einem <strong>Halbkreisbogen</strong> (Durchmesser) ist ein rechter Winkel. Umkehrung: liegt <m>∠ACB=90°</m> vor, so liegt <m>C</m> auf dem Thaleskreis über <m>AB</m>.",idea:"Spezialfall des Zentriwinkelsatzes mit gestrecktem Zentriwinkel <m>π</m> ⇒ Peripheriewinkel <m>π/2</m>. Umkehrung über gleichschenklige Teildreiecke (<m>|MA|=|MB|=|MC|</m>)."},
+  {n:"Sehnen-Tangentenwinkelsatz",s:"Der Winkel zwischen Sehne und Tangente im Berührpunkt ist gleich dem Peripheriewinkel über der Sehne im „anderen\u201c Segment.",idea:"Grenzübergang des Peripheriewinkelsatzes bzw. Berührradius (⊥) + Innenwinkelsumme."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 340 210" width="360">
+   <circle cx="150" cy="115" r="80" class="s-line"/><circle cx="150" cy="115" r="3.5" class="s-pt"/><text x="138" y="112" class="s-lbl">M</text>
+   <circle cx="82" cy="158" r="3.5" class="s-pt"/><circle cx="218" cy="158" r="3.5" class="s-pt"/>
+   <text x="66" y="172" class="s-lbl">A</text><text x="222" y="172" class="s-lbl">B</text>
+   <circle cx="150" cy="35" r="3.5" class="s-pt-r"/><text x="156" y="32" class="s-lbl-r">P</text>
+   <line x1="82" y1="158" x2="150" y2="35" class="s-res"/><line x1="218" y1="158" x2="150" y2="35" class="s-res"/>
+   <line x1="82" y1="158" x2="150" y2="115" class="s-con"/><line x1="218" y1="158" x2="150" y2="115" class="s-con"/>
+   <path d="M138 55 a20 20 0 0 0 24 0" class="s-res"/><text x="146" y="72" class="s-lbl-r">φ</text>
+   <path d="M124 120 a20 20 0 0 0 26 8" class="s-con"/><text x="150" y="146" class="s-lbl-b">2φ</text>
+   <text x="170" y="204" text-anchor="middle" class="s-lbl-b">Zentriwinkel = 2 · Peripheriewinkel</text>
+ </svg>`,cap:"Peripherie-Zentriwinkelsatz: Zentriwinkel ist doppelt so groß wie der Peripheriewinkel."},
+ focus:[
+  "Aufbau: <strong>Zentriwinkelsatz (Verdopplung) → Peripheriewinkelsatz → Thales (Spezialfall) → Sehnen-Tangentenwinkel (Grenzfall)</strong>.",
+  "Beweis des Zentriwinkelsatzes über gleichschenklige Teildreiecke + Basiswinkelsatz, <strong>mit Fallunterscheidung</strong>.",
+  "Thales als 180°-Zentriwinkel; Umkehrung nicht vergessen.",
+  "Anwendungen: Ortsbogen (Fasskreis), Konstruktion rechter Winkel."
+ ],
+ nachfr:[{q:"Beweisen Sie den Peripherie-Zentriwinkelsatz mit Fallunterscheidung.",a:"Zeichne den Radius <m>MP</m>. Die Dreiecke <m>MPA</m> und <m>MPB</m> sind gleichschenklig (Radien), ihre Basiswinkel je gleich. Nach dem Außenwinkelsatz ist der Winkel bei <m>M</m> in jedem Teildreieck gleich der Summe der beiden gleichen Basiswinkel, also doppelt so groß wie der jeweilige Anteil des Peripheriewinkels. Je nachdem, ob <m>M</m> innerhalb, auf oder außerhalb von <m>∠APB</m> liegt, addiert oder subtrahiert man die Teile – stets ergibt sich <m>∠AMB=2·∠APB</m>."},{q:"Wie folgt Thales daraus?",a:"Liegt <m>AB</m> auf einem Durchmesser, ist der Zentriwinkel <m>∠AMB</m> gestreckt, also <m>180°</m>. Nach dem Zentriwinkelsatz ist der Peripheriewinkel halb so groß: <m>∠ACB=90°</m>. Jeder Punkt <m>C</m> auf dem Halbkreis über <m>AB</m> sieht <m>AB</m> unter einem rechten Winkel – das ist Thales."},{q:"Beweisen Sie die Umkehrung des Satzes des Thales.",a:"Gelte <m>∠ACB=90°</m>; sei <m>k</m> der Kreis mit Durchmesser <m>AB</m>. Läge <m>C</m> innerhalb von <m>k</m>, wäre der Winkel größer als <m>90°</m>, außerhalb kleiner (Vergleich mit einem Kreispunkt über den Außenwinkelsatz). Da er genau <m>90°</m> ist, muss <m>C</m> auf <m>k</m> liegen – dem Thaleskreis."}],
+ plain:[{t:"Peripheriewinkel",e:"Der Winkel, unter dem man vom Kreisrand aus eine feste Sehne „sieht“. Erstaunlich: von jedem Randpunkt über demselben Bogen ist er gleich groß."},{t:"Zentriwinkel",e:"Der Winkel zur selben Sehne, aber vom Mittelpunkt aus gesehen – er ist stets doppelt so groß wie der Peripheriewinkel."},{t:"Satz des Thales",e:"Ist die längste Seite eines Dreiecks der Durchmesser eines Kreises und liegt die Spitze auf dem Kreis, so ist der Winkel an der Spitze immer ein rechter (90°)."}],
+ links:[22,21,9,20]
+},
+/* ============================== THEMA 24 ============================== */
+{
+ id:24, chapter:"Kap. 11.1", scope:"mittel", school:false,
+ title:"Elementargeometrische Grundlegung der Analytischen Geometrie",
+ subs:["Koordinatensystem einführen","Bijektion Ebene ↔ ℝ²","Abstand, Geraden, Winkel","Erfüllung der Axiome"],
+ overview:"Der Brückenschlag: Nach Wahl eines (orthogonalen) Koordinatensystems wird die Punktebene <strong>isometrisch</strong> auf <m>ℝ²</m> abgebildet. Damit wird Geometrie rechnerisch — und man zeigt, dass <m>ℝ²</m> alle Axiome erfüllt (Modell!).",
+ defs:[
+  {t:"Affines Koordinatensystem",b:"Tripel <m>(O,E₁,E₂)</m> nicht-kollinearer Punkte. <strong>Orthogonal</strong>, falls <m>OE₁⊥OE₂</m>. Konstruktion: Punkt <m>O</m>, Gerade durch <m>O</m>, Senkrechte errichten, Einheitspunkte wählen."},
+  {t:"Koordinatenabbildung κ",b:"<m>κ(P)=(x₁,x₂)∈ℝ²</m> über die Parallelprojektionen auf die Achsen (Vorzeichen je nach Strahl). Bei orthonormalem System ist <m>κ</m> <strong>abstandstreu</strong>."}
+ ],
+ theorems:[
+  {n:"Bijektion Ebene ↔ ℝ²",s:"Die Koordinatenabbildung <m>κ:P→ℝ²</m> ist bijektiv.",idea:"Zu jedem <m>(x₁,x₂)</m> liefern die eindeutige Punktabtragung (Ger‑2 / Satz 3.3.11) und der Schnitt zweier Parallelen genau einen Urbildpunkt."},
+  {n:"Abstand, Geraden, Winkel",s:"In orthonormalen Koordinaten gilt <m>d(P,Q)=√((x₁−y₁)²+(x₂−y₂)²)</m>; Geraden werden zu linearen Gleichungen, Winkel über das Skalarprodukt.",idea:"Isometrie überträgt die synthetische Metrik in die euklidische Metrik des <m>ℝ²</m>; Kollinearität ↔ Linearität."},
+  {n:"ℝ² als Modell",s:"<m>(ℝ², euklid. Metrik)</m> erfüllt alle Axiome (Inzidenz, Metrik/Ger‑1, Ger‑2, HE, Bew, Parallelenaxiom).",idea:"Damit ist die euklidische Geometrie <strong>widerspruchsfrei relativ zu ℝ</strong> — der Schulzugang (Koordinaten) und der axiomatische Aufbau treffen sich."}
+ ],
+ sketch:{svg:`<svg viewBox="0 0 320 210" width="340">
+   <line x1="40" y1="175" x2="290" y2="175" class="s-line"/><path d="M282 170 L290 175 L282 180" class="s-line"/>
+   <line x1="60" y1="195" x2="60" y2="30" class="s-line"/><path d="M55 38 L60 30 L65 38" class="s-line"/>
+   <circle cx="60" cy="175" r="3.5" class="s-pt"/><text x="46" y="192" class="s-lbl">O</text>
+   <circle cx="120" cy="175" r="3" class="s-pt"/><text x="112" y="192" class="s-lbl-b">E₁</text>
+   <circle cx="60" cy="115" r="3" class="s-pt"/><text x="34" y="119" class="s-lbl-b">E₂</text>
+   <circle cx="200" cy="80" r="4" class="s-pt-r"/><text x="206" y="78" class="s-lbl-r">P</text>
+   <line x1="200" y1="175" x2="200" y2="80" class="s-con"/><line x1="60" y1="80" x2="200" y2="80" class="s-con"/>
+   <text x="196" y="192" class="s-lbl-r">x₁</text><text x="34" y="84" class="s-lbl-r">x₂</text>
+   <text x="160" y="206" text-anchor="middle" class="s-lbl-b">κ(P)=(x₁,x₂) · isometrisch auf ℝ²</text>
+ </svg>`,cap:"Koordinatenabbildung: Parallelprojektion auf die Achsen liefert (x₁, x₂)."},
+ focus:[
+  "Grundidee in einem Satz: <strong>Koordinatensystem wählen → P isometrisch auf ℝ² → rechnen → zurückinterpretieren</strong>.",
+  "Bijektivität von <m>κ</m> aus der eindeutigen Punktabtragung (Ger‑2).",
+  "Orthonormal ⇒ synthetische Metrik = euklidische Metrik im <m>ℝ²</m>.",
+  "Krönung: <m>ℝ²</m> ist ein <strong>Modell</strong> — schließt den Bogen zu Thema 1 (Widerspruchsfreiheit)."
+ ],
+ nachfr:[{q:"Wie konstruiert man ein orthogonales Koordinatensystem?",a:"Wähle einen Ursprung <m>O</m> und eine Gerade <m>g</m> durch <m>O</m> als erste Achse. Errichte in <m>O</m> die Senkrechte <m>s</m> zu <m>g</m> (Lotkonstruktion) als zweite Achse. Wähle auf <m>g</m> einen Einheitspunkt <m>E₁≠O</m> und auf <m>s</m> einen Einheitspunkt <m>E₂≠O</m> (bei gleichem Abstand: orthonormal). Dann ist <m>(O,E₁,E₂)</m> ein orthogonales affines Koordinatensystem."},{q:"Beweisen Sie die Bijektivität der Koordinatenabbildung.",a:"Injektiv: verschiedene Punkte haben verschiedene Parallelprojektionen auf die Achsen, also verschiedene Koordinatenpaare. Surjektiv: Zu <m>(x₁,x₂)</m> trägt man nach dem Punktabtragungssatz (aus Ger‑2) auf jeder Achse eindeutig einen Punkt mit den Abständen <m>|x₁|,|x₂|</m> ab (Seite je nach Vorzeichen); die Parallelen dazu schneiden sich in genau einem Punkt <m>P</m> mit <m>κ(P)=(x₁,x₂)</m>. Also ist <m>κ</m> bijektiv."},{q:"Warum ist ℝ² ein Modell der euklidischen Axiome – und was folgt daraus?",a:"Man prüft, dass <m>ℝ²</m> mit der euklidischen Metrik alle Axiome erfüllt: Punkte sind Zahlenpaare, Geraden lineare Punktmengen (Inzidenz), der Abstand eine Metrik mit Ger‑1/Ger‑2, Halbebenen Lösungsmengen linearer Ungleichungen (HE), Bewegungen Kongruenzabbildungen (Bew), die Parallele eindeutig (P). Daraus folgt: Die euklidische Geometrie ist widerspruchsfrei, sofern es die reellen Zahlen sind – axiomatischer und Koordinaten‑Zugang beschreiben dieselbe Geometrie."}],
+ plain:[{t:"Koordinatensystem",e:"Zwei senkrechte Zahlenachsen (x und y), mit denen man jeden Punkt der Ebene durch ein Zahlenpaar beschreibt – wie Längen‑ und Breitengrad auf der Landkarte."},{t:"Bijektion Ebene ↔ ℝ²",e:"Eine lückenlose Eins‑zu‑eins‑Übersetzung: jeder Punkt bekommt genau ein Zahlenpaar und umgekehrt – so wird Zeichnen zu Rechnen."}],
+ links:[1,2,3,12]
+}
+];
+
+/* ===================== GRUPPEN für die Navigation ===================== */
+const GROUPS = [
+  {name:"Grundlagen & Axiome", ids:[1,2,3]},
+  {name:"Figuren & Konstruktion", ids:[4,5,6]},
+  {name:"Bewegungen & Kongruenz", ids:[7,8,9,10,11]},
+  {name:"Parallelen & Transversalen", ids:[12,13,14]},
+  {name:"Weitere Bewegungen", ids:[15,16]},
+  {name:"Ähnlichkeit & Pythagoras", ids:[17,18,19,20]},
+  {name:"Geometrie am Kreis", ids:[21,22,23]},
+  {name:"Analytische Grundlegung", ids:[24]}
+];
+
+/* ===================== STATE (Fortschritt) ===================== */
+const KEY = "koksch-geometrie-fortschritt";
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ done = {}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(done)); }catch(e){} }
+
+let current = 1;
+const byId = id => TOPICS.find(t=>t.id===id);
+
+/* ===================== NAVIGATION rendern ===================== */
+const nav = document.getElementById('nav');
+function buildNav(){
+  nav.innerHTML = "";
+  GROUPS.forEach(g=>{
+    const h = document.createElement('div');
+    h.className='navgroup'; h.textContent=g.name; nav.appendChild(h);
+    g.ids.forEach(id=>{
+      const t = byId(id);
+      const item = document.createElement('div');
+      item.className='navitem'+(id===current?' active':'')+(done[id]?' done':'');
+      item.dataset.id=id;
+      item.dataset.search=(t.title+' '+t.subs.join(' ')+' '+t.overview).toLowerCase();
+      item.innerHTML=`<span class="navnum">${id}</span><span class="navtitle">${t.title}</span>
+        <span class="navcheck">${done[id]?'✓':''}</span>`;
+      item.addEventListener('click',()=>{ show(id); closeMenu(); });
+      nav.appendChild(item);
+    });
+  });
+}
+
+/* ===================== FORTSCHRITT ===================== */
+function updateProgress(){
+  const n = Object.values(done).filter(Boolean).length;
+  document.getElementById('progfill').style.width=(n/24*100)+'%';
+  document.getElementById('progcount').textContent=`${n} / 24 sicher`;
+}
+
+/* ===================== helpers ===================== */
+function esc(s){return s;}
+function renderList(arr,cls,fn){ return arr && arr.length ? arr.map(fn).join('') : ''; }
+
+/* ===================== TOPIC rendern ===================== */
+function show(id){
+  current=id; const t=byId(id);
+  document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('active',+n.dataset.id===id));
+  const idx = TOPICS.findIndex(x=>x.id===id);
+  const prev = idx>0?TOPICS[idx-1]:null, next = idx<TOPICS.length-1?TOPICS[idx+1]:null;
+
+  const scopeLabel = {breit:"breites Gebiet",eng:"eng — hier (fast) alles wissen",mittel:"mittleres Gebiet"}[t.scope];
+
+  const defs = renderList(t.defs,'',d=>`<div class="entry"><span class="lbl def">Def</span><span class="name">${d.t}</span><div class="body">${d.b}</div></div>`);
+  const axioms = t.axioms ? renderList(t.axioms,'',a=>`<div class="entry"><span class="lbl ax">Axiom ${a.n}</span><div class="body inline">${a.b}</div></div>`) : '';
+  const sätze = renderList(t.theorems,'',s=>`<div class="entry"><span class="lbl satz">Satz</span><span class="name">${s.n}</span><div class="body">${s.s}</div>${s.idea?`<details class="idea"><summary>Beweisidee anzeigen</summary><div class="ideabody">${s.idea}</div></details>`:''}</div>`);
+  const nachfr = renderList(t.nachfr,'',n=>`<div class="qa"><div class="q">${n.q}</div><details class="idea answer"><summary>Prüfungsfähige Antwort</summary><div class="ideabody">${n.a}</div></details></div>`);
+  const plain = t.plain ? renderList(t.plain,'',p=>`<div class="plainrow"><div class="pt">${p.t}</div><div class="pe">${p.e}</div></div>`) : '';
+  const links = renderList(t.links,'',l=>{const lt=byId(l);return `<span class="linkchip" data-goto="${l}">${l} · ${lt.title.split(',')[0].split(' ').slice(0,3).join(' ')}…</span>`;});
+
+  document.getElementById('content').innerHTML = `
+   <div class="topic">
+     <div class="thead">
+       <div class="tnum">${t.id}</div>
+       <h2>${t.title}</h2>
+     </div>
+     <div class="meta">
+       <span class="tag chap">${t.chapter}</span>
+       <span class="tag scope-${t.scope}">${scopeLabel}</span>
+       ${t.school?'<span class="tag school">★ schulnah — häufiger dran</span>':''}
+       ${t.subs.map(s=>`<span class="tag">${s}</span>`).join('')}
+     </div>
+     <button class="doneBtn ${done[t.id]?'on':''}" id="doneBtn">${done[t.id]?'✓ als sicher markiert':'als „sicher“ markieren'}</button>
+
+     <div class="block"><h3>Überblick</h3><p class="lead">${t.overview}</p></div>
+
+     ${t.sketch?`<div class="block"><h3>Leitskizze</h3><div class="sketch">${t.sketch.svg}<div class="cap">${t.sketch.cap}</div></div></div>`:''}
+
+     ${defs?`<div class="block"><h3>Begriffe & Definitionen</h3>${defs}</div>`:''}
+     ${plain?`<div class="block"><h3>In einfachen Worten</h3><div class="plainbox">${plain}</div></div>`:''}
+     ${axioms?`<div class="block"><h3>Relevante Axiome</h3>${axioms}</div>`:''}
+     ${sätze?`<div class="block"><h3>Zentrale Sätze &amp; Beweisideen</h3>${sätze}</div>`:''}
+
+     <div class="block"><h3>Prüfungsfokus</h3>
+       <div class="karte"><h4>So punktest du bei Dr. Koksch</h4>
+       <ul>${t.focus.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+     </div>
+
+     ${nachfr?`<div class="block"><h3>Mögliche Nachfragen</h3><div class="nachfr">${nachfr}</div></div>`:''}
+
+     ${links?`<div class="block"><h3>Verwandte Themen</h3><div class="links">${links}</div></div>`:''}
+
+     <div class="foot">
+       ${prev?`<button class="navbtn prev" data-goto="${prev.id}"><span><span class="dir">◂ Thema ${prev.id}</span>${prev.title.split(',')[0]}</span></button>`:'<span></span>'}
+       ${next?`<button class="navbtn next" data-goto="${next.id}"><span><span class="dir">Thema ${next.id} ▸</span>${next.title.split(',')[0]}</span></button>`:'<span></span>'}
+     </div>
+     <p class="hint">Tastatur: <kbd>←</kbd> / <kbd>→</kbd> blättern · <kbd>m</kbd> als sicher markieren</p>
+   </div>`;
+
+  document.getElementById('doneBtn').addEventListener('click',toggleDone);
+  document.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click',()=>show(+el.dataset.goto)));
+  document.querySelector('main').scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleDone(){
+  done[current]=!done[current]; save(); updateProgress();
+  document.querySelectorAll('.navitem').forEach(n=>{
+    const on=!!done[+n.dataset.id];
+    n.classList.toggle('done',on);
+    n.querySelector('.navcheck').textContent=on?'✓':'';
+  });
+  const b=document.getElementById('doneBtn');
+  b.classList.toggle('on',!!done[current]);
+  b.textContent=done[current]?'✓ als sicher markiert':'als „sicher“ markieren';
+}
+
+/* ===================== SUCHE ===================== */
+document.getElementById('search').addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.navitem').forEach(n=>{
+    n.classList.toggle('hidden', q && !n.dataset.search.includes(q));
+  });
+  document.querySelectorAll('.navgroup').forEach(g=>{
+    let sib=g.nextElementSibling, any=false;
+    while(sib && sib.classList.contains('navitem')){ if(!sib.classList.contains('hidden'))any=true; sib=sib.nextElementSibling;}
+    g.style.display = q && !any ? 'none':'';
+  });
+});
+
+/* ===================== RESET ===================== */
+document.getElementById('progreset').addEventListener('click',()=>{
+  if(confirm('Fortschritt für alle 24 Themen zurücksetzen?')){
+    done={}; save(); updateProgress();
+    document.querySelectorAll('.navitem').forEach(n=>{n.classList.remove('done');n.querySelector('.navcheck').textContent='';});
+    show(current);
+  }
+});
+
+/* ===================== TASTATUR ===================== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight' && current<24)show(current+1);
+  else if(e.key==='ArrowLeft' && current>1)show(current-1);
+  else if(e.key==='m'||e.key==='M')toggleDone();
+});
+
+/* ===================== MOBILE MENÜ ===================== */
+const sidebar=document.getElementById('sidebar'), scrim=document.getElementById('scrim');
+function closeMenu(){sidebar.classList.remove('open');scrim.classList.remove('on');}
+document.getElementById('menuBtn').addEventListener('click',()=>{sidebar.classList.toggle('open');scrim.classList.toggle('on');});
+scrim.addEventListener('click',closeMenu);
+
+/* ===================== INIT ===================== */
+buildNav(); updateProgress(); show(1);
+</script>
+</body>
+</html>
