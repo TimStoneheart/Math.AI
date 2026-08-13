@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitzplan 6 C (Gy/OS)</title>
+<style>
+  :root{
+    --wood:#e3c493;
+    --wood-dark:#c9a06a;
+    --board:#5f7f8c;
+    --window:#bfe3f5;
+    --shelf:#b98849;
+    --accent:#3d6e63;
+    --accent-dark:#2c534a;
+    --bg:#f6f3ec;
+    --seat-empty:#ffffff;
+    --seat-filled:#fff3d6;
+    --text:#2b2b2b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:20px;
+  }
+  h1{
+    font-size:22px;
+    margin:0 0 2px 0;
+  }
+  .sub{
+    color:#666;
+    font-size:14px;
+    margin-bottom:16px;
+  }
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:18px;
+    align-items:center;
+  }
+  button{
+    font-size:14px;
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid var(--accent-dark);
+    background:var(--accent);
+    color:white;
+    cursor:pointer;
+  }
+  button.secondary{
+    background:white;
+    color:var(--accent-dark);
+  }
+  button:hover{ filter:brightness(1.08); }
+  .count-badge{
+    font-size:13px;
+    color:#555;
+    background:white;
+    border:1px solid #ddd;
+    padding:6px 12px;
+    border-radius:20px;
+  }
+  .layout{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .room{
+    flex:1 1 620px;
+    max-width:820px;
+    background:#eef4ef;
+    border:2px solid #d3d9d1;
+    border-radius:14px;
+    padding:18px;
+  }
+  .doorRow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .doorLabel{
+    background:#8b4a3a;
+    color:white;
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:6px;
+    position:relative;
+  }
+  .doorLabel::after{
+    content:"";
+    position:absolute;
+    left:100%;
+    top:-14px;
+    width:26px;
+    height:26px;
+    border:2px solid #8b4a3a;
+    border-left:none;
+    border-bottom:none;
+    border-radius:0 100% 0 0;
+    opacity:.6;
+  }
+  .cols{
+    display:flex;
+    gap:26px;
+    align-items:flex-start;
+  }
+  .col{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    flex:1;
+  }
+  .island{
+    display:flex;
+    gap:6px;
+    background:var(--wood-dark);
+    padding:6px;
+    border-radius:8px;
+  }
+  .island.diagonal{
+    transform:rotate(-12deg);
+    margin:6px 0 6px 30px;
+  }
+  .board{
+    background:var(--board);
+    color:white;
+    text-align:center;
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    letter-spacing:0.5px;
+    margin-top:18px;
+  }
+  .seat{
+    width:78px;
+    min-height:50px;
+    background:var(--seat-empty);
+    border:2px dashed #c9c2b3;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:12px;
+    padding:4px;
+    cursor:pointer;
+    user-select:none;
+    transition:transform .1s ease;
+  }
+  .seat:hover{ transform:scale(1.04); }
+  .seat.filled{
+    background:var(--seat-filled);
+    border:2px solid var(--wood-dark);
+    font-weight:600;
+  }
+  .seat.dragover{
+    outline:3px solid var(--accent);
+  }
+  .sidebar{
+    flex:0 0 240px;
+    background:white;
+    border:1px solid #e0ddd3;
+    border-radius:12px;
+    padding:14px;
+    max-height:640px;
+    overflow-y:auto;
+  }
+  .sidebar h2{
+    font-size:15px;
+    margin:0 0 8px 0;
+  }
+  .poolItem{
+    background:var(--seat-filled);
+    border:1px solid var(--wood-dark);
+    border-radius:6px;
+    padding:8px 10px;
+    margin-bottom:6px;
+    font-size:13px;
+    cursor:grab;
+  }
+  .poolItem.empty-msg{
+    background:none;
+    border:none;
+    color:#999;
+    font-style:italic;
+    cursor:default;
+  }
+  .note{
+    font-size:12px;
+    color:#777;
+    margin-top:16px;
+    line-height:1.5;
+  }
+  /* picker overlay */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+  }
+  .overlay.show{ display:flex; }
+  .picker{
+    background:white;
+    border-radius:10px;
+    padding:16px;
+    width:280px;
+    max-height:70vh;
+    overflow-y:auto;
+  }
+  .picker h3{ margin:0 0 10px 0; font-size:15px; }
+  .picker .opt{
+    padding:8px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:13px;
+    margin-bottom:4px;
+  }
+  .picker .opt:hover{ background:#f0f0f0; }
+  .picker .opt.current{ background:var(--seat-filled); font-weight:600; }
+  .picker .free-opt{ color:#a33; }
+  .versionSaveRow{
+    display:flex;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .versionSaveRow input{
+    flex:1;
+    padding:6px 8px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    font-size:13px;
+  }
+  .versionSaveRow button{
+    white-space:nowrap;
+  }
+  .versionGroup h4{
+    margin:14px 0 6px;
+    font-size:11px;
+    color:#999;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  .versionRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:7px 8px;
+    border-radius:6px;
+    margin-bottom:4px;
+    background:#f7f5ef;
+  }
+  .versionRow .vname{
+    font-size:12.5px;
+  }
+  .versionRow .vactions{
+    display:flex;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .versionRow .vactions button{
+    padding:4px 9px;
+    font-size:11px;
+    border-radius:5px;
+  }
+  .versionRow .vactions button.del{
+    background:#b23a3a;
+    border-color:#8a2b2b;
+  }
+  @media print{
+    .toolbar, .sidebar, .note, .count-badge, .overlay{ display:none !important; }
+    body{ padding:0; }
+    .layout{ display:block; }
+    .room{ max-width:100%; border:1px solid #999; }
+  }
+  @media (max-width:900px){
+    .layout{ flex-direction:column; }
+    .sidebar{ flex:1 1 auto; max-height:none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sitzplan – Klasse 6 C (Gy/OS)</h1>
+<div class="sub">Stand: 12.08.2026 &middot; Raumanordnung nach Foto des Klassenzimmers</div>
+
+<div class="toolbar">
+  <button id="shuffleBtn">🎲 Zufällig verteilen</button>
+  <button id="resetBtn" class="secondary">↺ Zurücksetzen</button>
+  <button id="saveVersionBtn" class="secondary">💾 Version speichern</button>
+  <button id="versionsBtn" class="secondary">🗂️ Versionen (<span id="versionsCount">0</span>)</button>
+  <button id="printBtn" class="secondary">🖨️ Drucken</button>
+  <span class="count-badge" id="countBadge">23 / 23 Kindern zugeordnet</span>
+</div>
+
+<div class="layout">
+
+  <div class="room" id="room">
+    <div class="doorRow"><span class="doorLabel">Tür</span></div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="island" data-island="A"></div>
+        <div class="island" data-island="L1"></div>
+        <div class="island" data-island="L2"></div>
+      </div>
+      <div class="col">
+        <div class="island" data-island="R1"></div>
+        <div class="island" data-island="R2"></div>
+        <div class="island diagonal" data-island="R3"></div>
+        <div class="island" data-island="R4"></div>
+      </div>
+    </div>
+
+    <div class="board">TAFEL</div>
+  </div>
+
+  <div class="sidebar">
+    <h2>Nicht zugeordnet</h2>
+    <div id="pool"></div>
+    <div class="note">
+      Diese Anordnung folgt deiner Skizze: Tür oben links, eine 2er-Insel sowie zwei 3er-Reihen links, rechts drei 4er-Reihen plus eine schräg gestellte 4er-Reihe, Tafel unten. Von den 24 Plätzen bleibt bei 23 Kindern 1 Platz frei. Ziehe Namen auf einen Platz oder tippe einen Platz an, um ihn zuzuweisen oder zu tauschen. Die Zuordnung wird automatisch im Browser gespeichert.
+    </div>
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="picker">
+    <h3 id="pickerTitle">Platz zuweisen</h3>
+    <div id="pickerList"></div>
+  </div>
+</div>
+
+<div class="overlay" id="versionsOverlay">
+  <div class="picker" style="width:340px;">
+    <h3>Gespeicherte Versionen</h3>
+    <div id="versionsList"></div>
+  </div>
+</div>
+
+<script>
+// ---- Schülerliste (aus Klassenliste_6 C (Gy_OS)_12-08-2026.xlsx) ----
+const rawNames = ["Ida","Ida","Raphael","Rosa","Lennard","Karl","Oscar","Theodor","Jan","Johanna","Edwin","Felix","Mara","Marc","Milena","Kian","Helen","Charlotte","Ella Rosa","Pablo","Herta","Marie","Mila"];
+
+// eindeutige IDs + Anzeige-Namen (Duplikate wie "Ida" bekommen einen Buchstaben: Ida A, Ida B, ...)
+const nameCounts = {};
+rawNames.forEach(n => nameCounts[n] = (nameCounts[n]||0)+1);
+const seenSoFar = {};
+const students = rawNames.map((n, i) => {
+  let display = n;
+  if(nameCounts[n] > 1){
+    seenSoFar[n] = (seenSoFar[n]||0)+1;
+    display = n + " " + "ABCD"[seenSoFar[n]-1];
+  }
+  return { id: "st"+i, name: n, display };
+});
+
+// ---- Sitzplan-Inseln (24 Plätze, nach der Skizze: Tür o.l., 2er-Insel + 2x 3er links, 3x 4er + 1 schräge 4er rechts, Tafel unten) ----
+const islandSeatCounts = {
+  A:2,
+  L1:3, L2:3,
+  R1:4, R2:4, R3:4, R4:4
+};
+
+const STORAGE_KEY = "sitzplan_6C_assignments_v1";
+let assignments = {}; // seatId -> studentId
+
+function buildSeats(){
+  Object.entries(islandSeatCounts).forEach(([islandId, count]) => {
+    const el = document.querySelector(`[data-island="${islandId}"]`);
+    for(let i=0;i<count;i++){
+      const seatId = islandId + "_" + i;
+      const seat = document.createElement("div");
+      seat.className = "seat";
+      seat.dataset.seat = seatId;
+      seat.draggable = true;
+      el.appendChild(seat);
+    }
+  });
+}
+
+function allSeatIds(){
+  const ids = [];
+  Object.entries(islandSeatCounts).forEach(([islandId, count]) => {
+    for(let i=0;i<count;i++) ids.push(islandId+"_"+i);
+  });
+  return ids;
+}
+
+function loadAssignments(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) assignments = JSON.parse(raw);
+  }catch(e){ assignments = {}; }
+}
+function saveAssignments(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments)); }catch(e){}
+}
+
+function studentInSeat(seatId){ return assignments[seatId] || null; }
+function seatOfStudent(studentId){
+  return Object.keys(assignments).find(sid => assignments[sid] === studentId) || null;
+}
+function unassignedStudents(){
+  const used = new Set(Object.values(assignments));
+  return students.filter(s => !used.has(s.id));
+}
+
+function render(){
+  // seats
+  document.querySelectorAll(".seat").forEach(seatEl => {
+    const seatId = seatEl.dataset.seat;
+    const stId = studentInSeat(seatId);
+    if(stId){
+      const st = students.find(s=>s.id===stId);
+      seatEl.textContent = st.display;
+      seatEl.classList.add("filled");
+    } else {
+      seatEl.textContent = "frei";
+      seatEl.classList.remove("filled");
+    }
+  });
+  // pool
+  const pool = document.getElementById("pool");
+  pool.innerHTML = "";
+  const free = unassignedStudents();
+  if(free.length === 0){
+    const d = document.createElement("div");
+    d.className = "poolItem empty-msg";
+    d.textContent = "Alle Kinder sind zugeordnet.";
+    pool.appendChild(d);
+  } else {
+    free.forEach(st => {
+      const d = document.createElement("div");
+      d.className = "poolItem";
+      d.textContent = st.display;
+      d.draggable = true;
+      d.dataset.student = st.id;
+      pool.appendChild(d);
+    });
+  }
+  // badge
+  const total = students.length;
+  const assigned = Object.keys(assignments).length;
+  document.getElementById("countBadge").textContent = `${assigned} / ${total} Kindern zugeordnet`;
+}
+
+function assignStudentToSeat(studentId, seatId){
+  // Falls Kind schon auf anderem Platz sitzt: alten Platz freigeben (ggf. tauschen)
+  const prevSeat = seatOfStudent(studentId);
+  const occupant = studentInSeat(seatId);
+  if(prevSeat && prevSeat !== seatId){
+    if(occupant){ assignments[prevSeat] = occupant; } else { delete assignments[prevSeat]; }
+  } else if(!prevSeat && occupant){
+    // neues Kind kommt aus dem Pool, bisheriger Sitzer geht in den Pool zurück
+    delete assignments[seatId];
+  }
+  assignments[seatId] = studentId;
+  saveAssignments();
+  render();
+}
+
+function swapSeats(seatA, seatB){
+  if(seatA === seatB) return;
+  const a = assignments[seatA];
+  const b = assignments[seatB];
+  if(b) assignments[seatA] = b; else delete assignments[seatA];
+  if(a) assignments[seatB] = a; else delete assignments[seatB];
+  saveAssignments();
+  render();
+}
+
+function clearSeat(seatId){
+  delete assignments[seatId];
+  saveAssignments();
+  render();
+}
+
+function shuffleAll(){
+  const ids = allSeatIds();
+  const shuffledStudents = [...students];
+  for(let i=shuffledStudents.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [shuffledStudents[i], shuffledStudents[j]] = [shuffledStudents[j], shuffledStudents[i]];
+  }
+  assignments = {};
+  ids.forEach((seatId, i) => {
+    if(shuffledStudents[i]) assignments[seatId] = shuffledStudents[i].id;
+  });
+  saveAssignments();
+  render();
+}
+
+function resetAll(){
+  assignments = {};
+  saveAssignments();
+  render();
+}
+
+// ---- Drag & Drop ----
+let dragPayload = null; // { type: 'pool'|'seat', id }
+
+document.addEventListener("dragstart", e => {
+  const poolItem = e.target.closest(".poolItem[data-student]");
+  const seat = e.target.closest(".seat");
+  if(poolItem){
+    dragPayload = { type:"pool", id: poolItem.dataset.student };
+  } else if(seat){
+    dragPayload = { type:"seat", id: seat.dataset.seat };
+  }
+});
+
+document.addEventListener("dragover", e => {
+  const seat = e.target.closest(".seat");
+  if(seat){
+    e.preventDefault();
+    seat.classList.add("dragover");
+  }
+});
+document.addEventListener("dragleave", e => {
+  const seat = e.target.closest(".seat");
+  if(seat) seat.classList.remove("dragover");
+});
+document.addEventListener("drop", e => {
+  const seat = e.target.closest(".seat");
+  if(!seat || !dragPayload) return;
+  e.preventDefault();
+  seat.classList.remove("dragover");
+  const targetSeatId = seat.dataset.seat;
+  if(dragPayload.type === "pool"){
+    assignStudentToSeat(dragPayload.id, targetSeatId);
+  } else if(dragPayload.type === "seat"){
+    swapSeats(dragPayload.id, targetSeatId);
+  }
+  dragPayload = null;
+});
+
+// ---- Klick-Zuweisung (Fallback für Touch / einfache Bedienung) ----
+const overlay = document.getElementById("overlay");
+const pickerList = document.getElementById("pickerList");
+const pickerTitle = document.getElementById("pickerTitle");
+let activeSeatId = null;
+
+document.addEventListener("click", e => {
+  const seat = e.target.closest(".seat");
+  const poolItem = e.target.closest(".poolItem[data-student]");
+  if(seat){
+    openPicker(seat.dataset.seat);
+  } else if(poolItem){
+    // Klick auf Pool-Namen: zeigt freie Plätze zur Auswahl? Einfacher: Hinweis in Konsole, Drag&Drop bevorzugt.
+  }
+});
+
+function openPicker(seatId){
+  activeSeatId = seatId;
+  pickerTitle.textContent = "Platz zuweisen";
+  pickerList.innerHTML = "";
+
+  const currentId = studentInSeat(seatId);
+
+  const freeOpt = document.createElement("div");
+  freeOpt.className = "opt free-opt";
+  freeOpt.textContent = "— Platz freimachen —";
+  freeOpt.onclick = () => { clearSeat(seatId); closePicker(); };
+  pickerList.appendChild(freeOpt);
+
+  students.forEach(st => {
+    const opt = document.createElement("div");
+    opt.className = "opt" + (st.id === currentId ? " current" : "");
+    opt.textContent = st.display + (seatOfStudent(st.id) && seatOfStudent(st.id) !== seatId ? "  (wechselt Platz)" : "");
+    opt.onclick = () => { assignStudentToSeat(st.id, seatId); closePicker(); };
+    pickerList.appendChild(opt);
+  });
+
+  overlay.classList.add("show");
+}
+function closePicker(){
+  overlay.classList.remove("show");
+  activeSeatId = null;
+}
+overlay.addEventListener("click", e => { if(e.target === overlay) closePicker(); });
+
+// ---- Versionsverwaltung (mehrere gespeicherte Stände pro Tag) ----
+const VERSIONS_KEY = "sitzplan_6C_versions_v1";
+let versions = [];
+
+function loadVersions(){
+  try{
+    const raw = localStorage.getItem(VERSIONS_KEY);
+    versions = raw ? JSON.parse(raw) : [];
+  }catch(e){ versions = []; }
+}
+function persistVersions(){
+  try{ localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions)); }catch(e){}
+}
+function updateVersionsCount(){
+  const el = document.getElementById("versionsCount");
+  if(el) el.textContent = versions.length;
+}
+
+function saveCurrentVersion(customLabel){
+  const now = new Date();
+  versions.push({
+    id: "v" + now.getTime() + "_" + Math.random().toString(36).slice(2,7),
+    ts: now.getTime(),
+    dateLabel: now.toLocaleDateString("de-DE"),
+    timeLabel: now.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"}),
+    label: (customLabel && customLabel.trim()) ? customLabel.trim() : null,
+    assignments: {...assignments}
+  });
+  persistVersions();
+  updateVersionsCount();
+}
+
+function deleteVersion(id){
+  versions = versions.filter(v => v.id !== id);
+  persistVersions();
+  updateVersionsCount();
+  renderVersionsOverlay();
+}
+
+function loadVersion(id){
+  const v = versions.find(v => v.id === id);
+  if(!v) return;
+  assignments = {...v.assignments};
+  saveAssignments();
+  render();
+  closeVersionsOverlay();
+}
+
+function renderVersionsOverlay(){
+  const list = document.getElementById("versionsList");
+  list.innerHTML = "";
+
+  const saveRow = document.createElement("div");
+  saveRow.className = "versionSaveRow";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Bezeichnung (optional, z. B. „Gruppenarbeit“)";
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Speichern";
+  saveBtn.onclick = () => {
+    saveCurrentVersion(input.value);
+    renderVersionsOverlay();
+  };
+  saveRow.appendChild(input);
+  saveRow.appendChild(saveBtn);
+  list.appendChild(saveRow);
+
+  if(versions.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "poolItem empty-msg";
+    empty.textContent = "Noch keine gespeicherten Versionen.";
+    list.appendChild(empty);
+    return;
+  }
+
+  const byDate = {};
+  versions.forEach(v => { (byDate[v.dateLabel] = byDate[v.dateLabel] || []).push(v); });
+  const dateKeys = Object.keys(byDate).sort((a,b) =>
+    Math.max(...byDate[b].map(v=>v.ts)) - Math.max(...byDate[a].map(v=>v.ts))
+  );
+
+  dateKeys.forEach(dateKey => {
+    const group = document.createElement("div");
+    group.className = "versionGroup";
+    const h4 = document.createElement("h4");
+    h4.textContent = dateKey;
+    group.appendChild(h4);
+
+    byDate[dateKey].slice().sort((a,b) => b.ts - a.ts).forEach(v => {
+      const row = document.createElement("div");
+      row.className = "versionRow";
+
+      const name = document.createElement("span");
+      name.className = "vname";
+      const filledCount = Object.keys(v.assignments).length;
+      name.textContent = `${v.timeLabel}${v.label ? " – " + v.label : ""} (${filledCount}/${students.length})`;
+
+      const actions = document.createElement("span");
+      actions.className = "vactions";
+      const loadBtn = document.createElement("button");
+      loadBtn.textContent = "Laden";
+      loadBtn.onclick = () => loadVersion(v.id);
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑";
+      delBtn.className = "del";
+      delBtn.onclick = () => { if(confirm("Diese Version wirklich löschen?")) deleteVersion(v.id); };
+      actions.appendChild(loadBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(name);
+      row.appendChild(actions);
+      group.appendChild(row);
+    });
+    list.appendChild(group);
+  });
+}
+
+const versionsOverlay = document.getElementById("versionsOverlay");
+function openVersionsOverlay(){
+  renderVersionsOverlay();
+  versionsOverlay.classList.add("show");
+}
+function closeVersionsOverlay(){
+  versionsOverlay.classList.remove("show");
+}
+versionsOverlay.addEventListener("click", e => { if(e.target === versionsOverlay) closeVersionsOverlay(); });
+
+// ---- Buttons ----
+document.getElementById("shuffleBtn").addEventListener("click", shuffleAll);
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if(confirm("Sitzplan wirklich zurücksetzen? Alle Zuordnungen werden gelöscht.")) resetAll();
+});
+document.getElementById("saveVersionBtn").addEventListener("click", () => {
+  const label = prompt("Bezeichnung für diese Version (optional):", "");
+  if(label !== null){
+    saveCurrentVersion(label);
+  }
+});
+document.getElementById("versionsBtn").addEventListener("click", openVersionsOverlay);
+document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+// ---- Init ----
+buildSeats();
+loadAssignments();
+loadVersions();
+updateVersionsCount();
+render();
+</script>
+
+</body>
+</html>
