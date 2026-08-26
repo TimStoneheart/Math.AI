@@ -1,0 +1,726 @@
+<title>Frühstückspartner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #EAF0EE;
+    --surface: #FFFFFF;
+    --surface-alt: #DEE8E1;
+    --surface-alt-hover: #D2E0D8;
+    --ink: #21302A;
+    --ink-soft: #55695F;
+    --ink-faint: #7E9089;
+    --accent: #D85F26;
+    --accent-ink: #FFFFFF;
+    --accent-2: #E8A939;
+    --line: #CBD8CF;
+    --line-strong: #AFC2B6;
+    --off: #B7C2BB;
+    --off-bg: #E4E9E4;
+    --shadow: 220 30% 20%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131C17;
+      --surface: #1B2620;
+      --surface-alt: #24322A;
+      --surface-alt-hover: #2C3C32;
+      --ink: #E9EFE9;
+      --ink-soft: #A6B7AC;
+      --ink-faint: #7C8C82;
+      --accent: #EC7A3C;
+      --accent-ink: #1A1206;
+      --accent-2: #EFC257;
+      --line: #33453A;
+      --line-strong: #3F5545;
+      --off: #4A5C51;
+      --off-bg: #202B24;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #131C17;
+    --surface: #1B2620;
+    --surface-alt: #24322A;
+    --surface-alt-hover: #2C3C32;
+    --ink: #E9EFE9;
+    --ink-soft: #A6B7AC;
+    --ink-faint: #7C8C82;
+    --accent: #EC7A3C;
+    --accent-ink: #1A1206;
+    --accent-2: #EFC257;
+    --line: #33453A;
+    --line-strong: #3F5545;
+    --off: #4A5C51;
+    --off-bg: #202B24;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(1.25rem, 3vw, 3rem);
+    display: flex;
+    justify-content: center;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  /* ---------- Header ---------- */
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: "Bricolage Grotesque", "Public Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    line-height: 1.05;
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    max-width: 56ch;
+    margin: 0;
+  }
+
+  /* ---------- Card shell ---------- */
+
+  section.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: clamp(1.1rem, 2.5vw, 1.6rem);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .card-title {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  .count-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .count-tag strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ---------- Roster chips ---------- */
+
+  .roster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.75rem 0.42rem 0.55rem;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    color: var(--ink);
+    font-size: 0.88rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .chip:hover {
+    background: var(--surface-alt-hover);
+  }
+
+  .chip input {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .chip.off {
+    background: transparent;
+    border-style: dashed;
+    color: var(--ink-faint);
+    opacity: 0.7;
+  }
+
+  .chip.off:hover {
+    opacity: 1;
+  }
+
+  .roster-actions {
+    display: flex;
+    gap: 1.1rem;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 3px;
+  }
+
+  .text-btn:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  /* ---------- Roll button ---------- */
+
+  .roll-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .roll-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 100px;
+    padding: 0.9rem 2rem;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 1.08rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px -6px hsl(var(--shadow) / 0.45);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  .roll-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -6px hsl(var(--shadow) / 0.5);
+  }
+
+  .roll-btn:active {
+    transform: translateY(0px) scale(0.98);
+  }
+
+  .roll-btn .die {
+    font-size: 1.2rem;
+    display: inline-block;
+    transform-origin: center;
+  }
+
+  .roll-btn.rolling .die {
+    animation: spin 0.5s ease;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.25); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roll-btn.rolling .die { animation: none; }
+    .pair-card { animation: none !important; }
+  }
+
+  /* ---------- Results ---------- */
+
+  #resultsWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .results-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .results-meta h2 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .timestamp {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+  }
+
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .pair-card {
+    position: relative;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.95rem 1.1rem 1rem 3.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    animation: rise 0.35s ease backwards;
+  }
+
+  .pair-card.trio {
+    border-color: var(--accent-2);
+    background: color-mix(in srgb, var(--accent-2) 12%, var(--surface-alt));
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pair-num {
+    position: absolute;
+    left: 0.85rem;
+    top: 0.9rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    width: 1.5rem;
+  }
+
+  .pair-name {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .pair-join {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+    padding-left: 0.1rem;
+  }
+
+  .trio-label {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--accent-2) 70%, var(--ink));
+  }
+
+  .empty-state {
+    color: var(--ink-faint);
+    font-size: 0.92rem;
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  /* ---------- History ---------- */
+
+  details.history summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  details.history summary::-webkit-details-marker { display: none; }
+
+  details.history summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.15s ease;
+    color: var(--ink-faint);
+    font-size: 0.7rem;
+  }
+
+  details.history[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .history-list {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .history-entry {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--line-strong);
+    padding-left: 0.7rem;
+  }
+
+  .history-entry .h-time {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  footer {
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+    text-align: center;
+    padding-top: 0.5rem;
+  }
+
+  @media (max-width: 420px) {
+    .roll-btn { width: 100%; justify-content: center; }
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <span class="eyebrow">Klassentool · Frühstückspartner</span>
+    <h1>Wer frühstückt heute mit wem?</h1>
+    <p class="subtitle">Alle Kinder auswählen, würfeln, fertig. Wer fehlt, kurz abwählen — die Auswahl bleibt für nächstes Mal gespeichert.</p>
+  </header>
+
+  <section class="card">
+    <div class="card-head">
+      <h2 class="card-title">Klassenliste</h2>
+      <span class="count-tag"><strong id="presentCount">23</strong> von 23 dabei</span>
+    </div>
+    <div class="roster" id="roster"></div>
+    <div class="roster-actions">
+      <button class="text-btn" id="selectAll">Alle auswählen</button>
+      <button class="text-btn" id="selectNone">Alle abwählen</button>
+    </div>
+  </section>
+
+  <div class="roll-row">
+    <button class="roll-btn" id="rollBtn">
+      <span class="die">🎲</span>
+      <span>Würfeln</span>
+    </button>
+  </div>
+
+  <section class="card" id="resultsCard" style="display:none;">
+    <div id="resultsWrap">
+      <div class="results-meta">
+        <h2>Heutige Paare</h2>
+        <span class="timestamp" id="resultTime"></span>
+      </div>
+      <div class="pairs-grid" id="pairsGrid"></div>
+    </div>
+  </section>
+
+  <section class="card" id="historyCard" style="display:none;">
+    <details class="history">
+      <summary>Frühere Würfe anzeigen</summary>
+      <div class="history-list" id="historyList"></div>
+    </details>
+  </section>
+
+  <footer>Bei einer ungeraden Anzahl Kinder wird eine Dreiergruppe gebildet.</footer>
+
+</div>
+
+<script>
+(function () {
+  var STUDENTS = [
+    "Albrecht, Ida Else Annemarie",
+    "Busse, Ida",
+    "Czießo, Raphael",
+    "Fleischer, Rosa",
+    "Günther, Lennard",
+    "Guthe, Karl",
+    "Hälbig, Oscar Luis",
+    "Honecker, Theodor",
+    "Krause, Jan",
+    "Kreutzmann, Johanna",
+    "Kriedemann, Edwin",
+    "Kupke, Felix",
+    "Liebezeit, Mara Isabella",
+    "Machemer, Marc Konstantin",
+    "Mittmann, Milena",
+    "Olesk, Kian",
+    "Pöhlig, Helen",
+    "Schmidt, Charlotte",
+    "Sommer, Ella Rosa",
+    "Wanke, Pablo Orell",
+    "Winter, Herta",
+    "Woodard, Marie Johanna",
+    "Zänker, Mila"
+  ];
+
+  var STORAGE_KEY = "fruehstueckspartner-presence-v1";
+
+  function displayName(full) {
+    var parts = full.split(",");
+    if (parts.length < 2) return full;
+    var surname = parts[0].trim();
+    var given = parts[1].trim();
+    return given + " " + surname.charAt(0) + ".";
+  }
+
+  var rosterEl = document.getElementById("roster");
+  var presentCountEl = document.getElementById("presentCount");
+  var rollBtn = document.getElementById("rollBtn");
+  var resultsCard = document.getElementById("resultsCard");
+  var pairsGrid = document.getElementById("pairsGrid");
+  var resultTime = document.getElementById("resultTime");
+  var historyCard = document.getElementById("historyCard");
+  var historyList = document.getElementById("historyList");
+
+  var history = [];
+
+  function loadPresence() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === "object") ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function savePresence(map) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    } catch (e) {
+      /* ignore - per-viewer convenience only */
+    }
+  }
+
+  var presence = loadPresence();
+
+  function isPresent(name) {
+    return presence[name] !== false;
+  }
+
+  function buildRoster() {
+    rosterEl.innerHTML = "";
+    STUDENTS.forEach(function (name) {
+      var label = document.createElement("label");
+      label.className = "chip" + (isPresent(name) ? "" : " off");
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = isPresent(name);
+      cb.addEventListener("change", function () {
+        presence[name] = cb.checked;
+        savePresence(presence);
+        label.classList.toggle("off", !cb.checked);
+        updateCount();
+      });
+
+      var span = document.createElement("span");
+      span.textContent = displayName(name);
+
+      label.appendChild(cb);
+      label.appendChild(span);
+      rosterEl.appendChild(label);
+    });
+    updateCount();
+  }
+
+  function updateCount() {
+    var n = STUDENTS.filter(isPresent).length;
+    presentCountEl.textContent = n;
+  }
+
+  document.getElementById("selectAll").addEventListener("click", function () {
+    STUDENTS.forEach(function (name) { presence[name] = true; });
+    savePresence(presence);
+    buildRoster();
+  });
+
+  document.getElementById("selectNone").addEventListener("click", function () {
+    STUDENTS.forEach(function (name) { presence[name] = false; });
+    savePresence(presence);
+    buildRoster();
+  });
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function makeGroups(names) {
+    var shuffled = shuffle(names);
+    var groups = [];
+    var i = 0;
+    while (i < shuffled.length) {
+      var remaining = shuffled.length - i;
+      if (remaining === 3) {
+        groups.push(shuffled.slice(i, i + 3));
+        i += 3;
+      } else {
+        groups.push(shuffled.slice(i, i + 2));
+        i += 2;
+      }
+    }
+    return groups;
+  }
+
+  function renderGroups(groups) {
+    pairsGrid.innerHTML = "";
+    groups.forEach(function (group, idx) {
+      var card = document.createElement("div");
+      card.className = "pair-card" + (group.length === 3 ? " trio" : "");
+      card.style.animationDelay = (idx * 0.04) + "s";
+
+      var num = document.createElement("span");
+      num.className = "pair-num";
+      num.textContent = String(idx + 1).padStart(2, "0");
+      card.appendChild(num);
+
+      group.forEach(function (name, i) {
+        var nameEl = document.createElement("span");
+        nameEl.className = "pair-name";
+        nameEl.textContent = displayName(name);
+        card.appendChild(nameEl);
+        if (i < group.length - 1) {
+          var join = document.createElement("span");
+          join.className = "pair-join";
+          join.textContent = "+ frühstückt mit +";
+          card.appendChild(join);
+        }
+      });
+
+      if (group.length === 3) {
+        var tag = document.createElement("span");
+        tag.className = "trio-label";
+        tag.textContent = "Dreiergruppe";
+        card.appendChild(tag);
+      }
+
+      pairsGrid.appendChild(card);
+    });
+  }
+
+  function formatTime(d) {
+    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" }) +
+      " · " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function renderHistory() {
+    if (history.length <= 1) {
+      historyCard.style.display = "none";
+      return;
+    }
+    historyCard.style.display = "";
+    historyList.innerHTML = "";
+    history.slice(1).forEach(function (entry) {
+      var div = document.createElement("div");
+      div.className = "history-entry";
+
+      var time = document.createElement("span");
+      time.className = "h-time";
+      time.textContent = formatTime(entry.time);
+      div.appendChild(time);
+
+      var text = entry.groups.map(function (g) {
+        return g.map(displayName).join(" + ");
+      }).join(" · ");
+      div.appendChild(document.createTextNode(text));
+
+      historyList.appendChild(div);
+    });
+  }
+
+  function roll() {
+    var present = STUDENTS.filter(isPresent);
+    if (present.length < 2) {
+      pairsGrid.innerHTML = '<p class="empty-state">Mindestens zwei anwesende Kinder auswählen, um zu würfeln.</p>';
+      resultsCard.style.display = "";
+      resultTime.textContent = "";
+      return;
+    }
+
+    rollBtn.classList.add("rolling");
+    setTimeout(function () { rollBtn.classList.remove("rolling"); }, 500);
+
+    var groups = makeGroups(present);
+    var now = new Date();
+
+    history.unshift({ time: now, groups: groups });
+    if (history.length > 8) history.length = 8;
+
+    resultsCard.style.display = "";
+    resultTime.textContent = formatTime(now);
+    renderGroups(groups);
+    renderHistory();
+  }
+
+  rollBtn.addEventListener("click", roll);
+
+  buildRoster();
+})();
+</script>
