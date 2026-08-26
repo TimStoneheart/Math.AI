@@ -1,0 +1,1106 @@
+<meta charset="utf-8">
+<title>Expedition Nullpunkt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-top:#e9a15a;
+    --bg-mid:#f4efe4;
+    --bg-bot:#1c6e7a;
+    --bg:#f4efe4;
+    --surface:#fdfaf2;
+    --surface-2:#f7f1e2;
+    --ink:#22291f;
+    --ink-soft:#5b5a4e;
+    --ink-faint:#8a8574;
+    --line:rgba(34,41,31,0.14);
+    --line-strong:rgba(34,41,31,0.28);
+    --high:#c96a1a;
+    --high-soft:#f3d9b8;
+    --high-ink:#7a4110;
+    --low:#146672;
+    --low-soft:#cbe6e8;
+    --low-ink:#0c454d;
+    --gold:#a9791f;
+    --gold-soft:#f1dfa9;
+    --good:#2f7a4d;
+    --good-soft:#d7ecdd;
+    --bad:#b13c2b;
+    --bad-soft:#f6dcd6;
+    --shadow:0 1px 2px rgba(34,41,31,0.08), 0 8px 24px -12px rgba(34,41,31,0.25);
+    --radius-l:22px;
+    --radius-m:14px;
+    --radius-s:9px;
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:'Manrope', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg-top:#3a2412;
+      --bg-mid:#101a1d;
+      --bg-bot:#06171a;
+      --bg:#101a1d;
+      --surface:#17262a;
+      --surface-2:#1d2e33;
+      --ink:#ede7d9;
+      --ink-soft:#b7b3a2;
+      --ink-faint:#7f8580;
+      --line:rgba(237,231,217,0.14);
+      --line-strong:rgba(237,231,217,0.26);
+      --high:#e8934a;
+      --high-soft:#3a2a1b;
+      --high-ink:#f6c690;
+      --low:#5cc2cd;
+      --low-soft:#153338;
+      --low-ink:#a9e4ea;
+      --gold:#e3b84b;
+      --gold-soft:#3a2f14;
+      --good:#6bc98d;
+      --good-soft:#173a26;
+      --bad:#e2685a;
+      --bad-soft:#3c1f1a;
+      --shadow:0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -12px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg-top:#3a2412;
+    --bg-mid:#101a1d;
+    --bg-bot:#06171a;
+    --bg:#101a1d;
+    --surface:#17262a;
+    --surface-2:#1d2e33;
+    --ink:#ede7d9;
+    --ink-soft:#b7b3a2;
+    --ink-faint:#7f8580;
+    --line:rgba(237,231,217,0.14);
+    --line-strong:rgba(237,231,217,0.26);
+    --high:#e8934a;
+    --high-soft:#3a2a1b;
+    --high-ink:#f6c690;
+    --low:#5cc2cd;
+    --low-soft:#153338;
+    --low-ink:#a9e4ea;
+    --gold:#e3b84b;
+    --gold-soft:#3a2f14;
+    --good:#6bc98d;
+    --good-soft:#173a26;
+    --bad:#e2685a;
+    --bad-soft:#3c1f1a;
+    --shadow:0 1px 2px rgba(0,0,0,0.35), 0 8px 28px -12px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% 0%, color-mix(in srgb, var(--bg-top) 30%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 38%, var(--bg-mid) 62%, var(--bg-bot) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  .mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums; letter-spacing:-0.01em;}
+  :focus-visible{outline:3px solid var(--gold); outline-offset:2px; border-radius:6px;}
+
+  .shell{max-width:640px; margin:0 auto; padding:20px 18px 64px; min-height:100vh; display:flex; flex-direction:column; gap:18px;}
+
+  /* ---- Header ---- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 16px;
+    background:color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter:blur(6px);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    box-shadow:var(--shadow);
+  }
+  .brand{display:flex; align-items:center; gap:9px; min-width:0; flex:1;}
+  .brand-badge{
+    width:38px; height:38px; border-radius:50%; flex:none;
+    background:conic-gradient(from 210deg, var(--low), var(--bg-mid) 48%, var(--high) 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--ink) 10%, transparent);
+  }
+  .brand-text{min-width:0;}
+  .brand-text h1{font-size:15.5px; font-weight:600; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .brand-text p{font-size:11px; color:var(--ink-soft); letter-spacing:0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  @media (min-width:380px){
+    .brand-text h1{font-size:17px;}
+  }
+  .stats{display:flex; align-items:center; gap:8px; flex:none;}
+  .stat-pill{
+    display:flex; align-items:center; gap:5px;
+    background:var(--gold-soft); color:var(--gold);
+    border-radius:999px; padding:6px 10px; font-size:13px; font-weight:700;
+    font-family:var(--font-mono);
+    box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent);
+  }
+  .rank-pill{
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--ink-soft); display:none;
+  }
+  @media (min-width:480px){ .rank-pill{display:block;} }
+
+  /* ---- Map screen ---- */
+  .map-intro{text-align:center; padding:6px 10px 2px;}
+  .map-intro h2{font-size:26px; font-weight:600; margin-bottom:6px;}
+  .map-intro p{font-size:14px; color:var(--ink-soft); max-width:46ch; margin:0 auto; line-height:1.5;}
+
+  .trail{position:relative; padding:22px 6px 6px; display:flex; flex-direction:column; gap:0;}
+  .trail::before{
+    content:"";
+    position:absolute; left:50%; top:36px; bottom:36px; width:3px;
+    background:repeating-linear-gradient(180deg, var(--line-strong) 0 10px, transparent 10px 18px);
+    transform:translateX(-50%); z-index:0;
+  }
+  .node-row{position:relative; z-index:1; display:flex; margin:2px 0;}
+  .node-row.right{justify-content:flex-end;}
+  .node-row.left{justify-content:flex-start;}
+  .node-row.mid{justify-content:center;}
+  .node{
+    width:min(78%, 420px);
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:12px 14px; box-shadow:var(--shadow);
+    text-align:left; color:var(--ink); position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .node:not(.locked):hover{transform:translateY(-2px);}
+  .node:not(.locked):active{transform:translateY(0);}
+  .node.locked{opacity:.55; cursor:not-allowed;}
+  .node-icon{
+    width:44px; height:44px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+    background:var(--tone-soft); color:var(--tone-ink);
+    box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tone) 40%, transparent);
+  }
+  .node.tone-high{--tone:var(--high); --tone-soft:var(--high-soft); --tone-ink:var(--high-ink);}
+  .node.tone-low{--tone:var(--low); --tone-soft:var(--low-soft); --tone-ink:var(--low-ink);}
+  .node.tone-neutral{--tone:var(--gold); --tone-soft:var(--gold-soft); --tone-ink:var(--gold);}
+  .node-body{flex:1; min-width:0;}
+  .node-eyebrow{font-size:10px; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint); font-weight:700;}
+  .node-title{font-family:var(--font-display); font-size:16.5px; font-weight:600; margin-top:1px;}
+  .node-sub{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .node-stars{display:flex; gap:2px; flex:none; font-size:14px; letter-spacing:-1px;}
+  .star{color:var(--line-strong);}
+  .star.on{color:var(--gold);}
+  .node-lock{font-size:18px; flex:none; color:var(--ink-faint);}
+
+  /* ---- Card / level screen ---- */
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-l);
+    box-shadow:var(--shadow); padding:20px; display:flex; flex-direction:column; gap:16px;
+  }
+  .level-head{display:flex; align-items:center; gap:12px;}
+  .back-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--surface-2);
+    color:var(--ink); font-size:16px; flex:none; display:flex; align-items:center; justify-content:center;
+  }
+  .level-head-text{flex:1; min-width:0;}
+  .level-head-text .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--tone-ink); font-weight:700;}
+  .level-head-text h2{font-size:19px; font-weight:600;}
+  .progress-track{height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden; box-shadow:inset 0 0 0 1px var(--line);}
+  .progress-fill{height:100%; background:linear-gradient(90deg, var(--low), var(--gold), var(--high)); border-radius:999px; transition:width .35s ease;}
+  .progress-meta{display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); font-family:var(--font-mono);}
+
+  .question-stem{font-size:15.5px; line-height:1.5;}
+  .question-formula{
+    font-size:26px; font-weight:600; text-align:center; padding:18px 10px; margin-top:2px;
+    background:var(--surface-2); border-radius:var(--radius-m); box-shadow:inset 0 0 0 1px var(--line);
+  }
+  .question-formula .op{color:var(--ink-soft); margin:0 4px;}
+
+  .options{display:grid; gap:10px;}
+  .options.grid-2{grid-template-columns:1fr 1fr;}
+  .options.grid-3{grid-template-columns:repeat(3,1fr);}
+  .opt-btn{
+    border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+    border-radius:var(--radius-m); padding:13px 14px; font-size:15px; font-weight:600;
+    text-align:left; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    transition:transform .1s ease, border-color .15s ease, background .15s ease;
+  }
+  .opt-btn .mono{font-size:15.5px;}
+  .opt-btn:not(:disabled):hover{border-color:var(--tone, var(--gold)); transform:translateY(-1px);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:var(--good-soft); border-color:var(--good); color:var(--good);}
+  .opt-btn.wrong{background:var(--bad-soft); border-color:var(--bad); color:var(--bad);}
+  .opt-btn.dim{opacity:.5;}
+  .opt-mark{font-size:16px; flex:none;}
+
+  /* number line (level 1) */
+  .numline-wrap{position:relative; padding:6px 0 4px; margin-top:2px;}
+  .numline-svg{width:100%; height:64px; display:block;}
+  .numline-svg .tick{stroke:var(--line-strong); stroke-width:1.5;}
+  .numline-svg .axis{stroke:var(--ink-faint); stroke-width:2;}
+  .numline-svg .zero-tick{stroke:var(--tone, var(--gold)); stroke-width:2.5;}
+  .numline-svg text{font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-faint);}
+  .numline-svg text.zero-label{fill:var(--tone-ink, var(--gold)); font-weight:700;}
+  .flag-btn{
+    position:absolute; top:6px; transform:translate(-50%,0);
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:none; border:none; padding:0; color:var(--ink);
+  }
+  .flag-pin{
+    width:30px; height:30px; border-radius:50% 50% 50% 4px; transform:rotate(-45deg);
+    background:var(--surface-2); border:2px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+    transition:transform .12s ease, border-color .15s ease, background .15s ease;
+  }
+  .flag-pin span{transform:rotate(45deg); font-family:var(--font-mono); font-weight:700; font-size:13px;}
+  .flag-btn:not(:disabled):hover .flag-pin{transform:rotate(-45deg) translateY(-3px);}
+  .flag-btn:disabled{cursor:default;}
+  .flag-btn.correct .flag-pin{background:var(--good-soft); border-color:var(--good); color:var(--good);}
+  .flag-btn.wrong .flag-pin{background:var(--bad-soft); border-color:var(--bad); color:var(--bad);}
+  .flag-btn .flag-line{width:2px; height:16px; background:var(--line-strong); margin-top:-2px;}
+
+  /* order chips (level 2) */
+  .chip-row{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px 0;}
+  .chip{
+    position:relative; border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+    border-radius:var(--radius-m); padding:14px 16px; font-size:16px; min-width:64px; text-align:center;
+  }
+  .chip.picked{border-color:var(--tone,var(--gold)); background:var(--gold-soft);}
+  .chip.correct{border-color:var(--good); background:var(--good-soft); color:var(--good);}
+  .chip.wrong{border-color:var(--bad); background:var(--bad-soft); color:var(--bad);}
+  .chip-order{
+    position:absolute; top:-8px; right:-8px; width:20px; height:20px; border-radius:50%;
+    background:var(--tone,var(--gold)); color:var(--surface); font-size:11px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono);
+  }
+
+  .feedback{
+    display:flex; gap:10px; align-items:flex-start; padding:13px 14px; border-radius:var(--radius-m);
+    font-size:13.5px; line-height:1.5;
+  }
+  .feedback.good{background:var(--good-soft); color:var(--good-ink,var(--good));}
+  .feedback.bad{background:var(--bad-soft); color:var(--bad);}
+  .feedback b{font-family:var(--font-display); font-size:14.5px;}
+  .feedback-icon{font-size:18px; flex:none;}
+
+  .row-actions{display:flex; gap:10px; justify-content:flex-end;}
+  .btn{
+    border-radius:999px; padding:11px 20px; font-size:14px; font-weight:700; border:1.5px solid transparent;
+  }
+  .btn-primary{background:var(--ink); color:var(--bg);}
+  .btn-ghost{background:transparent; border-color:var(--line-strong); color:var(--ink);}
+  .btn-block{width:100%; text-align:center;}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+
+  /* result screen */
+  .result-hero{text-align:center; padding:8px 6px 4px;}
+  .result-stars{font-size:44px; letter-spacing:6px; margin:6px 0 10px;}
+  .result-stars .star{font-size:44px;}
+  .result-title{font-size:22px; font-weight:700;}
+  .result-sub{font-size:13.5px; color:var(--ink-soft); margin-top:4px;}
+  .result-stats{display:flex; gap:10px; justify-content:center; margin:14px 0 4px;}
+  .rstat{background:var(--surface-2); border-radius:var(--radius-m); padding:10px 16px; text-align:center; box-shadow:inset 0 0 0 1px var(--line); min-width:88px;}
+  .rstat b{display:block; font-family:var(--font-mono); font-size:19px;}
+  .rstat span{font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em;}
+  .result-actions{display:flex; flex-direction:column; gap:10px; margin-top:6px;}
+
+  .streak-badge{
+    display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700;
+    background:var(--high-soft); color:var(--high-ink); border-radius:999px; padding:4px 10px;
+  }
+
+  footer{text-align:center; padding:6px 10px 0; font-size:11px; color:var(--ink-faint); line-height:1.6;}
+  footer button{background:none; border:none; color:var(--ink-faint); text-decoration:underline; font-size:11px; padding:0;}
+
+  .sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+
+  @keyframes pop{0%{transform:scale(.9); opacity:0;} 100%{transform:scale(1); opacity:1;}}
+  .pop-in{animation:pop .22s ease-out;}
+</style>
+
+<div class="shell" id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ utilities ============ */
+  var MDASH = "−"; // proper minus sign for math display
+  function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function choice(arr){ return arr[rnd(0,arr.length-1)]; }
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){ var j=rnd(0,i); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function uniq(arr){
+    var seen = {}, out = [];
+    for(var i=0;i<arr.length;i++){ var k=String(arr[i]); if(!seen[k]){ seen[k]=1; out.push(arr[i]); } }
+    return out;
+  }
+  // format a number the German way, using proper minus sign
+  function fmt(n, decimals){
+    if(decimals === undefined) decimals = null;
+    var neg = n < 0;
+    var abs = Math.abs(n);
+    var s;
+    if(decimals !== null){
+      s = abs.toFixed(decimals);
+    } else {
+      s = (Math.round(abs*100)/100).toString();
+    }
+    s = s.replace(".", ",");
+    return (neg ? MDASH : "") + s;
+  }
+  function fmtSigned(n, decimals){
+    // always show + or - sign, used inside formulas as an operand after an operator slot
+    return fmt(n, decimals);
+  }
+  function escapeHtml(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  /* ============ persistence ============ */
+  var STORAGE_KEY = "expedition-nullpunkt-v1";
+  function loadProgress(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return {};
+      var parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === "object") ? parsed : {};
+    }catch(e){ return {}; }
+  }
+  function saveProgress(p){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){}
+  }
+
+  /* ============ question generators ============ */
+
+  function makeMC(stem, formulaHtml, options, explanation, opts){
+    // options: array of {label, value, correct}
+    opts = opts || {};
+    return {
+      kind: "mc",
+      stem: stem,
+      formulaHtml: formulaHtml || null,
+      options: shuffle(options),
+      explanation: explanation,
+      cols: opts.cols || (options.length > 3 ? 2 : 1)
+    };
+  }
+
+  function numOptions(correct, decimals, spread){
+    var set = [correct];
+    var tries = 0;
+    while(set.length < 4 && tries < 40){
+      tries++;
+      var delta = choice([-1,1]) * (rnd(1, spread));
+      var cand = decimals ? Math.round((correct+delta)*Math.pow(10,decimals))/Math.pow(10,decimals) : correct+delta;
+      if(cand === correct) continue;
+      if(set.indexOf(cand) === -1) set.push(cand);
+    }
+    return shuffle(set).map(function(v){
+      return { label: fmt(v, decimals), value: v, correct: v === correct };
+    });
+  }
+
+  // ---- Level 1: Zahlenstrahl ----
+  function genNumberline(){
+    var mode = choice(["int","dec"]);
+    if(mode === "int"){
+      var lo = choice([-8,-7,-6,-5]);
+      var hi = lo + 10;
+      var target = rnd(lo+1, hi-1);
+      var others = [];
+      while(others.length < 3){
+        var c = rnd(lo, hi);
+        if(c !== target && others.indexOf(c) === -1) others.push(c);
+      }
+      var ticks = [];
+      for(var v=lo; v<=hi; v++) ticks.push(v);
+      var flagsVals = shuffle([target].concat(others));
+      return {
+        kind:"numline",
+        lo:lo, hi:hi, ticks:ticks, step:1,
+        target: target,
+        flags: flagsVals,
+        stem: "Klicke auf die Fahne, die die Zahl " + fmt(target) + " markiert.",
+        explanation: "Auf dem Zahlenstrahl liegt " + fmt(target) + " " + (target<0 ? (Math.abs(target)) + " Schritte links von der 0" : (target>0 ? target + " Schritte rechts von der 0" : "genau auf der 0")) + "."
+      };
+    } else {
+      var base = choice([-3,-2,-1,0,1,2]);
+      var lo2 = base, hi2 = base+1;
+      var tenths = rnd(1,9);
+      var target2 = Math.round((base + tenths/10)*10)/10;
+      var others2 = [];
+      while(others2.length < 3){
+        var t = rnd(1,9);
+        var c2 = Math.round((base + t/10)*10)/10;
+        if(c2 !== target2 && others2.indexOf(c2) === -1) others2.push(c2);
+      }
+      var ticks2 = [];
+      for(var t2=0;t2<=10;t2++) ticks2.push(Math.round((base + t2/10)*10)/10);
+      var flagsVals2 = shuffle([target2].concat(others2));
+      return {
+        kind:"numline",
+        lo:lo2, hi:hi2, ticks:ticks2, step:0.1,
+        target:target2,
+        flags:flagsVals2,
+        stem: "Klicke auf die Fahne, die die Zahl " + fmt(target2,1) + " markiert.",
+        explanation: "Zwischen " + fmt(lo2) + " und " + fmt(hi2) + " ist der Abschnitt in Zehntel geteilt. " + fmt(target2,1) + " liegt " + tenths + " Zehntelschritte hinter " + fmt(lo2) + "."
+      };
+    }
+  }
+
+  // ---- Level 2: Vergleichen & Ordnen ----
+  function genCompareOrder(){
+    if(Math.random() < 0.5){
+      var a = rnd(-15,15), b = rnd(-15,15);
+      while(b === a) b = rnd(-15,15);
+      var rel = a < b ? "<" : (a > b ? ">" : "=");
+      return makeMC(
+        "Vergleiche die beiden Zahlen.",
+        '<span class="mono">' + fmt(a) + '</span><span class="op">?</span><span class="mono">' + fmt(b) + '</span>',
+        [
+          {label:"<", value:"<", correct: rel==="<"},
+          {label:">", value:">", correct: rel===">"},
+          {label:"=", value:"=", correct: rel==="="}
+        ],
+        fmt(a) + " liegt auf dem Zahlenstrahl " + (rel==="<"?"links von":(rel===">"?"rechts von":"genau auf")) + " " + fmt(b) + ", also " + fmt(a) + " " + rel + " " + fmt(b) + ".",
+        {cols:3}
+      );
+    } else {
+      var nums = [];
+      while(nums.length < 4){
+        var n = rnd(-12,12);
+        if(nums.indexOf(n) === -1) nums.push(n);
+      }
+      var sorted = nums.slice().sort(function(x,y){return x-y;});
+      return {
+        kind:"order",
+        stem:"Ordne die Zahlen der Reihe nach vom kleinsten zum größten Wert. Klicke sie in der richtigen Reihenfolge an.",
+        items: shuffle(nums),
+        correctOrder: sorted,
+        explanation: "Von klein nach groß: " + sorted.map(function(v){return fmt(v);}).join(" < ") + "."
+      };
+    }
+  }
+
+  // ---- Level 3: Betrag ----
+  function genAbsolute(){
+    if(Math.random() < 0.55){
+      var v = choice([1,-1]) * rnd(1,24);
+      if(Math.random()<0.3) v = Math.round((choice([1,-1]) * (rnd(5,120)/10))*10)/10;
+      var correct = Math.abs(v);
+      var dec = (v % 1 !== 0) ? 1 : 0;
+      return makeMC(
+        "Wie groß ist der Betrag dieser Zahl?",
+        '<span class="op">|</span><span class="mono">' + fmt(v,dec) + '</span><span class="op">|</span><span class="op">=</span><span class="op">?</span>',
+        numOptions(correct, dec, dec?2:6),
+        "Der Betrag misst den Abstand vom Basislager (der 0) auf dem Zahlenstrahl – die Richtung (Vorzeichen) fällt weg. |" + fmt(v,dec) + "| = " + fmt(correct,dec) + "."
+      );
+    } else {
+      var a = choice([1,-1]) * rnd(1,20);
+      var b = choice([1,-1]) * rnd(1,20);
+      while(Math.abs(a) === Math.abs(b)) b = choice([1,-1]) * rnd(1,20);
+      var winner = Math.abs(a) > Math.abs(b) ? a : b;
+      return makeMC(
+        "Zwei Höhlenforscher: Person A steht bei " + fmt(a) + " m, Person B bei " + fmt(b) + " m (0 m = Höhleneingang). Wer ist weiter vom Eingang entfernt?",
+        null,
+        [
+          {label:"Person A (" + fmt(a) + " m)", value:"A", correct: winner===a},
+          {label:"Person B (" + fmt(b) + " m)", value:"B", correct: winner===b}
+        ],
+        "Entscheidend ist der Betrag, nicht das Vorzeichen: |" + fmt(a) + "| = " + fmt(Math.abs(a)) + " und |" + fmt(b) + "| = " + fmt(Math.abs(b)) + ". Der größere Betrag gewinnt.",
+        {cols:1}
+      );
+    }
+  }
+
+  // ---- Level 4: Addition & Subtraktion ----
+  function genAddSub(){
+    var useDec = Math.random() < 0.3;
+    var a = useDec ? (choice([1,-1])*rnd(5,80))/10 : choice([1,-1])*rnd(1,25);
+    var b = useDec ? (choice([1,-1])*rnd(5,80))/10 : choice([1,-1])*rnd(1,25);
+    var op = choice(["+","-"]);
+    var dec = useDec ? 1 : 0;
+    var correct = op === "+" ? a+b : a-b;
+    correct = Math.round(correct*10)/10;
+    var wrongSign = -correct;
+    var flipOp = op === "+" ? (a-b) : (a+b);
+    flipOp = Math.round(flipOp*10)/10;
+    var magErr = Math.round((correct + choice([1,-1])*(useDec?rnd(5,15)/10:rnd(2,6)))*10)/10;
+    var pool = uniq([correct, wrongSign, flipOp, magErr]).filter(function(v){return true;});
+    while(pool.length < 4){
+      var extra = Math.round((correct + choice([1,-1])*rnd(1,9))*10)/10;
+      if(pool.indexOf(extra)===-1) pool.push(extra);
+    }
+    pool = pool.slice(0,4);
+    if(pool.indexOf(correct) === -1) pool[0] = correct;
+    var bStr = fmt(b, dec);
+    var formula = '<span class="mono">' + fmt(a,dec) + '</span><span class="op">' + op + '</span><span class="mono">(' + bStr + ')</span><span class="op">=</span><span class="op">?</span>';
+    return makeMC(
+      "Berechne die Aufgabe.",
+      formula,
+      pool.map(function(v){ return {label: fmt(v,dec), value:v, correct: v===correct}; }),
+      "Auf dem Höhenpfad: von " + fmt(a,dec) + " aus " + (op==="+" ? "steigst du um " + fmt(Math.abs(b),dec) + (b<0?" ab":" auf") : "steigst du um " + fmt(Math.abs(b),dec) + (b<0?" auf":" ab") ) + ". Ergebnis: " + fmt(a,dec) + " " + op + " (" + bStr + ") = " + fmt(correct,dec) + "."
+    );
+  }
+
+  // ---- Level 5: Multiplikation & Division ----
+  function genMulDiv(){
+    var op = choice(["·","·","·",":"]);
+    var correct, a, b, dec=0;
+    if(op === "·"){
+      if(Math.random() < 0.25){
+        dec = 1;
+        a = (choice([1,-1])*rnd(5,30))/10;
+        b = choice([1,-1])*rnd(2,9);
+        correct = Math.round(a*b*10)/10;
+      } else {
+        a = choice([1,-1])*rnd(2,12);
+        b = choice([1,-1])*rnd(2,12);
+        correct = a*b;
+      }
+    } else {
+      b = choice([1,-1])*rnd(2,9);
+      correct = choice([1,-1])*rnd(2,12);
+      a = correct * b;
+      if(Math.abs(a) > 108){ b = choice([2,-2,3,-3]); a = correct*b; }
+    }
+    var wrongSign = -correct;
+    var offByOne = op==="·" ? correct + choice([1,-1])*Math.abs(b) : correct + choice([1,-1]);
+    var randomish = correct + choice([1,-1])*rnd(2,6);
+    var pool = uniq([correct, wrongSign, offByOne, randomish]);
+    while(pool.length < 4){
+      var extra = correct + choice([1,-1])*rnd(1,10);
+      if(pool.indexOf(extra)===-1) pool.push(extra);
+    }
+    pool = pool.slice(0,4);
+    if(pool.indexOf(correct) === -1) pool[0] = correct;
+    var formula = '<span class="mono">(' + fmt(a,dec) + ')</span><span class="op">' + op + '</span><span class="mono">(' + fmt(b) + ')</span><span class="op">=</span><span class="op">?</span>';
+    var signRule = (a<0)===(b<0) ? "Gleiche Vorzeichen → das Ergebnis ist positiv." : "Unterschiedliche Vorzeichen → das Ergebnis ist negativ.";
+    return makeMC(
+      "Berechne die Aufgabe.",
+      formula,
+      pool.map(function(v){ return {label: fmt(v,dec), value:v, correct: v===correct}; }),
+      signRule + " Betrag: " + fmt(Math.abs(a),dec) + " " + op + " " + fmt(Math.abs(b)) + " = " + fmt(Math.abs(correct),dec) + ", also Ergebnis " + fmt(correct,dec) + "."
+    );
+  }
+
+  // ---- Level 6: Rechengesetze ----
+  function genLaws(){
+    var kind = choice(["assoc","commut","distrib"]);
+    if(kind === "assoc"){
+      var f1 = choice([4,5,8,25,2]);
+      var f3 = f1===25 ? 4 : (f1===4 ? 25 : choice([2,5,10]));
+      var f2 = rnd(11,39);
+      var correct = f1*f2*f3;
+      var pool = numOptions(correct, 0, 15);
+      return makeMC(
+        "Rechne geschickt, indem du zuerst passende Faktoren gruppierst.",
+        '<span class="mono">' + f1 + '</span><span class="op">·</span><span class="mono">' + f2 + '</span><span class="op">·</span><span class="mono">' + f3 + '</span><span class="op">=</span><span class="op">?</span>',
+        pool,
+        "Assoziativgesetz: " + f1 + "·" + f2 + "·" + f3 + " = (" + f1 + "·" + f3 + ")·" + f2 + " = " + (f1*f3) + "·" + f2 + " = " + correct + ". Die Reihenfolge der Multiplikation darfst du frei wählen."
+      );
+    } else if(kind === "commut"){
+      var a = rnd(-15,15), b = rnd(-15,15), c = rnd(-15,15);
+      var forms = [
+        {expr: a+" + "+b, law:"Kommutativgesetz (a+b=b+a)", valid:true, text: b+" + "+a},
+        {expr: a+" + ("+b+" + "+c+")", law:"Assoziativgesetz", valid:true, text: "("+a+" + "+b+") + "+c},
+        {expr: a+" − "+b, law:"falsche Umformung", valid:false, text: b+" − "+a}
+      ];
+      var target = choice(forms);
+      var others = shuffle(forms.filter(function(f){return f!==target;}));
+      var optList = shuffle([
+        {label: target.text, value:"right", correct:true},
+        {label: (a - b) + "  (nur berechnet, keine Umformung)", value:"n1", correct:false},
+        {label: (b - a) + "  (Vorzeichenfehler)", value:"n2", correct:false}
+      ]);
+      return makeMC(
+        "Welche Umformung von " + target.expr + " ist nach dem Kommutativgesetz richtig?",
+        null,
+        optList,
+        "Das Kommutativgesetz erlaubt es, bei reiner Addition (oder Multiplikation) die Reihenfolge zu vertauschen: " + target.expr + " = " + target.text + ". Bei Subtraktion darfst du das nicht einfach tun!",
+        {cols:1}
+      );
+    } else {
+      var x = choice([4,6,8,12]);
+      var y = choice([99,101,98,102]);
+      var diff = y - 100;
+      var correct2 = x*y;
+      var expand = x+" · (100 " + (diff<0?"− "+Math.abs(diff):"+ "+diff) + ")";
+      var pool2 = numOptions(correct2, 0, 3*x);
+      return makeMC(
+        "Nutze das Distributivgesetz, um geschickt zu rechnen.",
+        '<span class="mono">' + x + '</span><span class="op">·</span><span class="mono">' + y + '</span><span class="op">=</span><span class="op">?</span>',
+        pool2,
+        "Schreibe " + y + " als 100 " + (diff<0?"− "+Math.abs(diff):"+ "+diff) + ": " + x + " · " + y + " = " + expand + " = " + (x*100) + " " + (diff<0?"− "+(x*Math.abs(diff)):"+ "+(x*diff)) + " = " + correct2 + "."
+      );
+    }
+  }
+
+  // ---- Level 7: Sachaufgaben (Boss) ----
+  function genWordProblem(){
+    var templates = [
+      function(){
+        var start = -rnd(2,9), rise = rnd(4,15);
+        var end = start + rise;
+        return {
+          stem: "Um 6 Uhr misst die Wetterstation " + fmt(start) + " °C. Bis zum Mittag steigt die Temperatur um " + rise + " °C. Welche Temperatur zeigt das Thermometer jetzt?",
+          correct: end, unit: "°C",
+          explanation: "Start bei " + fmt(start) + " °C, plus " + rise + " °C: " + fmt(start) + " + " + rise + " = " + fmt(end) + " °C."
+        };
+      },
+      function(){
+        var start = -rnd(20,60), dep = rnd(10,40), pay = rnd(15,50);
+        var end = start + pay - dep;
+        return {
+          stem: "Ein Konto steht bei " + fmt(start) + " €. Es werden " + pay + " € eingezahlt und danach " + dep + " € abgehoben. Wie hoch ist der Kontostand jetzt?",
+          correct: end, unit: "€",
+          explanation: fmt(start) + " + " + pay + " − " + dep + " = " + fmt(end) + " €."
+        };
+      },
+      function(){
+        var startH = rnd(800,1600);
+        var d1 = rnd(150,400), d2 = rnd(80,250);
+        var end = startH - d1 - d2;
+        return {
+          stem: "Eine Bergsteigerin startet auf " + startH + " m Höhe. Sie steigt " + d1 + " m ab, macht Pause und steigt dann noch " + d2 + " m ab. Auf welcher Höhe steht sie jetzt?",
+          correct: end, unit: "m",
+          explanation: startH + " − " + d1 + " − " + d2 + " = " + end + " m."
+        };
+      },
+      function(){
+        var startD = -rnd(30,90);
+        var down = rnd(10,40), up = rnd(5,25);
+        var end = startD - down + up;
+        return {
+          stem: "Ein U-Boot befindet sich auf " + fmt(startD) + " m (0 m = Wasseroberfläche). Es taucht " + down + " m tiefer und steigt danach " + up + " m auf. Auf welcher Tiefe ist es jetzt?",
+          correct: end, unit: "m",
+          explanation: fmt(startD) + " − " + down + " + " + up + " = " + fmt(end) + " m."
+        };
+      },
+      function(){
+        var fall = Math.round(rnd(15,45))/10;
+        var rise = Math.round(rnd(5,30))/10;
+        var change = Math.round((rise-fall)*10)/10;
+        return {
+          stem: "Ein Aktienkurs fällt an einem Tag um " + fmt(fall,1) + " € und steigt am nächsten Tag um " + fmt(rise,1) + " €. Wie verändert sich der Kurs insgesamt?",
+          correct: change, unit: "€", dec:1,
+          explanation: "Gesamtänderung: " + fmt(-fall,1) + " + " + fmt(rise,1) + " = " + fmt(change,1) + " €" + (change<0 ? " (der Kurs sinkt insgesamt)." : " (der Kurs steigt insgesamt).")
+        };
+      }
+    ];
+    var t = choice(templates)();
+    var dec = t.dec || 0;
+    var pool = numOptions(t.correct, dec, dec?2:Math.max(3, Math.round(Math.abs(t.correct)*0.15)+2));
+    return makeMC(
+      t.stem,
+      null,
+      pool.map(function(o){ return {label: fmt(o.value,dec) + " " + t.unit, value:o.value, correct:o.correct}; }),
+      t.explanation,
+      {cols:1}
+    );
+  }
+
+  /* ============ level metadata ============ */
+  var LEVELS = [
+    { id:"basislager", tone:"neutral", icon:"⛳", title:"Basislager Null", sub:"Zahlenstrahl – Zahlen einordnen", count:8, gen:genNumberline, kindHint:"numline" },
+    { id:"hoehenmesser", tone:"high", icon:"🧭", title:"Höhenmesser", sub:"Rationale Zahlen vergleichen & ordnen", count:8, gen:genCompareOrder },
+    { id:"tiefenmessung", tone:"low", icon:"🤿", title:"Tiefenmessung", sub:"Betrag rationaler Zahlen", count:8, gen:genAbsolute },
+    { id:"aufabstieg", tone:"high", icon:"🧗", title:"Aufstieg & Abstieg", sub:"Addition und Subtraktion", count:10, gen:genAddSub },
+    { id:"seilbahn", tone:"low", icon:"🚡", title:"Seilbahn-Rechnung", sub:"Multiplikation und Division", count:10, gen:genMulDiv },
+    { id:"kletterrouten", tone:"neutral", icon:"🧵", title:"Kletterrouten", sub:"Rechengesetze geschickt nutzen", count:8, gen:genLaws },
+    { id:"gipfelsturm", tone:"high", icon:"🏁", title:"Gipfelsturm", sub:"Sachaufgaben – Boss-Level", count:6, gen:genWordProblem }
+  ];
+  var RANKS = [
+    {min:0, name:"Basislager-Neuling"},
+    {min:5, name:"Zahlenstrahl-Wanderer"},
+    {min:10, name:"Höhen-Kletterin"},
+    {min:15, name:"Tiefsee-Navigator"},
+    {min:19, name:"Expeditionsleitung"}
+  ];
+  var MAX_STARS = LEVELS.reduce(function(s,l){return s+3;},0);
+
+  function rankFor(stars){
+    var name = RANKS[0].name;
+    for(var i=0;i<RANKS.length;i++){ if(stars >= RANKS[i].min) name = RANKS[i].name; }
+    return name;
+  }
+
+  /* ============ app state ============ */
+  var state = {
+    screen: "map",
+    progress: loadProgress(),
+    session: null
+  };
+
+  function totalStars(){
+    var t = 0;
+    for(var k in state.progress){ if(state.progress[k] && state.progress[k].stars){ t += state.progress[k].stars; } }
+    return t;
+  }
+  function isUnlocked(idx){
+    if(idx === 0) return true;
+    var prev = LEVELS[idx-1];
+    return !!(state.progress[prev.id] && state.progress[prev.id].done);
+  }
+
+  var app = document.getElementById("app");
+
+  function render(){
+    if(state.screen === "map") renderMap();
+    else if(state.screen === "level") renderLevel();
+    else if(state.screen === "result") renderResult();
+  }
+
+  /* ---- header (shared) ---- */
+  function headerHtml(){
+    return '' +
+      '<div class="topbar">' +
+        '<div class="brand">' +
+          '<div class="brand-badge">🏔️</div>' +
+          '<div class="brand-text">' +
+            '<h1>Expedition Nullpunkt</h1>' +
+            '<p>Rationale Zahlen · Klasse 7</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="stats">' +
+          '<span class="rank-pill">' + escapeHtml(rankFor(totalStars())) + '</span>' +
+          '<span class="stat-pill">★ ' + totalStars() + '/' + MAX_STARS + '</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---- MAP ---- */
+  function renderMap(){
+    var rows = LEVELS.map(function(lv, idx){
+      var unlocked = isUnlocked(idx);
+      var prog = state.progress[lv.id];
+      var stars = prog ? prog.stars : 0;
+      var starsHtml = "";
+      for(var s=1;s<=3;s++){ starsHtml += '<span class="star ' + (s<=stars?'on':'') + '">★</span>'; }
+      var side = idx % 3 === 0 ? "left" : (idx % 3 === 1 ? "right" : "mid");
+      return '' +
+        '<div class="node-row ' + side + '">' +
+          '<button class="node tone-' + lv.tone + ' ' + (unlocked?'':'locked') + '" ' +
+            (unlocked ? 'onclick="startLevel(' + idx + ')"' : 'disabled aria-disabled="true"') + '>' +
+            '<div class="node-icon">' + lv.icon + '</div>' +
+            '<div class="node-body">' +
+              '<div class="node-eyebrow">Station ' + (idx+1) + '</div>' +
+              '<div class="node-title">' + lv.title + '</div>' +
+              '<div class="node-sub">' + lv.sub + '</div>' +
+            '</div>' +
+            (unlocked ? '<div class="node-stars">' + starsHtml + '</div>' : '<div class="node-lock">🔒</div>') +
+          '</button>' +
+        '</div>';
+    }).join("");
+
+    app.innerHTML = '' +
+      headerHtml() +
+      '<div class="map-intro">' +
+        '<h2>Deine Route durch die rationalen Zahlen</h2>' +
+        '<p>Vom Tiefseegraben bis zum Gipfel: Meistere jede Station, sammle Sterne und werde Expeditionsleitung.</p>' +
+      '</div>' +
+      '<div class="trail">' + rows + '</div>' +
+      '<footer>' +
+        'Orientiert am sächsischen Lehrplan Mathematik, Lernbereich „Rationale Zahlen“ (Klasse 7).<br>' +
+        '<button onclick="resetProgress()">Fortschritt zurücksetzen</button>' +
+      '</footer>';
+  }
+
+  window.startLevel = function(idx){
+    var lv = LEVELS[idx];
+    var qs = [];
+    for(var i=0;i<lv.count;i++) qs.push(lv.gen());
+    state.session = { levelIdx: idx, questions: qs, index: 0, correct: 0, streak: 0, bestStreak:0, answered:false, lastPick:null };
+    state.screen = "level";
+    render();
+  };
+
+  window.resetProgress = function(){
+    state.progress = {};
+    saveProgress(state.progress);
+    render();
+  };
+
+  window.backToMap = function(){
+    state.session = null;
+    state.screen = "map";
+    render();
+  };
+
+  /* ---- LEVEL ---- */
+  function renderLevel(){
+    var sess = state.session;
+    var lv = LEVELS[sess.levelIdx];
+    var q = sess.questions[sess.index];
+    var pct = Math.round((sess.index / sess.questions.length) * 100);
+
+    var body = "";
+    if(q.kind === "mc"){
+      body = renderMC(q, sess);
+    } else if(q.kind === "numline"){
+      body = renderNumline(q, sess);
+    } else if(q.kind === "order"){
+      body = renderOrder(q, sess);
+    }
+
+    app.innerHTML = '' +
+      headerHtml() +
+      '<div class="card pop-in" style="--tone:var(--' + (lv.tone==='neutral'?'gold':lv.tone) + ');">' +
+        '<div class="level-head">' +
+          '<button class="back-btn" onclick="confirmExit()" aria-label="Zur Karte">←</button>' +
+          '<div class="level-head-text">' +
+            '<div class="eyebrow" style="color:' + (lv.tone==='neutral' ? 'var(--gold)' : 'var(--'+lv.tone+')') + '">' + lv.title + '</div>' +
+            '<h2>' + lv.sub + '</h2>' +
+          '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="progress-meta"><span>Aufgabe ' + (sess.index+1) + ' / ' + sess.questions.length + '</span><span>✓ ' + sess.correct + ' richtig' + (sess.streak>=3?' · 🔥 Serie '+sess.streak:'') + '</span></div>' +
+        '</div>' +
+        body +
+      '</div>';
+  }
+
+  function optionsColsClass(q){
+    var n = q.options.length;
+    if(q.cols === 3) return "grid-3";
+    if(q.cols === 2 || n===4) return "grid-2";
+    return "";
+  }
+
+  function renderMC(q, sess){
+    var stem = '<p class="question-stem">' + q.stem + '</p>';
+    var formula = q.formulaHtml ? '<div class="question-formula">' + q.formulaHtml + '</div>' : '';
+    var optsHtml = q.options.map(function(o, i){
+      var cls = "opt-btn";
+      var mark = "";
+      var disabled = sess.answered ? "disabled" : "";
+      if(sess.answered){
+        if(o.correct){ cls += " correct"; mark = '<span class="opt-mark">✓</span>'; }
+        else if(sess.lastPick === i){ cls += " wrong"; mark = '<span class="opt-mark">✗</span>'; }
+        else { cls += " dim"; }
+      }
+      var labelHtml = /[0-9]/.test(o.label) ? '<span class="mono">' + escapeHtml(o.label) + '</span>' : escapeHtml(o.label);
+      return '<button class="' + cls + '" ' + disabled + ' onclick="answerMC(' + i + ')">' + labelHtml + mark + '</button>';
+    }).join("");
+    var optsWrap = '<div class="options ' + optionsColsClass(q) + '">' + optsHtml + '</div>';
+    return stem + formula + optsWrap + feedbackBlock(sess, q);
+  }
+
+  function renderNumline(q, sess){
+    var stem = '<p class="question-stem">' + q.stem + '</p>';
+    var range = q.hi - q.lo;
+    var svgW = 600, svgH = 64, padL = 20, padR = 20;
+    var usableW = svgW - padL - padR;
+    function xFor(v){ return padL + ((v - q.lo) / range) * usableW; }
+    var ticksSvg = q.ticks.map(function(v){
+      var x = xFor(v);
+      var isZero = Math.abs(v) < 1e-9;
+      var isInt = Math.abs(v - Math.round(v)) < 1e-9;
+      var isEdge = Math.abs(v-q.lo) < 1e-9 || Math.abs(v-q.hi) < 1e-9;
+      var h = isZero ? 20 : (isInt ? 14 : 9);
+      var showLabel = q.step===1 ? isInt : (isZero || isEdge);
+      return '<line class="tick ' + (isZero?'zero-tick':'') + '" x1="' + x + '" y1="' + (32-h/2) + '" x2="' + x + '" y2="' + (32+h/2) + '"></line>' +
+        (showLabel ? '<text class="' + (isZero?'zero-label':'') + '" x="' + x + '" y="54" text-anchor="middle">' + fmt(v) + '</text>' : '');
+    }).join("");
+    var axisSvg = '<line class="axis" x1="' + padL + '" y1="32" x2="' + (svgW-padR) + '" y2="32"></line>';
+    var svg = '<svg class="numline-svg" viewBox="0 0 ' + svgW + ' ' + svgH + '" preserveAspectRatio="none" aria-hidden="true">' + axisSvg + ticksSvg + '</svg>';
+
+    var letters = ["A","B","C","D"];
+    var flagsHtml = q.flags.map(function(v, i){
+      var xPct = (xFor(v) / svgW) * 100;
+      var isCorrect = Math.abs(v - q.target) < 1e-9;
+      var cls = "flag-btn";
+      var mark = "";
+      var disabled = sess.answered ? "disabled" : "";
+      if(sess.answered){
+        if(isCorrect){ cls += " correct"; }
+        else if(sess.lastPick === i){ cls += " wrong"; }
+      }
+      return '<button class="' + cls + '" style="left:' + xPct + '%" ' + disabled + ' onclick="answerNumline(' + i + ')" aria-label="Position ' + letters[i] + '">' +
+        '<span class="flag-pin"><span>' + letters[i] + '</span></span><span class="flag-line"></span>' +
+        '</button>';
+    }).join("");
+
+    var wrap = '<div class="numline-wrap">' + svg + flagsHtml + '</div>';
+    return stem + wrap + feedbackBlock(sess, q);
+  }
+
+  function renderOrder(q, sess){
+    var stem = '<p class="question-stem">' + q.stem + '</p>';
+    var chipsHtml = sess.orderPicks === undefined ? "" : "";
+    var picks = sess.orderState || [];
+    var chips = q.items.map(function(v, i){
+      var pickIdx = picks.indexOf(i);
+      var cls = "chip";
+      var badge = "";
+      if(pickIdx !== -1){ cls += " picked"; badge = '<span class="chip-order">' + (pickIdx+1) + '</span>'; }
+      if(sess.answered){
+        var correctPos = q.correctOrder.indexOf(v);
+        var isRight = pickIdx === correctPos;
+        cls += isRight ? " correct" : " wrong";
+      }
+      var disabled = sess.answered ? "disabled" : "";
+      return '<button class="' + cls + '" ' + disabled + ' onclick="pickOrder(' + i + ')">' +
+        '<span class="mono">' + fmt(v) + '</span>' + badge +
+        '</button>';
+    }).join("");
+    var checkBtn = "";
+    if(!sess.answered){
+      var ready = picks.length === q.items.length;
+      checkBtn = '<div class="row-actions">' +
+        '<button class="btn btn-ghost" onclick="clearOrder()">Zurücksetzen</button>' +
+        '<button class="btn btn-primary" ' + (ready?'':'disabled') + ' onclick="checkOrder()">Prüfen</button>' +
+        '</div>';
+    }
+    return stem + '<div class="chip-row">' + chips + '</div>' + checkBtn + feedbackBlock(sess, q);
+  }
+
+  function feedbackBlock(sess, q){
+    if(!sess.answered) return "";
+    var lastCorrect = sess.lastCorrect;
+    return '<div class="feedback ' + (lastCorrect?'good':'bad') + '" role="status">' +
+        '<span class="feedback-icon">' + (lastCorrect ? '🌞' : '🧭') + '</span>' +
+        '<span><b>' + (lastCorrect ? 'Richtig!' : 'Nicht ganz.') + '</b><br>' + q.explanation + '</span>' +
+      '</div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" onclick="nextQuestion()">' + (sess.index+1 < sess.questions.length ? 'Weiter' : 'Ergebnis ansehen') + '</button>' +
+      '</div>';
+  }
+
+  window.answerMC = function(i){
+    var sess = state.session;
+    if(sess.answered) return;
+    var q = sess.questions[sess.index];
+    var picked = q.options[i];
+    sess.answered = true;
+    sess.lastPick = i;
+    sess.lastCorrect = !!picked.correct;
+    if(picked.correct){ sess.correct++; sess.streak++; sess.bestStreak = Math.max(sess.bestStreak, sess.streak); }
+    else { sess.streak = 0; }
+    render();
+  };
+
+  window.answerNumline = function(i){
+    var sess = state.session;
+    if(sess.answered) return;
+    var q = sess.questions[sess.index];
+    var val = q.flags[i];
+    var correct = Math.abs(val - q.target) < 1e-9;
+    sess.answered = true;
+    sess.lastPick = i;
+    sess.lastCorrect = correct;
+    if(correct){ sess.correct++; sess.streak++; sess.bestStreak = Math.max(sess.bestStreak, sess.streak); }
+    else { sess.streak = 0; }
+    render();
+  };
+
+  window.pickOrder = function(i){
+    var sess = state.session;
+    if(sess.answered) return;
+    sess.orderState = sess.orderState || [];
+    var pos = sess.orderState.indexOf(i);
+    if(pos !== -1){
+      sess.orderState.splice(pos,1);
+    } else if(sess.orderState.length < 4){
+      sess.orderState.push(i);
+    }
+    render();
+  };
+  window.clearOrder = function(){
+    state.session.orderState = [];
+    render();
+  };
+  window.checkOrder = function(){
+    var sess = state.session;
+    var q = sess.questions[sess.index];
+    var picks = sess.orderState || [];
+    var pickedValues = picks.map(function(i){ return q.items[i]; });
+    var correct = JSON.stringify(pickedValues) === JSON.stringify(q.correctOrder);
+    sess.answered = true;
+    sess.lastCorrect = correct;
+    if(correct){ sess.correct++; sess.streak++; sess.bestStreak = Math.max(sess.bestStreak, sess.streak); }
+    else { sess.streak = 0; }
+    render();
+  };
+
+  window.nextQuestion = function(){
+    var sess = state.session;
+    sess.index++;
+    sess.answered = false;
+    sess.lastPick = null;
+    sess.orderState = [];
+    if(sess.index >= sess.questions.length){
+      finishLevel();
+    } else {
+      state.screen = "level";
+      render();
+    }
+  };
+
+  window.confirmExit = function(){
+    state.session = null;
+    state.screen = "map";
+    render();
+  };
+
+  function finishLevel(){
+    var sess = state.session;
+    var lv = LEVELS[sess.levelIdx];
+    var pct = sess.correct / sess.questions.length;
+    var stars = pct >= 0.999 ? 3 : (pct >= 0.75 ? 2 : (pct >= 0.5 ? 1 : 0));
+    var prev = state.progress[lv.id] || { stars:0, done:false, bestPct:0 };
+    var newStars = Math.max(prev.stars, stars);
+    state.progress[lv.id] = { stars: newStars, done: true, bestPct: Math.max(prev.bestPct, pct) };
+    saveProgress(state.progress);
+    sess.finalStars = stars;
+    sess.finalPct = pct;
+    state.screen = "result";
+    render();
+  }
+
+  /* ---- RESULT ---- */
+  function renderResult(){
+    var sess = state.session;
+    var lv = LEVELS[sess.levelIdx];
+    var stars = sess.finalStars;
+    var starsHtml = "";
+    for(var s=1;s<=3;s++){ starsHtml += '<span class="star ' + (s<=stars?'on':'') + '">★</span>'; }
+    var msg = stars===3 ? "Perfekt gemeistert!" : stars===2 ? "Stark erklommen!" : stars===1 ? "Geschafft – weiter so!" : "Fast! Versuch's nochmal.";
+    var nextIdx = sess.levelIdx + 1;
+    var hasNext = nextIdx < LEVELS.length;
+
+    app.innerHTML = '' +
+      headerHtml() +
+      '<div class="card pop-in">' +
+        '<div class="result-hero">' +
+          '<div style="font-size:34px;">' + lv.icon + '</div>' +
+          '<div class="result-title">' + msg + '</div>' +
+          '<div class="result-sub">' + lv.title + ' · ' + lv.sub + '</div>' +
+          '<div class="result-stars">' + starsHtml + '</div>' +
+          (sess.bestStreak >= 3 ? '<div class="streak-badge">🔥 Beste Serie: ' + sess.bestStreak + '</div>' : '') +
+        '</div>' +
+        '<div class="result-stats">' +
+          '<div class="rstat"><b>' + sess.correct + '/' + sess.questions.length + '</b><span>Richtig</span></div>' +
+          '<div class="rstat"><b>' + Math.round(sess.finalPct*100) + '%</b><span>Quote</span></div>' +
+          '<div class="rstat"><b>' + totalStars() + '</b><span>★ Gesamt</span></div>' +
+        '</div>' +
+        '<div class="result-actions">' +
+          (hasNext ? '<button class="btn btn-primary btn-block" onclick="startLevel(' + nextIdx + ')">Nächste Station: ' + LEVELS[nextIdx].title + '</button>' : '<div class="feedback good" style="justify-content:center;text-align:center;"><span>🏆 Du hast alle Stationen der Expedition erreicht!</span></div>') +
+          '<button class="btn btn-ghost btn-block" onclick="startLevel(' + sess.levelIdx + ')">Station wiederholen</button>' +
+          '<button class="btn btn-ghost btn-block" onclick="backToMap()">Zurück zur Karte</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  render();
+})();
+</script>
