@@ -1,0 +1,538 @@
+/* ---------------------------------------------------------------
+   Prozent- & Zinsrechner — Design-Tokens
+   Farbe: gedecktes Kiefergrün auf warmem Papierton (Schulheft-Anmutung),
+   Kreide-Gelb als Hervorhebung, klare Signalfarben für richtig/falsch.
+   Schrift: Fraunces (Überschriften), Work Sans (Fließtext/UI),
+   JetBrains Mono (Zahlen, Codes, Eingaben).
+------------------------------------------------------------------*/
+
+:root {
+  --bg: #f2f1e7;
+  --surface: #ffffff;
+  --surface-2: #eae6d6;
+  --line: #d9d3bd;
+  --ink: #202b23;
+  --ink-soft: #57645a;
+  --ink-faint: #8b9488;
+
+  --accent: #1f6f5c;
+  --accent-strong: #16523f;
+  --accent-ink: #f3fbf6;
+  --accent-soft: #e3efe9;
+
+  --highlight: #d7a92c;
+  --highlight-ink: #3a2c05;
+
+  --good: #2f8f5b;
+  --good-bg: #e5f4ea;
+  --bad: #c1443c;
+  --bad-bg: #fbe9e7;
+
+  --focus: #2f6f5e;
+  --shadow: 0 1px 2px rgba(32, 43, 35, 0.06), 0 8px 24px -12px rgba(32, 43, 35, 0.18);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141d18;
+    --surface: #1b2620;
+    --surface-2: #223027;
+    --line: #2e3f34;
+    --ink: #eef2ee;
+    --ink-soft: #b7c3ba;
+    --ink-faint: #7c8b80;
+
+    --accent: #5fcfae;
+    --accent-strong: #7fe0c1;
+    --accent-ink: #0b1613;
+    --accent-soft: #1f3a30;
+
+    --highlight: #e8c65a;
+    --highlight-ink: #241d05;
+
+    --good: #6ad596;
+    --good-bg: #16301f;
+    --bad: #ef7a70;
+    --bad-bg: #3a1c19;
+
+    --focus: #7fe0c1;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 28px -14px rgba(0, 0, 0, 0.6);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: "Fraunces", ui-serif, Georgia, serif;
+  font-weight: 600;
+  text-wrap: balance;
+  margin: 0 0 0.3em;
+  color: var(--ink);
+}
+
+.mono, input, .code-pill, .score-num, td.num {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  font-weight: 700;
+  flex: none;
+}
+
+.brand-title {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.brand-sub {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.site-footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+}
+
+/* ---------- Cards & layout ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.card + .card { margin-top: 20px; }
+
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+/* ---------- Tabs (gate screen) ---------- */
+
+.tabs {
+  display: inline-flex;
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 22px;
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.tab-btn[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Form elements ---------- */
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.field { flex: 1 1 200px; }
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+textarea {
+  font-family: "Work Sans", sans-serif;
+  min-height: 110px;
+  resize: vertical;
+}
+
+input:focus, textarea:focus, button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  transition: transform 0.05s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent-strong);
+  padding: 8px 6px;
+}
+
+.btn-small {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.error-msg {
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.info-msg {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+}
+
+/* ---------- Worksheet ---------- */
+
+.variant-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.code-pill {
+  background: var(--highlight);
+  color: var(--highlight-ink);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.task {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 16px;
+}
+
+.task:first-of-type { border-top: none; padding-top: 4px; }
+
+.task-num {
+  font-family: "Fraunces", serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.task-body p { margin: 0 0 12px; }
+
+.task-answer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 260px;
+}
+
+.task-answer input { text-align: right; }
+
+.unit {
+  color: var(--ink-faint);
+  font-weight: 600;
+  min-width: 1.4em;
+}
+
+.task-feedback {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: none;
+}
+
+.task.correct .task-feedback {
+  display: block;
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.task.incorrect .task-feedback {
+  display: block;
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+
+/* ---------- Result screen ---------- */
+
+.score-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.score-num {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.score-label { color: var(--ink-soft); font-weight: 500; }
+
+/* ---------- Admin dashboard ---------- */
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-filters select,
+.admin-filters input {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-tile {
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.stat-tile .num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.stat-tile .label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead th {
+  text-align: left;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--surface-2);
+  padding: 10px 14px;
+  position: sticky;
+  top: 0;
+}
+
+tbody td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+tbody tr.detail-row td {
+  background: var(--surface-2);
+}
+
+.pct-bar {
+  display: inline-block;
+  width: 60px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.pct-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.detail-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+
+.detail-item.wrong { border-color: var(--bad); }
+.detail-item.right { border-color: var(--good); }
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent-strong);
+  font-weight: 600;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-faint);
+  padding: 40px 20px;
+}
+
+@media (max-width: 560px) {
+  .task { grid-template-columns: 28px 1fr; }
+  .card { padding: 20px; }
+}
