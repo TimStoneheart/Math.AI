@@ -389,6 +389,18 @@ button {
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.notes-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-ghost.active {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .notes-label {
@@ -408,6 +420,22 @@ button {
 
 .canvas-wrap.notes {
   background: var(--surface-2);
+  max-height: 120px;
+  overflow-y: auto;
+  transition: max-height 0.15s ease;
+}
+
+.canvas-wrap.notes.expanded {
+  max-height: 280px;
+}
+
+.canvas-wrap.notes::-webkit-scrollbar {
+  width: 10px;
+}
+
+.canvas-wrap.notes::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
 }
 
 .answer-canvas,

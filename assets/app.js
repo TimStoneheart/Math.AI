@@ -97,7 +97,7 @@ function setupCanvas(canvas, key) {
   const inkColor = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#202b23";
   ctx.strokeStyle = inkColor;
 
-  const state = { canvas, ctx, hasDrawn: false, drawing: false, last: null };
+  const state = { canvas, ctx, hasDrawn: false, drawing: false, last: null, mode: "pen" };
   CANVASES[key] = state;
 
   function posFromEvent(e) {
@@ -116,13 +116,19 @@ function setupCanvas(canvas, key) {
     if (!state.drawing) return;
     const p = posFromEvent(e);
     const pressure = e.pressure && e.pressure > 0 ? e.pressure : 0.5;
-    ctx.lineWidth = 1.6 + pressure * 2.4;
+    if (state.mode === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 16 + pressure * 12;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.lineWidth = 1.6 + pressure * 2.4;
+    }
     ctx.beginPath();
     ctx.moveTo(state.last.x, state.last.y);
     ctx.lineTo(p.x, p.y);
     ctx.stroke();
     state.last = p;
-    state.hasDrawn = true;
+    if (state.mode !== "eraser") state.hasDrawn = true;
   });
 
   const endStroke = () => {
@@ -142,6 +148,21 @@ function clearCanvas(key) {
   state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
   state.ctx.restore();
   state.hasDrawn = false;
+}
+
+function toggleEraser(key, btn) {
+  const state = CANVASES[key];
+  if (!state) return;
+  state.mode = state.mode === "eraser" ? "pen" : "eraser";
+  const isEraser = state.mode === "eraser";
+  btn.textContent = isEraser ? "Stift verwenden" : "Radierer";
+  btn.classList.toggle("active", isEraser);
+  state.canvas.style.cursor = isEraser ? "cell" : "crosshair";
+}
+
+function toggleExpand(wrap, btn) {
+  const expanded = wrap.classList.toggle("expanded");
+  btn.textContent = expanded ? "Verkleinern" : "Vergrößern";
 }
 
 // ---- App-Root ------------------------------------------------------
@@ -275,10 +296,14 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
           <div class="notes-block">
             <div class="notes-head">
               <span class="notes-label">Notizen / Rechenweg (optional, mit Stift)</span>
-              <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="${notesKey}">Notizen löschen</button>
+              <div class="notes-actions">
+                <button type="button" class="btn btn-ghost btn-small toggle-eraser" data-key="${notesKey}">Radierer</button>
+                <button type="button" class="btn btn-ghost btn-small toggle-expand" data-key="${notesKey}">Vergrößern</button>
+                <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="${notesKey}">Löschen</button>
+              </div>
             </div>
             <div class="canvas-wrap notes">
-              <canvas class="notes-canvas" data-key="${notesKey}" style="height:100px;"></canvas>
+              <canvas class="notes-canvas" data-key="${notesKey}" style="height:260px;"></canvas>
             </div>
           </div>
         </div>
@@ -305,7 +330,10 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
             </div>
             <div class="canvas-toolbar">
               <span class="hint" style="margin:0;">Mit Stift, Finger oder Maus schreiben</span>
-              <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="t7">Feld löschen</button>
+              <div class="notes-actions">
+                <button type="button" class="btn btn-ghost btn-small toggle-eraser" data-key="t7">Radierer</button>
+                <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="t7">Feld löschen</button>
+              </div>
             </div>
           </div>
         </div>
@@ -327,6 +355,17 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
 
   document.querySelectorAll(".clear-canvas").forEach((btn) => {
     btn.addEventListener("click", () => clearCanvas(btn.dataset.key));
+  });
+
+  document.querySelectorAll(".toggle-eraser").forEach((btn) => {
+    btn.addEventListener("click", () => toggleEraser(btn.dataset.key, btn));
+  });
+
+  document.querySelectorAll(".toggle-expand").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const wrap = btn.closest(".notes-block").querySelector(".canvas-wrap");
+      toggleExpand(wrap, btn);
+    });
   });
 
   document.getElementById("back-btn").addEventListener("click", () => {
