@@ -375,6 +375,93 @@ button {
   color: var(--bad);
 }
 
+/* ---------- Zeichenflächen (Stift/Touch/Maus) ---------- */
+
+.notes-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+.notes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.notes-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.canvas-wrap {
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.canvas-wrap.notes {
+  background: var(--surface-2);
+}
+
+.answer-canvas,
+.notes-canvas {
+  display: block;
+  width: 100%;
+  touch-action: none;
+  cursor: crosshair;
+  background: transparent;
+}
+
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.unit-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.answer-thumb {
+  display: block;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  margin: 6px 0;
+}
+
+.answer-thumb.small {
+  max-height: 90px;
+  width: auto;
+}
+
+.solution-reveal {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.solution-reveal summary {
+  cursor: pointer;
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.solution-reveal p {
+  margin: 6px 0 0;
+}
+
 /* ---------- Result screen ---------- */
 
 .score-banner {

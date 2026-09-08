@@ -2,12 +2,15 @@
 // Prozent- & Zinsrechner — App-Logik
 // Reines Vanilla-JS, kein Build-Schritt nötig. Speicherung über
 // Supabase (siehe supabase/schema.sql und README.md).
+//
+// Aufgaben 1–6: getippte Zahl (wird automatisch kontrolliert) +
+//   zusätzliches Notizfeld zum Rechenweg, das mit Stift/Finger/Maus
+//   beschrieben werden kann (Pointer Events).
+// Aufgabe 7: komplett ein Zeichenfeld (Freihand-Erklärung), da hier
+//   ganze Sätze handschriftlich formuliert werden.
 // =============================================================
 
 // ---- Supabase-Konfiguration -----------------------------------
-// Trage hier die Werte aus deinem Supabase-Projekt ein
-// (Project Settings → API). Ohne gültige Werte läuft die App im
-// Offline-Modus: Aufgaben funktionieren, aber nichts wird gespeichert.
 const SUPABASE_URL = "https://vyunodtwvtgtjbaonejt.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5dW5vZHR3dnRndGpiYW9uZWp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NDEyNDMsImV4cCI6MjEwNDQxNzI0M30.dsV_4GxVq-PTkDG0H5d_4ZW11ae9feSs2NmuKuhyQgM";
@@ -19,45 +22,19 @@ const supa =
 
 // ---- Aufgabentexte (Platzhalter werden pro Variante gefüllt) ---
 const TASK_DEFS = [
-  {
-    key: "t1",
-    unit: "%",
-    prompt: (t) => `Wie viel Prozent sind ${t.a} von ${t.b}?`,
-  },
-  {
-    key: "t2",
-    unit: "€",
-    prompt: (t) => `Berechne ${fmtNum(t.p)} % von ${fmtNum(t.g)} €.`,
-  },
-  {
-    key: "t3",
-    unit: "€",
-    prompt: (t) => `${fmtNum(t.p)} % eines Betrags sind ${fmtNum(t.w)} €. Berechne den Grundwert.`,
-  },
-  {
-    key: "t4",
-    unit: "€",
-    prompt: (t) => `Ein Artikel kostet ${fmtNum(t.n)} € netto. Berechne den Bruttopreis (19 % MwSt).`,
-  },
-  {
-    key: "t5",
-    unit: "€",
-    prompt: (t) => `Ein Preis von ${fmtNum(t.p)} € steigt um ${fmtNum(t.pct)} %. Berechne den neuen Preis mit dem Wachstumsfaktor.`,
-  },
-  {
-    key: "t6",
-    unit: "€",
-    prompt: (t) => `Berechne die Jahreszinsen für ${fmtNum(t.k)} € zu ${fmtNum(t.z)} %.`,
-  },
+  { key: "t1", unit: "%", prompt: (t) => `Wie viel Prozent sind ${t.a} von ${t.b}?` },
+  { key: "t2", unit: "€", prompt: (t) => `Berechne ${fmtNum(t.p)} % von ${fmtNum(t.g)} €.` },
+  { key: "t3", unit: "€", prompt: (t) => `${fmtNum(t.p)} % eines Betrags sind ${fmtNum(t.w)} €. Berechne den Grundwert.` },
+  { key: "t4", unit: "€", prompt: (t) => `Ein Artikel kostet ${fmtNum(t.n)} € netto. Berechne den Bruttopreis (19 % MwSt).` },
+  { key: "t5", unit: "€", prompt: (t) => `Ein Preis von ${fmtNum(t.p)} € steigt um ${fmtNum(t.pct)} %. Berechne den neuen Preis mit dem Wachstumsfaktor.` },
+  { key: "t6", unit: "€", prompt: (t) => `Berechne die Jahreszinsen für ${fmtNum(t.k)} € zu ${fmtNum(t.z)} %.` },
 ];
 const TASK7_PROMPT = "Erkläre in ganzen Sätzen, wie du bei Aufgabe 3 (Grundwert berechnen) vorgegangen bist.";
-
 const TOLERANCE = 0.05;
 
 // ---- Helpers -----------------------------------------------------
 
 function fmtNum(n) {
-  // 42.5 -> "42,5" / 300 -> "300" (deutsche Schreibweise, ohne unnötige Nachkommastellen)
   const rounded = Math.round(n * 100) / 100;
   return rounded.toString().replace(".", ",");
 }
@@ -83,16 +60,88 @@ function escapeHtml(str) {
   }[c]));
 }
 
-function downloadTextFile(filename, content, mime = "text/plain") {
-  const blob = new Blob([content], { type: mime + ";charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+function downloadDataUrl(filename, dataUrl) {
   const a = document.createElement("a");
-  a.href = url;
+  a.href = dataUrl;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
+}
+
+function downloadTextFile(filename, content, mime = "text/plain") {
+  const blob = new Blob([content], { type: mime + ";charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  downloadDataUrl(filename, url);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function isImageDataUrl(str) {
+  return typeof str === "string" && str.startsWith("data:image");
+}
+
+// ---- Zeichenflächen (Pointer Events: Maus, Touch, Stift/Pen) ------
+// Ein Registry-Eintrag pro Canvas-Key ("notes_t1" … "notes_t6", "t7").
+
+const CANVASES = {};
+
+function setupCanvas(canvas, key) {
+  const ratio = Math.min(window.devicePixelRatio || 1, 3);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.round(rect.width * ratio);
+  canvas.height = Math.round(rect.height * ratio);
+  const ctx = canvas.getContext("2d");
+  ctx.scale(ratio, ratio);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  const inkColor = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#202b23";
+  ctx.strokeStyle = inkColor;
+
+  const state = { canvas, ctx, hasDrawn: false, drawing: false, last: null };
+  CANVASES[key] = state;
+
+  function posFromEvent(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  canvas.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    state.drawing = true;
+    state.last = posFromEvent(e);
+  });
+
+  canvas.addEventListener("pointermove", (e) => {
+    if (!state.drawing) return;
+    const p = posFromEvent(e);
+    const pressure = e.pressure && e.pressure > 0 ? e.pressure : 0.5;
+    ctx.lineWidth = 1.6 + pressure * 2.4;
+    ctx.beginPath();
+    ctx.moveTo(state.last.x, state.last.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    state.last = p;
+    state.hasDrawn = true;
+  });
+
+  const endStroke = () => {
+    state.drawing = false;
+    state.last = null;
+  };
+  canvas.addEventListener("pointerup", endStroke);
+  canvas.addEventListener("pointercancel", endStroke);
+  canvas.addEventListener("pointerleave", endStroke);
+}
+
+function clearCanvas(key) {
+  const state = CANVASES[key];
+  if (!state) return;
+  state.ctx.save();
+  state.ctx.setTransform(1, 0, 0, 1, 0, 0);
+  state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+  state.ctx.restore();
+  state.hasDrawn = false;
 }
 
 // ---- App-Root ------------------------------------------------------
@@ -122,12 +171,12 @@ function renderGate(opts = {}) {
           <div class="row">
             <div class="field">
               <label for="in-code">Zugangscode</label>
-              <input type="text" id="in-code" class="mono" placeholder="z. B. PZ26-A" autocapitalize="characters" required />
+              <input type="text" id="in-code" class="mono" autocapitalize="characters" required />
               <p class="hint">Steht auf deinem Arbeitsblatt / wurde dir von deiner Lehrkraft genannt.</p>
             </div>
             <div class="field">
               <label for="in-name">Dein Name</label>
-              <input type="text" id="in-name" autocomplete="name" placeholder="Vorname Nachname" required />
+              <input type="text" id="in-name" autocomplete="name" required />
               <p class="hint">Wird zusammen mit deinem Ergebnis gespeichert.</p>
             </div>
           </div>
@@ -211,6 +260,7 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
   const tasksHtml = TASK_DEFS.map((def, idx) => {
     const t = variant.tasks[def.key];
     const prev = prevAnswers[def.key] ?? "";
+    const notesKey = `notes_${def.key}`;
     return `
       <div class="task" data-key="${def.key}">
         <div class="task-num">${idx + 1}</div>
@@ -221,6 +271,16 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
             <span class="unit">${def.unit}</span>
           </div>
           <div class="task-feedback"></div>
+
+          <div class="notes-block">
+            <div class="notes-head">
+              <span class="notes-label">Notizen / Rechenweg (optional, mit Stift)</span>
+              <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="${notesKey}">Notizen löschen</button>
+            </div>
+            <div class="canvas-wrap notes">
+              <canvas class="notes-canvas" data-key="${notesKey}" style="height:100px;"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -230,7 +290,7 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
     <div class="card">
       <span class="variant-pill">Angemeldet als <strong>${escapeHtml(name)}</strong> · <span class="code-pill">${variant.code}</span></span>
       <h2 style="margin-top:16px;">Prozent- und Zinsrechnung</h2>
-      <p class="hint" style="margin-bottom:0;">Trage bei den Aufgaben 1–6 nur die Zahl ein (Dezimaltrennzeichen Komma oder Punkt). Bei Aufgabe 7 erklärst du deinen Rechenweg in ganzen Sätzen.</p>
+      <p class="hint" style="margin-bottom:0;">Trage bei den Aufgaben 1–6 nur die Zahl ein (Komma oder Punkt). Darunter ist Platz für deinen Rechenweg mit dem Stift. Bei Aufgabe 7 schreibst du deine Erklärung direkt mit dem Stift in das Feld.</p>
     </div>
 
     <div class="card">
@@ -240,7 +300,13 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
           <div class="task-num">7</div>
           <div class="task-body">
             <p>${TASK7_PROMPT}</p>
-            <textarea id="t7-input" placeholder="Zuerst habe ich … Dann …">${escapeHtml(prevAnswers.t7 ?? "")}</textarea>
+            <div class="canvas-wrap">
+              <canvas class="answer-canvas" data-key="t7" style="height:240px;"></canvas>
+            </div>
+            <div class="canvas-toolbar">
+              <span class="hint" style="margin:0;">Mit Stift, Finger oder Maus schreiben</span>
+              <button type="button" class="btn btn-ghost btn-small clear-canvas" data-key="t7">Feld löschen</button>
+            </div>
           </div>
         </div>
 
@@ -252,6 +318,16 @@ function renderWorksheet(variant, name, prevAnswers = {}) {
       <div id="submit-status" style="margin-top:14px;"></div>
     </div>
   `);
+
+  TASK_DEFS.forEach((def) => {
+    const notesCanvas = document.querySelector(`.notes-canvas[data-key="notes_${def.key}"]`);
+    setupCanvas(notesCanvas, `notes_${def.key}`);
+  });
+  setupCanvas(document.querySelector('.answer-canvas[data-key="t7"]'), "t7");
+
+  document.querySelectorAll(".clear-canvas").forEach((btn) => {
+    btn.addEventListener("click", () => clearCanvas(btn.dataset.key));
+  });
 
   document.getElementById("back-btn").addEventListener("click", () => {
     if (confirm("Zurück zur Anmeldung? Deine Eingaben auf dieser Seite gehen dabei verloren.")) {
@@ -270,7 +346,6 @@ async function handleSubmit(variant, name) {
   document.querySelectorAll(".answer-input").forEach((input) => {
     answers[input.dataset.key] = input.value;
   });
-  answers.t7 = document.getElementById("t7-input").value.trim();
 
   let correctCount = 0;
   TASK_DEFS.forEach((def) => {
@@ -281,11 +356,21 @@ async function handleSubmit(variant, name) {
     const ok = isClose(given, correct);
     taskEl.classList.remove("correct", "incorrect");
     taskEl.classList.add(ok ? "correct" : "incorrect");
-    feedbackEl.textContent = ok
-      ? "Richtig!"
-      : `Nicht ganz — richtig wäre ${fmtNum(correct)} ${def.unit}.`;
+    feedbackEl.textContent = ok ? "Richtig!" : `Nicht ganz — richtig wäre ${fmtNum(correct)} ${def.unit}.`;
     if (ok) correctCount++;
   });
+
+  const notes = {};
+  TASK_DEFS.forEach((def) => {
+    const key = `notes_${def.key}`;
+    notes[def.key] = CANVASES[key].hasDrawn ? CANVASES[key].canvas.toDataURL("image/png") : null;
+  });
+
+  const explanationImage = CANVASES.t7.canvas.toDataURL("image/png");
+  if (!CANVASES.t7.hasDrawn) {
+    const proceed = confirm("Aufgabe 7 (Erklärung) ist noch leer. Trotzdem abgeben?");
+    if (!proceed) return;
+  }
 
   const total = TASK_DEFS.length;
   const submitBtn = document.getElementById("submit-btn");
@@ -297,10 +382,10 @@ async function handleSubmit(variant, name) {
     variant_code: variant.code,
     variant_label: variant.label,
     student_name: name,
-    answers,
+    answers: { ...answers, notes },
     score: correctCount,
     total,
-    explanation: answers.t7,
+    explanation: explanationImage, // Bild (data:image/png;...) statt Text
   };
 
   let saved = false;
@@ -327,17 +412,16 @@ async function handleSubmit(variant, name) {
         `Punkte: ${correctCount} von ${total}`,
         "",
         ...TASK_DEFS.map((def, i) => `${i + 1}. Eingabe: ${answers[def.key]} ${def.unit} (richtig: ${fmtNum(variant.tasks[def.key].answer)} ${def.unit})`),
-        "",
-        "7. " + answers.t7,
       ];
       downloadTextFile(`${name.replace(/\s+/g, "_")}_${variant.code}.txt`, lines.join("\n"));
+      downloadDataUrl(`${name.replace(/\s+/g, "_")}_${variant.code}_aufgabe7.png`, explanationImage);
     });
   }
 
-  renderResultBanner(correctCount, total, variant, name, answers);
+  renderResultBanner(correctCount, total);
 }
 
-function renderResultBanner(score, total, variant, name, answers) {
+function renderResultBanner(score, total) {
   const banner = document.createElement("div");
   banner.className = "score-banner";
   banner.innerHTML = `
@@ -471,15 +555,26 @@ function adminRowHtml(row, i) {
   const pct = row.total ? Math.round((row.score / row.total) * 100) : 0;
   const detailId = `detail-${i}`;
   const answers = row.answers || {};
+  const notes = answers.notes || {};
   const time = new Date(row.created_at).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" });
+  const variant = VARIANTS.find((v) => v.code === row.variant_code);
 
   const detailItems = TASK_DEFS.map((def, idx) => {
-    const variant = VARIANTS.find((v) => v.code === row.variant_code);
     const correct = variant ? variant.tasks[def.key].answer : null;
     const given = parseGermanNumber(answers[def.key]);
     const ok = correct !== null && isClose(given, correct);
-    return `<div class="detail-item ${ok ? "right" : "wrong"}">Aufg. ${idx + 1}: <strong>${escapeHtml(answers[def.key] ?? "–")}</strong> ${def.unit}${correct !== null ? ` (richtig: ${fmtNum(correct)} ${def.unit})` : ""}</div>`;
+    const noteImg = notes[def.key];
+    return `
+      <div class="detail-item ${ok ? "right" : "wrong"}">
+        <p style="margin:0 0 4px;">Aufg. ${idx + 1}: <strong>${escapeHtml(answers[def.key] ?? "–")}</strong> ${def.unit}${correct !== null ? ` (richtig: ${fmtNum(correct)} ${def.unit})` : ""}</p>
+        ${noteImg ? `<details class="solution-reveal"><summary>Notizen ansehen</summary><img class="answer-thumb small" src="${noteImg}" alt="Notizen zu Aufgabe ${idx + 1}" /></details>` : ""}
+      </div>
+    `;
   }).join("");
+
+  const explanationHtml = isImageDataUrl(row.explanation)
+    ? `<img class="answer-thumb" src="${row.explanation}" alt="Erklärung Aufgabe 7 (handschriftlich)" />`
+    : `<p style="margin:0;">${escapeHtml(row.explanation || "–")}</p>`;
 
   return `
     <tr>
@@ -492,14 +587,15 @@ function adminRowHtml(row, i) {
     <tr class="detail-row" id="${detailId}" style="display:none;">
       <td colspan="5">
         <div class="detail-grid">${detailItems}</div>
-        <p style="margin:0;"><strong>Aufgabe 7 (Erklärung):</strong><br>${escapeHtml(row.explanation || "–")}</p>
+        <p style="margin:0 0 6px;"><strong>Aufgabe 7 (Erklärung, handschriftlich):</strong></p>
+        ${explanationHtml}
       </td>
     </tr>
   `;
 }
 
 function exportCsv(rows) {
-  const header = ["Zeit", "Name", "Variante", "Punkte", "Von", ...TASK_DEFS.map((d, i) => `Aufgabe ${i + 1}`), "Erklärung (Aufgabe 7)"];
+  const header = ["Zeit", "Name", "Variante", "Punkte", "Von", ...TASK_DEFS.map((d, i) => `Aufgabe ${i + 1}`)];
   const lines = [header.join(";")];
   rows.forEach((r) => {
     const answers = r.answers || {};
@@ -510,10 +606,11 @@ function exportCsv(rows) {
       r.score,
       r.total,
       ...TASK_DEFS.map((d) => answers[d.key] ?? ""),
-      (r.explanation || "").replace(/\n/g, " "),
     ];
     lines.push(cells.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"));
   });
+  lines.push("");
+  lines.push('"Hinweis: Notizen und die handschriftliche Erklärung zu Aufgabe 7 sind Bilder und nur in der App unter Details sichtbar, nicht in dieser CSV-Datei."');
   downloadTextFile("abgaben.csv", lines.join("\n"), "text/csv");
 }
 
