@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernbaustein Terme Klasse 8</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* VOICE everyday learning: calm, clear, encouraging
+   IDEA a squared maths exercise book (Karopapier) with algebra tiles laid on it
+   PICTURE per Baustein one live model: dot frame, term check table, area rectangle, binomial square, equation table, number line
+   COLOUR white graph paper, ink navy, tile blue / orange / yellow, red pencil for corrections
+   TYPE Lexend headings + Atkinson Hyperlegible text
+   LAYOUT title + six Baustein tabs; panel = text and tasks left, live model right (sticky); phone: intro, model, tasks */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1420);--grid:light-dark(#e6edf7,#182031);--ink:light-dark(#14213a,#e8edf6);--muted:light-dark(#4a5670,#a9b4c8);--panel:light-dark(#ffffff,#161d2c);--soft:light-dark(#f2f5fa,#1c2536);--line:light-dark(#cfd8e6,#2c374b);--t1:light-dark(#2556c4,#7aa2ff);--t2:light-dark(#d9700f,#f4a24d);--t3:light-dark(#f2c230,#e3bd45);--t4:light-dark(#b8366f,#ee7aa9);--red:light-dark(#cc3324,#ff7a6b)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:17px/1.55 'Atkinson Hyperlegible',Verdana,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Lexend,'Trebuchet MS',sans-serif;line-height:1.1;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(30px,4.4vw,48px);text-wrap:balance}
+h2{font-size:clamp(26px,3vw,36px)}
+h3{font-size:19px}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(20px,3vw,40px) max(4vw,16px) 64px}
+.top{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end;justify-content:space-between;margin-bottom:24px}
+.top p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.prog{font-family:Lexend,sans-serif;font-size:15px;color:var(--muted);white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:24px}
+.tab{all:unset;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:center;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:var(--panel);min-height:44px}
+.tab b{grid-row:span 2;font:700 30px/1 Lexend,sans-serif;color:var(--t1)}
+.tab span{font-weight:700;font-size:15px;line-height:1.2}
+.tab small{font-size:13px;color:var(--muted)}
+.tab:hover{border-color:var(--t1)}
+.tab:focus-visible{outline:3px solid var(--t2);outline-offset:2px}
+.tab[aria-selected=true]{background:var(--t1);border-color:var(--t1);color:#fff}
+.tab[aria-selected=true] b,.tab[aria-selected=true] small{color:#fff}
+.panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-areas:"intro fig" "tasks fig";gap:24px 36px;align-items:start}
+.intro{grid-area:intro}.tasks{grid-area:tasks}.figwrap{grid-area:fig;position:sticky;top:16px}
+.core{margin:16px 0 0;padding:16px 18px;background:var(--soft);border-left:6px solid var(--t2);border-radius:4px 12px 12px 4px;font-size:19px;font-weight:700}
+.intro p{margin:12px 0 0}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:18px}
+.figwrap .card{padding:16px}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font-family:'Atkinson Hyperlegible',sans-serif;font-size:15px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:12px}
+.ctrl label{display:flex;gap:8px;align-items:center;font-weight:700;white-space:nowrap}
+input[type=range]{accent-color:var(--t1);width:130px;height:44px}
+input[type=text],select{font:16px 'Atkinson Hyperlegible',sans-serif;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-height:44px}
+input[type=text]:focus,select:focus{outline:3px solid var(--t1);outline-offset:1px}
+.btn{font:700 15px 'Atkinson Hyperlegible',sans-serif;min-height:44px;padding:8px 14px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--t1)}.btn:focus-visible{outline:3px solid var(--t2);outline-offset:2px}
+.btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.out{font-family:Lexend,sans-serif;font-size:clamp(18px,2.2vw,22px);margin:12px 0 0}
+.note{color:var(--muted);font-size:15px;margin:6px 0 0}
+.task{padding:16px 0;border-top:2px dashed var(--line)}
+.task:first-of-type{border-top:0}
+.task .q{font-weight:700;margin:0 0 10px}
+.task .term{font-family:Lexend,sans-serif;font-size:20px;color:var(--t1);white-space:nowrap}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.row input{flex:1 1 180px}
+.fb{margin:10px 0 0;padding:10px 12px;border-radius:10px;font-size:16px}
+.fb.ok{background:color-mix(in srgb,var(--t1) 14%,transparent);border-left:5px solid var(--t1)}
+.fb.no{background:color-mix(in srgb,var(--red) 12%,transparent);border-left:5px solid var(--red)}
+.fb.mid{background:color-mix(in srgb,var(--t2) 15%,transparent);border-left:5px solid var(--t2)}
+.hint{color:var(--muted);font-size:15px;margin:8px 0 0}
+.pro{margin-top:8px;padding:14px 16px;border-radius:14px;background:var(--soft)}
+.pro .tag{font-family:Lexend,sans-serif;font-size:14px;color:var(--t4);font-weight:700}
+.done{font-size:14px;color:var(--t1);font-weight:700;margin-left:6px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th{font-family:Lexend,sans-serif;font-size:14px;color:var(--muted);font-weight:500}
+th:first-child,td:first-child{text-align:left}
+tr.eq td{background:color-mix(in srgb,var(--t1) 13%,transparent);font-weight:700}
+td.ne{color:var(--red);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:15px;margin-top:8px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+.mirror circle{transition:transform .7s ease}
+@media (prefers-reduced-motion:reduce){.mirror circle{transition:none}}
+@media(max-width:860px){.panel{grid-template-columns:minmax(0,1fr);grid-template-areas:"intro" "fig" "tasks"}.figwrap{position:static}}
+@media(max-width:600px){.fig{min-height:290px}table{font-size:14px}th,td{padding:6px 5px}.tab b{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<div><h1>Terme und Gleichungen verstehen</h1>
+<p>Wähle den Baustein, den dir der Check-In empfohlen hat. Probiere das Modell aus, dann löse die Aufgaben – du bekommst sofort Rückmeldung.</p></div>
+<div class="prog" id="prog"></div>
+</header>
+<nav class="tabs" id="tabs" role="tablist" aria-label="Bausteine"></nav>
+<main class="panel" id="panel"></main>
+</div>
+<script>
+{
+const B=[
+{id:'a',name:'Variable & Term',ci:'1–3',core:'Ein Buchstabe steht für eine Zahl – nie für ein Ding. Ein Term beschreibt eine Rechnung, die für jede passende Zahl funktioniert.',text:'Im Modell siehst du einen quadratischen Rahmen aus Punkten. Zähle ihn zuerst selbst und schreibe deine Zählweise als Term mit n. Danach vergleichst du mit anderen Zählweisen: Verschiedene Terme können dasselbe beschreiben.',fig:'dots',tasks:[
+{k:'choice',q:'An einer Schule gibt es 6-mal so viele Schüler (S) wie Lehrer (L). Welche Gleichung stimmt?',opts:['6S = L','S = 6L'],ans:1,why:'Probe: 10 Lehrer → 60 Schüler. S = 6 · 10 = 60 passt. S und L sind Anzahlen, keine Abkürzungen.',hint:'Setze eine Zahl für L ein, z. B. 10.'},
+{k:'num',q:'Berechne für a = 3:',t:'4a²',ans:36,hint:'Erst die Potenz: a² = 9, dann mal 4.'},
+{k:'num',q:'Berechne für a = 3:',t:'(4a)²',ans:144,hint:'Erst die Klammer: 4 · 3 = 12, dann quadrieren.'},
+{k:'term',q:'Ein Rechteck hat die Seiten 3x und y. Gib einen Term für den Umfang an.',ans:'2*3x+2y',hint:'Umfang = 2 · Länge + 2 · Breite.'},
+{k:'term',pro:1,q:'Zahlenzauber: Denk dir eine Zahl x, verdopple sie, addiere 6, halbiere, ziehe x ab. Schreibe den Term auf.',ans:'(2x+6)/2-x',hint:'Schritt für Schritt: 2x, dann 2x + 6, dann (2x + 6) : 2, dann … − x.',why:'Vereinfacht ergibt der Term immer 3 – egal welche Zahl man denkt.'}]},
+{id:'b',name:'Zusammen&shy;fassen',ci:'4',core:'Zusammenfassen heißt: gleiche Sorte zählen. 3x + 2x = (3 + 2) · x. x und x² sind verschiedene Sorten.',text:'Der Einsetz-Check zeigt, ob zwei Terme gleichwertig sind: Setze Zahlen ein. Ist auch nur ein Ergebnis verschieden, ist die Umformung falsch. Probiere die typischen Fehler unten aus.',fig:'check',tasks:[
+{k:'term',q:'Vereinfache:',t:'3x + 2y + x',ans:'4x+2y',form:'short',hint:'Nur x-Terme zusammen: 3x + x.'},
+{k:'term',q:'Vereinfache:',t:'2x · 3x',ans:'6x^2',form:'short',hint:'Zahlen multiplizieren, Variablen multiplizieren: x · x = x².'},
+{k:'term',q:'Vereinfache:',t:'5a − (−a)',ans:'6a',form:'short',hint:'Minus minus ergibt plus.'},
+{k:'term',q:'Vereinfache:',t:'12pq − 5qp − 3p − q + pq',ans:'8pq-3p-q',form:'short',hint:'qp ist dasselbe wie pq.'},
+{k:'term',pro:1,q:'Vereinfache so weit wie möglich:',t:'7 · 3a − 2a · 3a + a²',ans:'21a-5a^2',form:'short',hint:'Erst die Produkte: 21a und 6a². Dann a²-Terme zusammenfassen.'}]},
+{id:'c',name:'Klammern',ci:'5–6',core:'Eine Klammer auflösen heißt: ein Rechteck in Teilrechtecke zerlegen. Jedes Glied mal jedes Glied – jede Teilfläche zählt.',text:'Stelle die Seitenlängen ein. Das große Rechteck hat den Flächeninhalt (x + p)(x + q). Die vier Teilflächen ergeben zusammen denselben Wert – das ist das Ausmultiplizieren. Rückwärts gelesen ist es Ausklammern.',fig:'area',tasks:[
+{k:'term',q:'Löse die Klammer auf:',t:'5(x + y)',ans:'5x+5y',form:'noParen',hint:'Beide Glieder mal 5.'},
+{k:'term',q:'Löse die Klammern auf und fasse zusammen:',t:'(x + 3)(x + 5)',ans:'x^2+8x+15',form:'noParen',hint:'Vier Teilflächen: x², 5x, 3x, 15.'},
+{k:'term',q:'Löse die Klammern auf:',t:'(2a + 3)(b − 3)',ans:'2ab-6a+3b-9',form:'noParen',hint:'Jedes Glied der ersten Klammer mit jedem der zweiten.'},
+{k:'term',q:'Klammere aus:',t:'6x + 9',ans:'3(2x+3)',form:'product',hint:'Welche Zahl steckt in 6 und in 9?'},
+{k:'term',q:'Klammere so viel wie möglich aus:',t:'8ab + 4ac',ans:'4a(2b+c)',form:'product',hint:'Gemeinsam sind 4 und a. Probe: wieder ausmultiplizieren.'},
+{k:'term',pro:1,q:'Löse die Klammer auf (Minus davor!):',t:'x − (2x − 3)',ans:'-x+3',form:'noParen',hint:'−(2x − 3) = (−1) · (2x − 3).'}]},
+{id:'d',name:'Binomische Formeln',ci:'7',core:'(a + b)² ist ein Quadrat mit Seite a + b. Es besteht aus a², b² und zwei Rechtecken ab – deshalb a² + 2ab + b².',text:'Verändere a und b. Schalte dann „Toms Behauptung“ ein: Er glaubt, (a + b)² = a² + b². Welche Flächen hat er vergessen?',fig:'square',tasks:[
+{k:'term',q:'Wende eine binomische Formel an:',t:'(x + 4)²',ans:'x^2+8x+16',form:'noParen',hint:'a = x, b = 4. Mittelglied 2 · x · 4.'},
+{k:'term',q:'Wende eine binomische Formel an:',t:'(3x − 5)²',ans:'9x^2-30x+25',form:'noParen',hint:'(3x)² = 9x², nicht 3x².'},
+{k:'term',q:'Wende eine binomische Formel an:',t:'(p + 2q)(p − 2q)',ans:'p^2-4q^2',form:'noParen',hint:'3. Formel: a² − b².'},
+{k:'term',q:'Faktorisiere:',t:'x² + 10x + 25',ans:'(x+5)^2',form:'product',hint:'Quadrate x² und 25 = 5². Passt 2 · x · 5?'},
+{k:'term',q:'Rebecca schreibt (2u + 8v)². Faktorisiere richtig:',t:'4u² + 16uv + 16v²',ans:'(2u+4v)^2',form:'product',hint:'16v² = (4v)². Prüfe das Mittelglied.'},
+{k:'num',pro:1,q:'Rechne im Kopf mit der 2. binomischen Formel: 49² = (50 − 1)² =',ans:2401,hint:'2500 − 100 + 1.'}]},
+{id:'e',name:'Gleichungen',ci:'8–9',core:'Eine Gleichung ist eine Frage: Für welche Zahl sind beide Seiten gleich? Bei Brüchen darf kein Nenner 0 werden.',text:'Wähle eine Gleichung. Die Tabelle rechnet beide Seiten für viele x aus. Wo beide gleich sind, steht die Lösung. Achte auf „geteilt durch 0“.',fig:'eq',tasks:[
+{k:'choice',q:'Ist x = 5 eine Lösung von 3x − 4 = 2x + 1? Setze ein, ohne umzuformen.',opts:['Ja','Nein'],ans:0,why:'Links 3 · 5 − 4 = 11, rechts 2 · 5 + 1 = 11. Beide gleich.'},
+{k:'num',q:'Welche Zahl muss bei 6 / (x − 2) = 3 ausgeschlossen werden?',ans:2,hint:'Für welches x wird der Nenner 0?'},
+{k:'num',q:'Löse: 6 / (x − 2) = 3. x =',ans:4,hint:'Beide Seiten mal (x − 2): 6 = 3x − 6.'},
+{k:'num',q:'Löse: 3 / (x + 4) = 4 / (2x). x =',ans:8,hint:'Über Kreuz: 3 · 2x = 4 · (x + 4).'},
+{k:'choice',pro:1,q:'x / (x − 3) = 3 / (x − 3). Welche Lösungsmenge stimmt?',opts:['L = {3}','L = { }'],ans:1,why:'Umgeformt kommt x = 3 heraus – aber für x = 3 wird der Nenner 0. Die Probe scheitert, also gibt es keine Lösung.'}]},
+{id:'f',name:'Ungleichungen',ci:'10',core:'Mal oder geteilt durch eine negative Zahl spiegelt die Zahlengerade – deshalb dreht sich das Zeichen um.',text:'Wähle eine Ungleichung. Gefüllte Punkte erfüllen sie, leere nicht. Unten siehst du, warum mal (−1) die Reihenfolge umdreht.',fig:'line',tasks:[
+{k:'choice',q:'Ist x = −5 eine Lösung von −2x < 6?',opts:['Ja','Nein'],ans:1,why:'−2 · (−5) = 10, und 10 < 6 ist falsch.'},
+{k:'choice',q:'−2x < 6 wird durch (−2) geteilt. Was kommt heraus?',opts:['x < −3','x > −3'],ans:1,why:'Durch eine negative Zahl geteilt: Zeichen umdrehen.'},
+{k:'choice',q:'Mia rechnet: 3x + 12 ≤ 9 → 3x ≤ −3 → x ≥ −1. Stimmt das?',opts:['Ja','Nein, x ≤ −1'],ans:1,why:'Mia hat durch +3 geteilt – da bleibt das Zeichen. Test: x = 0 liegt in Mias Bereich, aber 12 ≤ 9 ist falsch.'},
+{k:'choice',q:'Löse: −5x + 3 > −17',opts:['x > 4','x < 4'],ans:1,why:'−5x > −20, geteilt durch (−5): x < 4.'},
+{k:'choice',pro:1,q:'Löse: 8x − 11 ≤ 4x + 9',opts:['x ≤ 5','x ≥ 5','x ≤ −5'],ans:0,why:'4x ≤ 20, also x ≤ 5. Geteilt durch +4, Zeichen bleibt.'}]}
+];
+const $=s=>document.querySelector(s);
+let solved=new Set();
+try{solved=new Set(JSON.parse(localStorage.getItem('tg8')||'[]'))}catch(e){}
+const save=()=>{try{localStorage.setItem('tg8',JSON.stringify([...solved]))}catch(e){}};
+const fmt=v=>{if(!isFinite(v))return'–';const r=Math.round(v*1000)/1000;return String(r).replace('.',',').replace('-','−')};
+
+function norm(s){return s.replace(/[−–]/g,'-').replace(/[·×]/g,'*').replace(/:/g,'/').replace(/²/g,'^2').replace(/³/g,'^3').replace(/(\d),(\d)/g,'$1.$2').replace(/\s+/g,'')}
+function parse(src){
+const s=norm(src);if(!s)throw Error('Bitte einen Term eingeben.');
+const T=[];let i=0;
+while(i<s.length){const c=s[i];
+if(/[0-9.]/.test(c)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;T.push({t:'n',v:parseFloat(s.slice(i,j))});i=j}
+else if(/[a-zA-Z]/.test(c)){T.push({t:'v',v:c});i++}
+else if('+-*/^()'.includes(c)){T.push({t:c});i++}
+else throw Error('Das Zeichen „'+c+'“ kenne ich nicht.')}
+let p=0;const eat=t=>{if(T[p]&&T[p].t===t){p++;return true}return false};
+const expr=()=>{let f=term();for(;;){if(eat('+')){const a=f,b=term();f=e=>a(e)+b(e)}else if(eat('-')){const a=f,b=term();f=e=>a(e)-b(e)}else return f}};
+const term=()=>{let f=unary();for(;;){const k=T[p];if(!k)return f;
+if(k.t==='*'){p++;const a=f,b=unary();f=e=>a(e)*b(e)}
+else if(k.t==='/'){p++;const a=f,b=unary();f=e=>a(e)/b(e)}
+else if(k.t==='n'||k.t==='v'||k.t==='('){const a=f,b=power();f=e=>a(e)*b(e)}
+else return f}};
+const unary=()=>{if(eat('-')){const a=unary();return e=>-a(e)}if(eat('+'))return unary();return power()};
+const power=()=>{const b=prim();if(eat('^')){const x=unary();return e=>Math.pow(b(e),x(e))}return b};
+const prim=()=>{const k=T[p++];if(!k)throw Error('Der Term ist unvollständig.');
+if(k.t==='n'){const v=k.v;return()=>v}
+if(k.t==='v'){const n=k.v;return e=>e[n]}
+if(k.t==='('){const f=expr();if(!eat(')'))throw Error('Eine Klammer wird nicht geschlossen.');return f}
+throw Error('An der Stelle „'+k.t+'“ fehlt etwas.')};
+const f=expr();if(p<T.length)throw Error('Ich verstehe den Term ab „'+(T[p].v??T[p].t)+'“ nicht.');
+return{f,vars:[...new Set(T.filter(t=>t.t==='v').map(t=>t.v))].sort()}}
+const VALS=[2,3,-1,5,-2,0.5,1.5,4];
+function assign(vars,k){const e={};vars.forEach((v,i)=>e[v]=VALS[(k+i*3)%VALS.length]);return e}
+function equiv(a,b){const vs=[...new Set([...a.vars,...b.vars])];
+for(let k=0;k<VALS.length;k++){const e=assign(vs,k),A=a.f(e),Bv=b.f(e);if(!isFinite(A)||!isFinite(Bv))continue;
+if(Math.abs(A-Bv)>1e-7*Math.max(1,Math.abs(A),Math.abs(Bv)))return{ok:false,e,A,B:Bv}}return{ok:true}}
+const envText=e=>Object.keys(e).map(k=>k+' = '+fmt(e[k])).join(', ');
+function isProduct(s){const n=norm(s);let d=0;for(let i=0;i<n.length;i++){const c=n[i];if(c==='(')d++;else if(c===')')d--;else if(d===0&&i>0&&(c==='+'||c==='-')&&n[i-1]!=='^'&&n[i-1]!=='*'&&n[i-1]!=='/')return false}return n.includes('(')}
+
+function checkTask(t,val){
+if(t.k==='num'){const v=parseFloat(norm(val));if(isNaN(v))return['no','Bitte eine Zahl eingeben.'];return Math.abs(v-t.ans)<1e-9?['ok','Richtig! '+(t.why||'')]:['no','Noch nicht. '+(t.hint||'')]}
+let u;try{u=parse(val)}catch(e){return['no',e.message]}
+const r=equiv(u,parse(t.ans));
+if(!r.ok)return['no','Noch nicht gleichwertig. Probe mit '+envText(r.e)+': richtig wäre '+fmt(r.B)+', dein Term ergibt '+fmt(r.A)+'.'];
+if(t.form==='noParen'&&/[()]/.test(norm(val)))return['mid','Gleichwertig – aber es sind noch Klammern drin. Löse sie ganz auf.'];
+if(t.form==='product'&&!isProduct(val))return['mid','Gleichwertig – aber noch eine Summe. Schreibe es als Produkt mit Klammer.'];
+if(t.form==='short'&&norm(val).length>norm(t.ans).length+3)return['mid','Gleichwertig – aber es geht noch kürzer. Fasse gleichartige Terme zusammen.'];
+return['ok','Richtig! '+(t.why||'')]}
+
+function tabsHTML(cur){return B.map(b=>{const n=b.tasks.filter((t,i)=>solved.has(b.id+i)).length;return`<button class="tab" role="tab" id="tab-${b.id}" aria-selected="${b.id===cur}" data-id="${b.id}"><b>${b.id.toUpperCase()}</b><span>${b.name}</span><small>Check-In ${b.ci} · ${n}/${b.tasks.length} gelöst</small></button>`}).join('')}
+function taskHTML(b,t,i){const id=b.id+i,done=solved.has(id);
+const head=`<p class="q">${t.q}${t.t?` <span class="term">${t.t}</span>`:''}${done?'<span class="done">gelöst</span>':''}</p>`;
+const body=t.k==='choice'?`<div class="row">${t.opts.map((o,j)=>`<button class="btn" data-task="${i}" data-opt="${j}">${o}</button>`).join('')}</div>`
+:`<form class="row" data-task="${i}"><input type="text" id="in-${id}" aria-label="Antwort" autocomplete="off" placeholder="${t.k==='num'?'Zahl':'Term, z. B. 3x^2 + 2x'}"><button class="btn" type="submit">Prüfen</button><button class="btn" type="button" data-hint="${i}">Tipp</button></form>`;
+const inner=head+body+`<p class="hint" id="hint-${id}" hidden>${t.hint||''}</p><div id="fb-${id}" aria-live="polite"></div>`;
+return t.pro?`<div class="task pro"><div class="tag">Profi-Aufgabe</div>${inner}</div>`:`<div class="task">${inner}</div>`}
+
+let cur=B[0];
+function render(id){
+const b=B.find(x=>x.id===id)||B[0];
+$('#tabs').innerHTML=tabsHTML(b.id);
+const all=B.reduce((s,x)=>s+x.tasks.length,0);$('#prog').textContent=solved.size+' von '+all+' Aufgaben gelöst';
+$('#panel').innerHTML=`<section class="intro"><h2>${b.id.toUpperCase()} · ${b.name}</h2><p class="core">${b.core}</p><p>${b.text}</p></section>
+<div class="figwrap"><div class="card">${FIG[b.fig].html}</div></div>
+<section class="tasks card"><h3>Aufgaben</h3><p class="note">Terme tippst du so: 3x^2 für 3x², 2(x+1) für Klammern, Komma oder Punkt bei Dezimalzahlen.</p>${b.tasks.map((t,i)=>taskHTML(b,t,i)).join('')}</section>`;
+FIG[b.fig].init($('#panel .figwrap'));
+cur=b}
+function show(b,i,c,m){const id=b.id+i;$('#fb-'+id).innerHTML=`<p class="fb ${c}">${m}</p>`;if(c==='ok'&&!solved.has(id)){solved.add(id);save();$('#tabs').innerHTML=tabsHTML(b.id);const all=B.reduce((s,x)=>s+x.tasks.length,0);$('#prog').textContent=solved.size+' von '+all+' Aufgaben gelöst'}}
+
+const svgEl=(root,draw)=>{const s=root.querySelector('svg');const ro=new ResizeObserver(()=>draw(s,s.clientWidth,s.clientHeight));ro.observe(s);return()=>draw(s,s.clientWidth,s.clientHeight)};
+const C=['var(--t1)','var(--t2)','var(--t4)','var(--t3)'];
+const FIG={
+dots:{html:`<div id="d1"><p><b>Schritt 1:</b> Wie viele Punkte hat dieser Rahmen? Zähle geschickt, nicht jeden Punkt einzeln.</p><form class="row" id="df1"><input type="text" id="dc" aria-label="Anzahl der Punkte" placeholder="Anzahl" autocomplete="off" inputmode="numeric"><button class="btn">Prüfen</button></form><div id="dfb1" aria-live="polite"></div></div>
+<div id="d2" hidden><p><b>Schritt 2:</b> Jetzt hat jede Seite n Punkte. Schreibe deine Zählweise als Term mit n.</p><form class="row" id="df2"><input type="text" id="dt" aria-label="Term mit n" placeholder="z. B. 4n − 4" autocomplete="off"><button class="btn">Prüfen</button></form><div id="dfb2" aria-live="polite"></div></div>
+<div class="fig"><svg role="img" aria-label="Quadratischer Punktrahmen"></svg></div>
+<div id="d3" hidden><p><b>Schritt 3:</b> So haben andere gezählt. Ist deine Zählweise dabei?</p>
+<div class="ctrl" id="dstr">${['4n − 4','4(n − 1)','2n + 2(n − 2)','n² − (n − 2)²'].map((s,i)=>`<button class="btn${i?'':' on'}" type="button" data-s="${i}">${s}</button>`).join('')}</div>
+<div class="ctrl"><label for="dn">n = <span id="dnv">5</span></label><input type="range" id="dn" min="3" max="9" value="5"></div>
+<p class="out" id="dout"></p><p class="note" id="dnote"></p><div class="scroll"><table id="dtab"></table></div></div>
+<p><button class="btn" id="dskip" type="button">Zählweisen direkt zeigen</button></p>`,
+init(r){let phase=1,st=0,own=null,ownS='';const q=s=>r.querySelector(s);
+const CO=['var(--t1)','var(--t2)','var(--t4)','var(--muted)'];
+const T=[n=>4*n-4,n=>4*(n-1),n=>2*n+2*(n-2),n=>n*n-(n-2)**2];
+const EX=[N=>`4 · ${N} − 4`,N=>`4 · (${N} − 1)`,N=>`2 · ${N} + 2 · (${N} − 2)`,N=>`${N}² − (${N} − 2)²`];
+const NOTE=['Jede Seite hat n Punkte. Die Umrandungen überlappen an den Ecken (rot): Jede Ecke wurde zweimal gezählt. Deshalb − 4.','Vier gleiche Stücke mit je n − 1 Punkten, rundherum. Keine Ecke wird doppelt gezählt.','Oben und unten je n Punkte. Links und rechts bleiben ohne Ecken je n − 2 Punkte.','Alle Punkte im vollen Quadrat: n². Das Innere (gestrichelt) ist leer und wird abgezogen: (n − 2)².'];
+const count=N=>{let c=0;for(let j=0;j<N;j++)for(let i=0;i<N;i++)if(i===0||j===0||i===N-1||j===N-1)c++;return c};
+const G=(s,N)=>s===0?[[0,0,N-1,0,0,N,'t'],[0,N-1,N-1,N-1,1,N,'b'],[0,0,0,N-1,2,N,'l'],[N-1,0,N-1,N-1,3,N,'r']]
+:s===1?[[0,0,N-2,0,0,N-1,'t'],[N-1,0,N-1,N-2,1,N-1,'r'],[1,N-1,N-1,N-1,2,N-1,'b'],[0,1,0,N-1,3,N-1,'l']]
+:s===2?[[0,0,N-1,0,0,N,'t'],[0,N-1,N-1,N-1,1,N,'b'],[0,1,0,N-2,2,N-2,'l'],[N-1,1,N-1,N-2,3,N-2,'r']]
+:[[0,0,N-1,N-1,0,'alle: n² = '+N*N,'t'],[1,1,N-2,N-2,-1,'innen leer: (n − 2)² = '+(N-2)**2,'b']];
+const draw=(s,W,H)=>{const N=phase<3?5:+q('#dn').value,m=50,c=Math.min((W-2*m)/(N-1),(H-2*m)/(N-1),64),ox=(W-c*(N-1))/2,oy=(H-c*(N-1))/2,rad=Math.max(5,Math.min(c*0.2,11));
+let back='',front='',lab='';
+if(phase===3)G(st,N).forEach(g=>{const [i0,j0,i1,j1,k,l,side]=g,horiz=j0===j1,full=k===0&&st===3,inner=k<0;
+const pad=inner?rad+5:full?rad+9:horiz?rad+6:rad+13,col=inner?'var(--red)':CO[k];
+const x=ox+i0*c-pad,y=oy+j0*c-pad,w=(i1-i0)*c+2*pad,h=(j1-j0)*c+2*pad;
+back+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(pad,w/2,h/2)}" fill="${col}" fill-opacity="${inner?0:.13}" stroke="${col}" stroke-width="3"${inner?' stroke-dasharray="7 6"':''}/>`;
+const [tx,ty,an]=side==='t'?[x+w/2,y-10,'middle']:side==='b'?[x+w/2,(inner?oy+(N-1)*c+rad+9:y+h)+24,'middle']:side==='l'?[x-8,y+h/2+5,'end']:[x+w+8,y+h/2+5,'start'];
+lab+=`<text x="${tx}" y="${ty}" text-anchor="${an}" style="fill:${col};font-weight:700">${l}</text>`});
+for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x=ox+i*c,y=oy+j*c,edge=i===0||j===0||i===N-1||j===N-1;
+if(edge)front+=`<circle cx="${x}" cy="${y}" r="${rad}" fill="var(--ink)"/>`;
+else if(phase===3&&st===3)front+=`<circle cx="${x}" cy="${y}" r="${rad*.7}" fill="none" stroke="var(--line)" stroke-width="2"/>`;
+if(phase===3&&st===0&&(i===0||i===N-1)&&(j===0||j===N-1))front+=`<circle cx="${x}" cy="${y}" r="${rad+5}" fill="none" stroke="var(--red)" stroke-width="3"/>`}
+s.innerHTML=back+front+lab;
+if(phase===3){q('#dnv').textContent=N;q('#dout').textContent=`n = ${N}:  ${EX[st](N)} = ${T[st](N)} Punkte`;q('#dnote').textContent=NOTE[st];
+const H2=['n','gezählt','4n − 4','4(n − 1)','2n + 2(n − 2)','n² − (n − 2)²'].concat(own?['dein Term']:[]);
+let h='<tr>'+H2.map(x=>`<th>${x}</th>`).join('')+'</tr>';
+for(let n=3;n<=8;n++)h+=`<tr${n===N?' class="eq"':''}><td>${n}</td><td>${count(n)}</td>${T.map(f=>`<td>${f(n)}</td>`).join('')}${own?`<td>${fmt(own.f({n}))}</td>`:''}</tr>`;
+q('#dtab').innerHTML=h}};
+const redraw=svgEl(r,draw);
+const fb=(id,c,m)=>q(id).innerHTML=`<p class="fb ${c}">${m}</p>`;
+const to3=()=>{phase=3;q('#d3').hidden=false;q('#dskip').parentNode.hidden=true;redraw()};
+q('#df1').addEventListener('submit',e=>{e.preventDefault();const v=parseFloat(norm(q('#dc').value));
+if(v===16){fb('#dfb1','ok','Richtig, 16 Punkte. Wie hast du gezählt? Das schreibst du jetzt als Term.');phase=2;q('#d2').hidden=false;q('#dt').focus()}
+else if(v===20)fb('#dfb1','mid','Fast. 4 Seiten mit je 5 Punkten sind 20 – aber jede Ecke gehört zu zwei Seiten. Hast du sie doppelt gezählt?');
+else if(v===25)fb('#dfb1','mid','Das wäre das volle Quadrat. Der Rahmen ist innen leer.');
+else fb('#dfb1','no','Noch nicht. Tipp: Eine Seite hat 5 Punkte. Was passiert mit den Ecken?')});
+q('#df2').addEventListener('submit',e=>{e.preventDefault();let u;ownS=q('#dt').value;
+try{u=parse(ownS)}catch(err){fb('#dfb2','no',err.message);return}
+if(!u.vars.length){fb('#dfb2','mid','Das ist eine feste Zahl. Ein Term mit n soll für jede Rahmengröße passen: Ersetze die 5 durch n.');return}
+if(u.vars.some(v=>v!=='n')){fb('#dfb2','mid','Benutze nur die Variable n für die Anzahl pro Seite.');return}
+const bad=[3,4,5,6,7,8,9,10].filter(n=>Math.abs(u.f({n})-count(n))>1e-9);
+if(!bad.length){own=u;fb('#dfb2','ok','Dein Term stimmt für jedes n von 3 bis 10. Er beschreibt jeden Rahmen, nicht nur diesen einen.');to3()}
+else fb('#dfb2','no',`Bei n = ${bad[0]} hat der Rahmen ${count(bad[0])} Punkte, dein Term ergibt ${fmt(u.f({n:bad[0]}))}.`+(bad.includes(5)?'':' Bei n = 5 stimmt er – rechnest du irgendwo mit einer festen Zahl statt mit n?'))});
+q('#dskip').addEventListener('click',to3);
+q('#dn').addEventListener('input',redraw);
+q('#dstr').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;st=+b.dataset.s;r.querySelectorAll('#dstr .btn').forEach(x=>x.classList.toggle('on',x===b));redraw()})}},
+check:{html:`<div class="ctrl"><label for="c1">Term 1</label><input type="text" id="c1" value="3x + 2y + x"><label for="c2">Term 2</label><input type="text" id="c2" value="6xy"></div>
+<div class="scroll"><table id="ctab"></table></div><p class="out" id="cout"></p>
+<p class="note">Typische Fehler zum Ausprobieren:</p><div class="chips">${[['3x + 2y + x','6xy'],['3a + 4b','7ab'],['a · a','2a'],['x + x','x²'],['2(x + 3)','2x + 3'],['(a + b)²','a² + b²'],['(a + b)²','a² + 2ab + b²'],['−(b − c)','−b − c']].map(p=>`<button class="btn" data-p="${p.join('|')}">${p[0]} = ${p[1]}?</button>`).join('')}</div>`,
+init(r){const go=()=>{let a,b;const tab=r.querySelector('#ctab'),out=r.querySelector('#cout');
+try{a=parse(r.querySelector('#c1').value);b=parse(r.querySelector('#c2').value)}catch(e){tab.innerHTML='';out.textContent=e.message;return}
+const vs=[...new Set([...a.vars,...b.vars])];let bad=0;
+const rows=[0,1,2,3,5].map(k=>{const e=assign(vs,k),A=a.f(e),Bv=b.f(e),eq=Math.abs(A-Bv)<1e-9;if(!eq)bad++;return`<tr class="${eq?'eq':''}"><td>${vs.length?envText(e):'–'}</td><td>${fmt(A)}</td><td${eq?'':' class="ne"'}>${fmt(Bv)}</td><td>${eq?'gleich':'verschieden'}</td></tr>`});
+tab.innerHTML=`<tr><th>Einsetzen</th><th>Term 1</th><th>Term 2</th><th>Ergebnis</th></tr>`+rows.join('');
+out.textContent=bad?`Nicht gleichwertig: ${bad} von 5 Proben verschieden.`:'Bei allen Proben gleich – vermutlich gleichwertig.'};
+r.addEventListener('input',e=>{if(e.target.matches('#c1,#c2'))go()});
+r.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const [x,y]=b.dataset.p.split('|');r.querySelector('#c1').value=x;r.querySelector('#c2').value=y;go()});go()}},
+area:{html:`<div class="ctrl"><label for="ap">p = <span id="apv">2</span></label><input type="range" id="ap" min="1" max="6" value="2"><label for="aq">q = <span id="aqv">3</span></label><input type="range" id="aq" min="1" max="6" value="3"><label for="ax">x = <span id="axv">5</span></label><input type="range" id="ax" min="2" max="10" value="5"></div>
+<div class="fig"><svg role="img" aria-label="Rechteck in vier Teilflächen"></svg></div>
+<div class="legend"><span><i style="background:var(--t1)"></i>x²</span><span><i style="background:var(--t2)"></i>Rechtecke mit x</span><span><i style="background:var(--t3)"></i>Zahl · Zahl</span></div><p class="out" id="aout"></p><p class="note" id="anote"></p>`,
+init(r){const v=id=>+r.querySelector(id).value;
+const draw=(s,W,H)=>{const p=v('#ap'),q=v('#aq'),x=v('#ax'),m=34,k=Math.min((W-m-10)/(x+q),(H-m-10)/(x+p)),ox=m+(W-m-10-k*(x+q))/2,oy=m;
+const cell=(X,Y,w,h,f,l)=>`<rect x="${ox+X*k}" y="${oy+Y*k}" width="${w*k}" height="${h*k}" fill="${f}" stroke="var(--panel)" stroke-width="3" rx="4"/>`+(w*k>46&&h*k>28?`<text x="${ox+(X+w/2)*k}" y="${oy+(Y+h/2)*k+5}" text-anchor="middle">${l}</text>`:'');
+s.innerHTML=cell(0,0,x,x,'var(--t1)','x²')+cell(x,0,q,x,'var(--t2)',q+'x')+cell(0,x,x,p,'var(--t2)',p+'x')+cell(x,x,q,p,'var(--t3)',p*q)
++`<text x="${ox+x*k/2}" y="${oy-10}" text-anchor="middle">x</text><text x="${ox+(x+q/2)*k}" y="${oy-10}" text-anchor="middle">+ ${q}</text><text x="${ox-10}" y="${oy+x*k/2+5}" text-anchor="end">x</text><text x="${ox-10}" y="${oy+(x+p/2)*k+5}" text-anchor="end">+${p}</text>`;
+['p','q','x'].forEach(n=>r.querySelector('#a'+n+'v').textContent=v('#a'+n));
+r.querySelector('#aout').textContent=`(x + ${p})(x + ${q}) = x² + ${q}x + ${p}x + ${p*q} = x² + ${p+q}x + ${p*q}`;
+r.querySelector('#anote').textContent=`Probe für x = ${x}: (${x} + ${p}) · (${x} + ${q}) = ${(x+p)*(x+q)} und ${x*x} + ${(p+q)*x} + ${p*q} = ${x*x+(p+q)*x+p*q}. Gleich!`};
+const redraw=svgEl(r,draw);r.querySelectorAll('input').forEach(i=>i.addEventListener('input',redraw))}},
+square:{html:`<div class="ctrl"><label for="sa">a = <span id="sav">5</span></label><input type="range" id="sa" min="1" max="8" value="5"><label for="sb">b = <span id="sbv">3</span></label><input type="range" id="sb" min="1" max="8" value="3"><button class="btn" id="tom" aria-pressed="false">Toms Behauptung</button></div>
+<div class="fig"><svg role="img" aria-label="Quadrat mit Seite a plus b"></svg></div><p class="out" id="sout"></p><p class="note" id="snote"></p>`,
+init(r){let tom=false;const v=id=>+r.querySelector(id).value;
+const draw=(s,W,H)=>{const a=v('#sa'),b=v('#sb'),m=34,k=Math.min((W-m-10)/(a+b),(H-m-10)/(a+b)),ox=m+(W-m-10-k*(a+b))/2,oy=m;
+const cell=(X,Y,w,h,f,l,miss)=>`<rect x="${ox+X*k}" y="${oy+Y*k}" width="${w*k}" height="${h*k}" fill="${miss?'url(#hatch)':f}" stroke="${miss?'var(--red)':'var(--panel)'}" stroke-width="3" rx="4"/>`+(w*k>40&&h*k>26?`<text x="${ox+(X+w/2)*k}" y="${oy+(Y+h/2)*k+5}" text-anchor="middle">${miss?'fehlt':l}</text>`:'');
+s.innerHTML=`<defs><pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="var(--panel)"/><line x1="0" y1="0" x2="0" y2="10" stroke="var(--red)" stroke-width="3"/></pattern></defs>`
++cell(0,0,a,a,'var(--t1)','a²')+cell(a,0,b,a,'var(--t2)','ab',tom)+cell(0,a,a,b,'var(--t2)','ab',tom)+cell(a,a,b,b,'var(--t3)','b²')
++`<text x="${ox+a*k/2}" y="${oy-10}" text-anchor="middle">a = ${a}</text><text x="${ox+(a+b/2)*k}" y="${oy-10}" text-anchor="middle">b = ${b}</text>`;
+r.querySelector('#sav').textContent=a;r.querySelector('#sbv').textContent=b;
+r.querySelector('#sout').textContent=tom?`Tom: a² + b² = ${a*a} + ${b*b} = ${a*a+b*b} – aber (a + b)² = ${(a+b)**2}`:`(a + b)² = a² + 2ab + b² = ${a*a} + ${2*a*b} + ${b*b} = ${(a+b)**2}`;
+r.querySelector('#snote').textContent=tom?`Es fehlen die zwei Rechtecke ab: 2 · ${a} · ${b} = ${2*a*b}.`:`Das Quadrat mit Seite ${a} + ${b} = ${a+b} hat den Flächeninhalt ${(a+b)**2}.`};
+const redraw=svgEl(r,draw);r.querySelectorAll('input').forEach(i=>i.addEventListener('input',redraw));
+r.querySelector('#tom').addEventListener('click',e=>{tom=!tom;e.currentTarget.classList.toggle('on',tom);e.currentTarget.setAttribute('aria-pressed',tom);redraw()})}},
+eq:{html:`<div class="ctrl"><label for="es">Gleichung</label><select id="es">${['3x − 4 = 2x + 1','6/(x − 2) = 3','3/(x + 4) = 4/(2x)','x/(x − 3) = 3/(x − 3)','2x + 3 = 11'].map(g=>`<option>${g}</option>`).join('')}<option value="">eigene …</option></select><input type="text" id="eo" placeholder="z. B. 5x − 2 = 3x + 6" hidden></div>
+<div class="scroll"><table id="etab"></table></div><p class="out" id="eout"></p>`,
+init(r){const sel=r.querySelector('#es'),own=r.querySelector('#eo');
+const go=()=>{const src=sel.value||own.value,out=r.querySelector('#eout'),tab=r.querySelector('#etab');const parts=norm(src).split('=');
+if(parts.length!==2){tab.innerHTML='';out.textContent='Eine Gleichung braucht genau ein Gleichheitszeichen.';return}
+let L,R;try{L=parse(parts[0]);R=parse(parts[1])}catch(e){tab.innerHTML='';out.textContent=e.message;return}
+const sol=[],undef=[];let h='<tr><th>x</th><th>linke Seite</th><th>rechte Seite</th><th></th></tr>';
+for(let x=-3;x<=10;x++){const a=L.f({x}),b=R.f({x}),u=!isFinite(a)||!isFinite(b),eq=!u&&Math.abs(a-b)<1e-9;if(eq)sol.push(x);if(u)undef.push(x);
+h+=`<tr class="${eq?'eq':''}"><td>${fmt(x)}</td><td>${isFinite(a)?fmt(a):'geteilt durch 0'}</td><td>${isFinite(b)?fmt(b):'geteilt durch 0'}</td><td>${u?'verboten':eq?'gleich':''}</td></tr>`}
+tab.innerHTML=h;
+out.textContent=(sol.length?`Beide Seiten gleich bei x = ${sol.map(fmt).join(', ')}.`:'Keine ganze Zahl von −3 bis 10 passt.')+(undef.length?` Ausgeschlossen: x = ${undef.map(fmt).join(', ')}.`:'')};
+sel.addEventListener('change',()=>{own.hidden=!!sel.value;go()});own.addEventListener('input',go);go()}},
+line:{html:`<div class="ctrl"><label for="ls">Ungleichung</label><select id="ls">${['−2x < 6','2x + 3 < 11','3x + 12 ≤ 9','−5x + 3 > −17','8x − 11 ≤ 4x + 9'].map(g=>`<option>${g}</option>`).join('')}<option value="">eigene …</option></select><input type="text" id="lo" placeholder="z. B. 4 − x > 1" hidden></div>
+<div class="fig" style="min-height:150px"><svg id="lsvg" role="img" aria-label="Zahlengerade"></svg></div><p class="out" id="lout"></p>
+<h3 style="margin-top:18px">Warum dreht sich das Zeichen um?</h3><p class="note">2 &lt; 5. Multipliziere beide Zahlen mit (−1):</p>
+<div class="fig mirror" style="min-height:110px"><svg id="msvg" role="img" aria-label="Spiegelung an der Null"></svg></div><div class="ctrl"><button class="btn" id="mb" aria-pressed="false">mal (−1)</button><span class="out" id="mout" style="margin:0">2 &lt; 5</span></div>`,
+init(r){const sel=r.querySelector('#ls'),own=r.querySelector('#lo');let flip=false;
+const axis=(W,y,lo,hi)=>{const X=v=>20+(v-lo)*(W-40)/(hi-lo);let h=`<line x1="10" y1="${y}" x2="${W-10}" y2="${y}" stroke="var(--ink)" stroke-width="2"/>`;for(let v=lo;v<=hi;v++){h+=`<line x1="${X(v)}" y1="${y-6}" x2="${X(v)}" y2="${y+6}" stroke="var(--ink)" stroke-width="${v?1.5:3}"/>`;if(W>=520||v%2===0)h+=`<text x="${X(v)}" y="${y+28}" text-anchor="middle">${fmt(v)}</text>`}return[h,X]};
+const drawL=(s,W,H)=>{const src=norm(sel.value||own.value),m=src.match(/<=|>=|≤|≥|<|>/),out=r.querySelector('#lout');
+const [h,X]=axis(W,H/2,-8,8);if(!m){s.innerHTML=h;out.textContent='Es fehlt ein Zeichen: <, >, ≤ oder ≥.';return}
+let L,R;try{L=parse(src.slice(0,m.index));R=parse(src.slice(m.index+m[0].length))}catch(e){s.innerHTML=h;out.textContent=e.message;return}
+const op=m[0],ok=x=>{const a=L.f({x}),b=R.f({x});return op==='<'?a<b:op==='>'?a>b:(op==='<='||op==='≤')?a<=b+1e-9:a>=b-1e-9};let d='',yes=[];
+for(let x=-8;x<=8;x++){const t=ok(x);if(t)yes.push(x);d+=`<circle cx="${X(x)}" cy="${H/2}" r="9" fill="${t?'var(--t1)':'var(--panel)'}" stroke="${t?'var(--t1)':'var(--muted)'}" stroke-width="2.5"/>`}
+s.innerHTML=h+d;out.textContent=yes.length?`Erfüllt für die gefüllten Punkte (${yes.length} von 17 ganzen Zahlen von −8 bis 8).`:'Keine ganze Zahl von −8 bis 8 erfüllt die Ungleichung.'};
+const drawM=(s,W,H)=>{const [h,X]=axis(W,H/2-6,-6,6);const dx=v=>X(flip?-v:v)-X(0);
+s.innerHTML=h+`<circle cx="${X(0)}" cy="${H/2-6}" r="11" fill="var(--t2)" style="transform:translateX(${dx(2)}px)"/><circle cx="${X(0)}" cy="${H/2-6}" r="11" fill="var(--t4)" style="transform:translateX(${dx(5)}px)"/>`};
+const rl=svgEl(r.querySelector('#lsvg').parentNode,drawL);const ms=r.querySelector('#msvg');const rm=svgEl(ms.parentNode,drawM);
+sel.addEventListener('change',()=>{own.hidden=!!sel.value;rl()});own.addEventListener('input',rl);
+r.querySelector('#mb').addEventListener('click',e=>{flip=!flip;e.currentTarget.classList.toggle('on',flip);e.currentTarget.setAttribute('aria-pressed',flip);
+const cs=ms.querySelectorAll('circle'),X0=ms.clientWidth;const step=(X0-40)/12;cs[0].style.transform=`translateX(${(flip?-2:2)*step}px)`;cs[1].style.transform=`translateX(${(flip?-5:5)*step}px)`;
+r.querySelector('#mout').textContent=flip?'−2 > −5: Die Reihenfolge ist gespiegelt, das Zeichen dreht sich um.':'2 < 5'})}}
+};
+const P=$('#panel');
+P.addEventListener('submit',ev=>{ev.preventDefault();if(!ev.target.dataset.task)return;const b=cur,i=+ev.target.dataset.task,t=b.tasks[i],id=b.id+i;const [c,m]=checkTask(t,$('#in-'+id).value);show(b,i,c,m)});
+P.addEventListener('click',ev=>{const b=cur;const o=ev.target.closest('[data-opt]');if(o){const i=+o.dataset.task,t=b.tasks[i],j=+o.dataset.opt;show(b,i,j===t.ans?'ok':'no',j===t.ans?'Richtig! '+t.why:'Noch nicht. '+(t.hint||'Prüfe durch Einsetzen.'))}
+const h=ev.target.closest('[data-hint]');if(h){const el=$('#hint-'+b.id+h.dataset.hint);el.hidden=!el.hidden}});
+const route=()=>{const h=location.hash.slice(1);render(B.some(b=>b.id===h)?h:'a')};
+$('#tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;if(location.hash!=='#'+t.dataset.id)location.hash=t.dataset.id;else render(t.dataset.id)});
+addEventListener('hashchange',route);route();
+}
+</script>
+</body>
+</html>
