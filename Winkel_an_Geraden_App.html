@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Winkel an Geraden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#00008C; --navy-soft:#2B2BA6; --blue:#9CC3FF; --blue-soft:#E6F0FF;
+    --orange:#F2B144; --orange-deep:#B4541A; --teal:#0E7C7B; --ink:#1B1D2A;
+    --muted:#5D6275; --line:#D7DBE7; --bg:#F7F8FC; --card:#FFFFFF;
+    --ok:#1F7A46; --ok-bg:#E5F4EA; --bad:#B4541A; --bad-bg:#FDEEE2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+  header{background:var(--navy);color:#fff;padding:18px 28px 0}
+  .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .kicker{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;font-weight:600}
+  h1{margin:4px 0 14px;font-size:28px;font-weight:800;letter-spacing:-.01em}
+  nav{display:flex;gap:6px;max-width:1180px;margin:0 auto}
+  nav button{appearance:none;border:0;background:transparent;color:#fff;opacity:.75;font:600 16px Inter,sans-serif;padding:12px 18px;border-radius:12px 12px 0 0;cursor:pointer}
+  nav button[aria-selected="true"]{background:var(--bg);color:var(--navy);opacity:1}
+  nav button:focus-visible{outline:3px solid var(--orange);outline-offset:-3px}
+  .teacher{display:flex;align-items:center;gap:8px;font-size:14px;padding-bottom:14px;opacity:.95}
+  main{max-width:1180px;margin:0 auto;padding:24px 28px 48px}
+  section[hidden]{display:none}
+  .intro{font-size:17px;color:var(--muted);margin:0 0 20px;max-width:760px;line-height:1.5}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .two{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+  @media (max-width:880px){.two{grid-template-columns:1fr}}
+  .disc-wrap{display:flex;justify-content:center}
+  svg.disc{width:100%;max-width:520px;height:auto;touch-action:none;user-select:none;cursor:grab}
+  svg.disc.dragging{cursor:grabbing}
+  .side h2{font-size:18px;margin:0 0 10px}
+  .side p{margin:0 0 14px;color:var(--muted);line-height:1.5;font-size:15px}
+  .readout{display:flex;flex-direction:column;gap:6px;background:var(--blue-soft);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .readout .big{font-size:40px;font-weight:800;color:var(--navy);line-height:1}
+  .readout .small{font-size:15px;color:var(--navy-soft);font-weight:600}
+  .readout.hide-deg .big{color:#9aa3c7}
+  .toggle{display:flex;align-items:center;gap:10px;font-size:15px;margin:8px 0;cursor:pointer}
+  .toggle input{width:20px;height:20px;accent-color:var(--navy)}
+  .artlegend{list-style:none;margin:10px 0 4px;padding:0;display:flex;flex-direction:column;gap:4px}
+  .artlegend li{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:10px;padding:5px 8px;border-radius:8px;font-size:14px;color:var(--muted)}
+  .artlegend li i{width:18px;height:18px;border-radius:50%;border:1.5px solid #1B1D2A55}
+  .artlegend li small{font-size:13px;white-space:nowrap}
+  .artlegend li span{white-space:nowrap}
+  .artlegend li.on{background:#EEF0F7;color:var(--ink);font-weight:700}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);font:600 15px Inter,sans-serif;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn:hover{border-color:var(--navy-soft)}
+  .btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+  .btn.primary:hover{background:var(--navy-soft)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  @media (max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .kcard{position:relative;background:#fff;border:2px dashed #B9BFD0;border-radius:14px;aspect-ratio:1/1;padding:0;cursor:pointer;transition:transform .12s, border-color .12s, box-shadow .12s}
+  .kcard:hover{transform:translateY(-2px);border-color:var(--navy-soft)}
+  .kcard:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+  .kcard.used{opacity:.25;pointer-events:none}
+  .kcard.sel{border-style:solid;border-color:var(--orange);box-shadow:0 0 0 3px #F2B14455}
+  .kcard svg{width:100%;height:100%;display:block}
+  .deg{position:absolute;right:10px;bottom:8px;font-weight:800;color:var(--orange-deep);font-size:15px}
+  .row-label{font-weight:700;margin:24px 0 10px;font-size:16px}
+  .order{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;align-items:center}
+  @media (max-width:700px){.order{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .slot{aspect-ratio:1/1;border:2px solid var(--line);border-radius:12px;background:#fff;position:relative;display:flex;align-items:center;justify-content:center;color:#B9BFD0;font-weight:700;font-size:13px;cursor:pointer;padding:0}
+  .slot.filled{border-color:var(--navy-soft)}
+  .slot.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .slot.right{border-color:var(--ok);background:var(--ok-bg)}
+  .slot svg{width:100%;height:100%}
+  .order-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:6px}
+  .feedback{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:16px;line-height:1.45;display:none}
+  .feedback.ok{display:block;background:var(--ok-bg);color:var(--ok)}
+  .feedback.bad{display:block;background:var(--bad-bg);color:var(--bad)}
+  .feedback.info{display:block;background:var(--blue-soft);color:var(--navy)}
+  .pick{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-bottom:18px}
+  @media (max-width:700px){.pick{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .compare{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:22px;align-items:center}
+  @media (max-width:880px){.compare{grid-template-columns:1fr}}
+  .bigcard{background:#fff;border:2px dashed #B9BFD0;border-radius:16px;aspect-ratio:1/1;position:relative;max-width:420px;width:100%;margin:0 auto}
+  .bigcard svg{width:100%;height:100%}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:10px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:18px;height:4px;border-radius:2px;display:inline-block}
+  .seg{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  svg.geo{max-width:none;cursor:default}
+  svg.geo .hnd{cursor:grab}
+  footer{max-width:1180px;margin:0 auto;padding:0 28px 32px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header style="padding-bottom:18px">
+  <div class="head-row">
+    <div>
+      <div class="kicker">Klasse 5 · Winkel</div>
+      <h1 style="margin-bottom:0">Winkel an Geraden</h1>
+    </div>
+  </div>
+</header>
+<main>
+  <section id="geraden">
+    <p class="intro" id="gIntro">Ziehe an den Punkten am Ende der Geraden. Beobachte die vier Winkel, während du die Geraden bewegst. Was fällt dir auf?</p>
+    <div class="seg" role="group" aria-label="Ansicht">
+      <button class="btn primary" id="modeKreuz" aria-pressed="true">Geradenkreuzung</button>
+      <button class="btn" id="modePar" aria-pressed="false">Geschnittene Parallelen</button>
+    </div>
+    <div class="two">
+      <div class="panel"><svg class="disc geo" id="geo" viewBox="0 0 640 460" role="img" aria-label="Geraden mit Winkeln, ziehbar"></svg></div>
+      <div class="panel side">
+        <label class="toggle"><input type="checkbox" id="gMeasure"> Winkel messen</label>
+        <div id="kreuzSide">
+          <div class="readout" style="margin-top:12px">
+            <div class="small" id="gSum1">Schalte „Winkel messen“ ein.</div>
+            <div class="small" id="gSum2"></div>
+          </div>
+          <p>Bewege die Geraden in drei verschiedene Lagen. Notiere jedes Mal α, β, γ und δ auf deinem Arbeitsblatt. Was fällt dir auf? Kannst du erklären, <i>warum</i> das so ist?</p>
+        </div>
+        <div id="parSide" hidden>
+          <label class="toggle"><input type="checkbox" id="gParallel" checked> g und h sind parallel</label>
+          <div class="btns">
+            <button class="btn" id="showStufe">Stufenwinkel zeigen</button>
+            <button class="btn" id="showWechsel">Wechselwinkel zeigen</button>
+          </div>
+          <div class="readout" style="margin-top:14px"><div class="small" id="gPair">Wähle ein Winkelpaar.</div></div>
+          <p>Vergleiche die markierten Winkel. Nimm dann den Haken bei „parallel“ weg und drehe h. Was ändert sich?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Didaktik der Geometrie · Referat Winkel · Stunde 6: Neben-, Scheitel-, Stufen- und Wechselwinkel · eigene Darstellung</footer>
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const C = { navy:"#00008C", blue:"#9CC3FF", orange:"#F2B144", teal:"#0E7C7B", ink:"#1B1D2A" };
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const rad = d => d * Math.PI / 180;
+  const pt = (cx, cy, r, deg) => [cx + r * Math.cos(rad(deg)), cy - r * Math.sin(rad(deg))];
+
+  /* ---------------- Teil 4: Winkel an Geraden ---------------- */
+  const geo = document.getElementById("geo");
+  const gMeasure = document.getElementById("gMeasure"), gParallel = document.getElementById("gParallel");
+  const NAMES = ["α", "β", "γ", "δ"];
+  const st = { mode: "kreuz", t1: 18, t2: 72, tq: 62, th: 0, pair: null };
+  const norm = a => ((a % 360) + 360) % 360;
+  const fmt = a => Math.round(a) + "°";
+  const sectorPath = (x, y, r, a0, a1) => { const [x0, y0] = pt(x, y, r, a0), [x1, y1] = pt(x, y, r, a1); return `M ${x} ${y} L ${x0} ${y0} A ${r} ${r} 0 0 0 ${x1} ${y1} Z`; };
+  function line(x, y, t, len, attrs = {}) {
+    const [x0, y0] = pt(x, y, -len, t), [x1, y1] = pt(x, y, len, t);
+    return el("line", Object.assign({ x1: x0, y1: y0, x2: x1, y2: y1, stroke: C.ink, "stroke-width": 4, "stroke-linecap": "round" }, attrs), geo);
+  }
+  // vier Winkel an einem Schnittpunkt; base = Richtung der "waagerechten" Geraden, q = Richtung der anderen (base < q < base+180)
+  function vier(x, y, base, q, suffix, highlight) {
+    const a = norm(q - base);
+    const secs = [[base, base + a], [base + a, base + 180], [base + 180, base + 180 + a], [base + 180 + a, base + 360]];
+    const sizes = [a, 180 - a, a, 180 - a];
+    secs.forEach(([a0, a1], k) => {
+      const isHi = highlight && highlight.includes(k);
+      const col = isHi ? C.orange : "#FFFFFF";
+      el("path", { d: sectorPath(x, y, 34, a0, a1), fill: col, stroke: C.ink, "stroke-width": isHi ? 3 : 1.4, opacity: highlight && !isHi ? 0.35 : 1 }, geo);
+      const mid = (a0 + a1) / 2, [lx, ly] = pt(x, y, gMeasure.checked ? 66 : 54, mid);
+      const t = el("text", { x: lx, y: ly, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 18, "font-weight": isHi ? 800 : 600,
+        fill: highlight && !isHi ? "#9aa0b4" : C.ink, "font-family": "Inter, sans-serif" }, geo);
+      t.textContent = NAMES[k] + (suffix || "") + (gMeasure.checked ? " = " + fmt(sizes[k]) : "");
+    });
+    el("circle", { cx: x, cy: y, r: 5, fill: C.ink }, geo);
+    return sizes;
+  }
+  function handle(x, y, key, pivot) {
+    const h = el("circle", { cx: x, cy: y, r: 13, fill: "#fff", stroke: C.navy, "stroke-width": 5, class: "hnd", tabindex: 0 }, geo);
+    h.dataset.key = key; h.dataset.px = pivot[0]; h.dataset.py = pivot[1];
+    return h;
+  }
+  function drawGeo() {
+    geo.innerHTML = "";
+    if (st.mode === "kreuz") {
+      const S = [320, 230];
+      line(...S, st.t1, 400); line(...S, st.t2, 400);
+      let q = st.t2; while (q <= st.t1) q += 180; while (q > st.t1 + 180) q -= 180;
+      const sizes = vier(...S, st.t1, q, "");
+      const lbl = el("text", { x: S[0] + 14, y: S[1] + 26, "font-size": 16, fill: C.ink, "font-style": "italic", "font-family": "Inter, sans-serif" }, geo); lbl.textContent = "S";
+      handle(...pt(...S, 190, st.t1), "t1", S); handle(...pt(...S, 190, st.t2), "t2", S);
+      document.getElementById("gSum1").textContent = gMeasure.checked ? `α = ${fmt(sizes[0])} · β = ${fmt(sizes[1])}` : "Schalte „Winkel messen“ ein.";
+      document.getElementById("gSum2").textContent = gMeasure.checked ? `γ = ${fmt(sizes[2])} · δ = ${fmt(sizes[3])}` : "";
+    } else {
+      const G = [320, 140], Hp = [320, 330];
+      const th = gParallel.checked ? 0 : st.th;
+      line(...G, 0, 600); line(...Hp, th, 600);
+      // Querlinie durch G mit Richtung tq; Schnitt mit h
+      const tq = st.tq, dq = [Math.cos(rad(tq)), -Math.sin(rad(tq))], dh = [Math.cos(rad(th)), -Math.sin(rad(th))];
+      const det = dq[0] * (-dh[1]) - dq[1] * (-dh[0]);
+      const rx = Hp[0] - G[0], ry = Hp[1] - G[1];
+      const s = (rx * (-dh[1]) - ry * (-dh[0])) / det;
+      const X2 = [G[0] + s * dq[0], G[1] + s * dq[1]];
+      line(...G, tq, 600);
+      const hi1 = st.pair === "stufe" ? [0] : st.pair === "wechsel" ? [0] : null;
+      const hi2 = st.pair === "stufe" ? [0] : st.pair === "wechsel" ? [2] : null;
+      const s1 = vier(...G, 0, tq, "₁", hi1);
+      let q2 = tq; while (q2 <= th) q2 += 180; while (q2 > th + 180) q2 -= 180;
+      const s2 = vier(...X2, th, q2, "₂", hi2);
+      for (const [p, n] of [[G, "g"], [Hp, "h"]]) {
+        const [lx, ly] = n === "g" ? [610, G[1] - 12] : pt(...Hp, 280, th);
+        const t = el("text", { x: lx, y: n === "g" ? ly : ly - 12, "font-size": 20, "font-style": "italic", fill: C.ink, "text-anchor": "end", "font-family": "Inter, sans-serif" }, geo); t.textContent = n;
+      }
+      handle(...pt(...G, 110, tq), "tq", G);
+      if (!gParallel.checked) handle(...pt(...Hp, -250, th), "th", Hp);
+      const pairTxt = document.getElementById("gPair");
+      if (!st.pair) pairTxt.textContent = "Wähle ein Winkelpaar.";
+      else {
+        const a = s1[0], b = st.pair === "stufe" ? s2[0] : s2[2];
+        const nm = st.pair === "stufe" ? "Stufenwinkel α₁ und α₂" : "Wechselwinkel α₁ und γ₂";
+        pairTxt.textContent = gMeasure.checked ? `${nm}: ${fmt(a)} und ${fmt(b)}` : nm + " (Winkel messen einschalten)";
+      }
+    }
+  }
+  let drag = null;
+  geo.addEventListener("pointerdown", e => {
+    const h = e.target.closest(".hnd"); if (!h) return;
+    drag = h.dataset; geo.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  geo.addEventListener("pointermove", e => {
+    if (!drag) return;
+    const r = geo.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * 640, y = (e.clientY - r.top) / r.height * 460;
+    let a = Math.atan2(-(y - drag.py), x - drag.px) * 180 / Math.PI;
+    if (drag.key === "th") a += 180;   // Griff liegt auf der Gegenseite
+    a = norm(a);
+    if (drag.key === "tq") { a = a % 180; st.tq = Math.min(160, Math.max(20, Math.round(a))); }
+    else if (drag.key === "th") { let b = a > 180 ? a - 360 : a; if (b > 90) b -= 180; if (b < -90) b += 180; st.th = Math.max(-25, Math.min(25, Math.round(b))); }
+    else {
+      const other = drag.key === "t1" ? st.t2 : st.t1;
+      let d = norm(a - other) % 180; if (d < 12 || d > 168) return;   // Geraden nicht zusammenfallen lassen
+      st[drag.key] = Math.round(a);
+    }
+    drawGeo();
+  });
+  const endDrag = () => { drag = null; };
+  geo.addEventListener("pointerup", endDrag); geo.addEventListener("pointercancel", endDrag);
+  function setMode(m) {
+    st.mode = m; st.pair = null;
+    document.getElementById("modeKreuz").classList.toggle("primary", m === "kreuz");
+    document.getElementById("modePar").classList.toggle("primary", m === "par");
+    document.getElementById("modeKreuz").setAttribute("aria-pressed", m === "kreuz");
+    document.getElementById("modePar").setAttribute("aria-pressed", m === "par");
+    document.getElementById("kreuzSide").hidden = m !== "kreuz";
+    document.getElementById("parSide").hidden = m !== "par";
+    document.getElementById("gIntro").textContent = m === "kreuz"
+      ? "Ziehe an den Punkten am Ende der Geraden. Beobachte die vier Winkel, während du die Geraden bewegst. Was fällt dir auf?"
+      : "Eine Gerade schneidet die beiden Geraden g und h. Ziehe am Punkt, um sie zu drehen. Vergleiche die Winkel an beiden Schnittpunkten.";
+    drawGeo();
+  }
+  document.getElementById("modeKreuz").addEventListener("click", () => setMode("kreuz"));
+  document.getElementById("modePar").addEventListener("click", () => setMode("par"));
+  document.getElementById("showStufe").addEventListener("click", () => { st.pair = st.pair === "stufe" ? null : "stufe"; drawGeo(); });
+  document.getElementById("showWechsel").addEventListener("click", () => { st.pair = st.pair === "wechsel" ? null : "wechsel"; drawGeo(); });
+  gMeasure.addEventListener("change", drawGeo);
+  gParallel.addEventListener("change", () => { if (!gParallel.checked && st.th === 0) st.th = 12; drawGeo(); });
+  drawGeo();
+})();
+</script>
+</body>
+</html>
